@@ -295,12 +295,7 @@ void SysTick_Handler( void )
 
       /* Check Connection */
       #define NoSignal 1  // 1 sec
-      if(KEYR_L == 0)
-        Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
-      else if(((Time_Sec-RecvTime_Sec)>NoSignal) || ((Time_Sec-RecvTime_Sec)<-NoSignal))
-        Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
-      else
-        Motor_Control(Final_M1, Final_M2, Final_M3, Final_M4);
+      Motor_Control(Final_M1, Final_M2, Final_M3, Final_M4);
 
       /* DeBug */
       Tmp_PID_KP = PID_Yaw.Kp*1000;
