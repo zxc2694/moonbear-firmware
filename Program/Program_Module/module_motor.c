@@ -30,7 +30,7 @@ void Motor_Config( void )
   GPIO_PinAFConfig(GPIOB, GPIO_PinSource0, GPIO_AF_TIM3);
   GPIO_PinAFConfig(GPIOB, GPIO_PinSource1, GPIO_AF_TIM3);
   GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_TIM4);
-  GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_TIM4);
+ 
   GPIO_PinAFConfig(GPIOC, GPIO_PinSource6, GPIO_AF_TIM8);
   GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_TIM8);
 
@@ -43,7 +43,7 @@ void Motor_Config( void )
   GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
   GPIO_Init(GPIOA, &GPIO_InitStruct);
   /* TIM3 PWM11 PB0 */	/* TIM3 PWM12 PB1 */	/* TIM4 PWM1  PB6 */	/* TIM4 PWM2  PB7 */
-  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_6 | GPIO_Pin_7;
+  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_6;
   GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
   GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
   GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
@@ -92,7 +92,6 @@ void Motor_Config( void )
   TIM_OC3Init(TIM3, &TIM_OCInitStruct);                       // 初始化 TIM3 OC3
   TIM_OC4Init(TIM3, &TIM_OCInitStruct);                       // 初始化 TIM3 OC4
   TIM_OC1Init(TIM4, &TIM_OCInitStruct);                       // 初始化 TIM4 OC1
-  TIM_OC2Init(TIM4, &TIM_OCInitStruct);                       // 初始化 TIM4 OC2
   TIM_OC1Init(TIM8, &TIM_OCInitStruct);                       // 初始化 TIM8 OC1
   TIM_OC2Init(TIM8, &TIM_OCInitStruct);                       // 初始化 TIM8 OC2
   TIM_OC1PreloadConfig(TIM2, TIM_OCPreload_Enable);           // 致能 TIM2 OC1 預裝載
@@ -104,7 +103,6 @@ void Motor_Config( void )
   TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);           // 致能 TIM3 OC3 預裝載
   TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);           // 致能 TIM3 OC4 預裝載
   TIM_OC1PreloadConfig(TIM4, TIM_OCPreload_Enable);           // 致能 TIM4 OC1 預裝載
-  TIM_OC2PreloadConfig(TIM4, TIM_OCPreload_Enable);           // 致能 TIM4 OC2 預裝載
   TIM_OC1PreloadConfig(TIM8, TIM_OCPreload_Enable);           // 致能 TIM8 OC1 預裝載
   TIM_OC2PreloadConfig(TIM8, TIM_OCPreload_Enable);           // 致能 TIM8 OC2 預裝載
 
@@ -123,6 +121,57 @@ void Motor_Config( void )
   PWM_Motor3 = PWM_MOTOR_MIN;
   PWM_Motor4 = PWM_MOTOR_MIN;
 }
+void PWM_Capture_Config()
+{
+  GPIO_InitTypeDef GPIO_InitStructure;
+  NVIC_InitTypeDef NVIC_InitStructure;
+  TIM_ICInitTypeDef  TIM_ICInitStructure;
+  /* TIM4 clock enable */
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+
+  /* GPIOB clock enable */
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+  
+  /* TIM4 chennel2 configuration : PB.07 */
+  GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_7;
+  GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP ;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
+  
+  /* Connect TIM pin to AF2 */
+  GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_TIM4);
+
+  /* Enable the TIM4 global Interrupt */
+  NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
+  TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
+  TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
+  TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
+  TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
+  TIM_ICInitStructure.TIM_ICFilter = 0x0;
+
+  TIM_PWMIConfig(TIM4, &TIM_ICInitStructure);
+
+  /* Select the TIM4 Input Trigger: TI2FP2 */
+  TIM_SelectInputTrigger(TIM4, TIM_TS_TI2FP2);
+
+  /* Select the slave Mode: Reset Mode */
+  TIM_SelectSlaveMode(TIM4, TIM_SlaveMode_Reset);
+  TIM_SelectMasterSlaveMode(TIM4,TIM_MasterSlaveMode_Enable);
+
+  /* TIM enable counter */
+  TIM_Cmd(TIM4, ENABLE);
+
+  /* Enable the CC2 Interrupt Request */
+   TIM_ITConfig(TIM4, TIM_IT_CC2, ENABLE);
+}
+
 /*=====================================================================================================*/
 /*=====================================================================================================*
 **函數 : Motor_Control
