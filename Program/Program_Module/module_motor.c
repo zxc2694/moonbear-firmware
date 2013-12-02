@@ -151,12 +151,12 @@ void PWM_Capture_Config()
   NVIC_Init(&NVIC_InitStructure);
 
   TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
-  TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
+  TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_BothEdge;
   TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
   TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
   TIM_ICInitStructure.TIM_ICFilter = 0x0;
 
-  TIM_PWMIConfig(TIM4, &TIM_ICInitStructure);
+  TIM_ICInit(TIM4, &TIM_ICInitStructure);
 
   /* Select the TIM4 Input Trigger: TI2FP2 */
   TIM_SelectInputTrigger(TIM4, TIM_TS_TI2FP2);

@@ -27,10 +27,11 @@ vs16 Tmp_PID_KP;
 vs16 Tmp_PID_KI;
 vs16 Tmp_PID_KD;
 vs16 Tmp_PID_Pitch;
-__IO uint16_t IC2Value = 0;
-__IO uint16_t DutyCycle = 0;
-__IO uint32_t Frequency = 0;
-__IO uint32_t CCR = 0;
+
+
+__IO uint16_t InputCaptureValue = 0;
+__IO uint16_t PreviousValue = 0;
+
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 /*=====================================================================================================*/
 /*=====================================================================================================*/
@@ -312,32 +313,27 @@ void SysTick_Handler( void )
 
 void TIM4_IRQHandler(void)
 {
-  RCC_ClocksTypeDef RCC_Clocks;
-  RCC_GetClocksFreq(&RCC_Clocks);
+  u16 current = 0;
 
-  /* Clear TIM4 Capture compare interrupt pending bit */
-  TIM_ClearITPendingBit(TIM4, TIM_IT_CC2);
 
-  /* Get the Input Capture value */
-  IC2Value = TIM_GetCapture2(TIM4);
-
-  if (IC2Value != 0)
+ if(TIM_GetITStatus(TIM4, TIM_IT_CC2) == SET) 
   {
-	CCR = TIM_GetCapture1(TIM4);
-    /* Duty cycle computation */
-    DutyCycle = (CCR * 100) / IC2Value;
-	 
-    /* Frequency computation 
-       TIM4 counter clock = (RCC_Clocks.HCLK_Frequency)/2 */
+    /* Clear TIM1 Capture compare interrupt pending bit */
+    TIM_ClearITPendingBit(TIM4, TIM_IT_CC2);
 
-    Frequency = (RCC_Clocks.HCLK_Frequency)/2 / IC2Value;
-
-
-  }
-  else
-  {
-    DutyCycle = 0;
-    Frequency = 0;
+	
+    /* Get the Input Capture value */
+    current = TIM_GetCapture2(TIM4);
+	if (current > PreviousValue)
+	{
+		InputCaptureValue = PreviousValue;
+	}
+	else
+	{	
+		InputCaptureValue = current;
+	} 
+	PreviousValue = current;
+   
   }
 }
 /*=====================================================================================================*/
