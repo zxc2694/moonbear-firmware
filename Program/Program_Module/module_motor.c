@@ -21,8 +21,6 @@ void Motor_Config( void )
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2 | RCC_APB1Periph_TIM3 , ENABLE);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM8, ENABLE);
 
-  GPIO_PinAFConfig(GPIOA, GPIO_PinSource0, GPIO_AF_TIM2);
-  GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_TIM2);
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_TIM2);
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_TIM2);
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_TIM3);
@@ -34,7 +32,7 @@ void Motor_Config( void )
 
   /* TIM2 PWM3  PA0 */	/* TIM2 PWM4  PA1 */	/* TIM2 PWM5  PA2 */	/* TIM2 PWM8  PA3 */
   /* TIM3 PWM9  PA6 */	/* TIM3 PWM10 PA7 */
-  GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_6 | GPIO_Pin_7;
+  GPIO_InitStruct.GPIO_Pin =  GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_6 | GPIO_Pin_7;
   GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
   GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
   GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
@@ -79,8 +77,6 @@ void Motor_Config( void )
   TIM_OCInitStruct.TIM_OutputState = TIM_OutputState_Enable;  // 致能 OC
   TIM_OCInitStruct.TIM_Pulse = PWM_MOTOR_MAX;                 // 設置跳變值
   TIM_OCInitStruct.TIM_OCPolarity = TIM_OCPolarity_High;      // 當計數值小於 PWM_MOTOR_MIN 時為高電平
-  TIM_OC1Init(TIM2, &TIM_OCInitStruct);                       // 初始化 TIM2 OC1
-  TIM_OC2Init(TIM2, &TIM_OCInitStruct);                       // 初始化 TIM2 OC2
   TIM_OC3Init(TIM2, &TIM_OCInitStruct);                       // 初始化 TIM2 OC3
   TIM_OC4Init(TIM2, &TIM_OCInitStruct);                       // 初始化 TIM2 OC4
   TIM_OC1Init(TIM3, &TIM_OCInitStruct);                       // 初始化 TIM3 OC1
@@ -89,8 +85,6 @@ void Motor_Config( void )
   TIM_OC4Init(TIM3, &TIM_OCInitStruct);                       // 初始化 TIM3 OC4
   TIM_OC1Init(TIM8, &TIM_OCInitStruct);                       // 初始化 TIM8 OC1
   TIM_OC2Init(TIM8, &TIM_OCInitStruct);                       // 初始化 TIM8 OC2
-  TIM_OC1PreloadConfig(TIM2, TIM_OCPreload_Enable);           // 致能 TIM2 OC1 預裝載
-  TIM_OC2PreloadConfig(TIM2, TIM_OCPreload_Enable);           // 致能 TIM2 OC2 預裝載
   TIM_OC3PreloadConfig(TIM2, TIM_OCPreload_Enable);           // 致能 TIM2 OC3 預裝載
   TIM_OC4PreloadConfig(TIM2, TIM_OCPreload_Enable);           // 致能 TIM2 OC4 預裝載
   TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);           // 致能 TIM3 OC1 預裝載
