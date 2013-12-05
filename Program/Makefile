@@ -15,6 +15,8 @@ CFLAGS+=-ffreestanding -nostdlib
 #Flash
 CFLAGS+=-Wl,-T,stm32_flash.ld
 
+CFLAGS+=-I./
+
 #STM32 CMSIS
 CFLAGS+=-I./Libraries/CMSIS
 #STM32F4xx Peripherys including
