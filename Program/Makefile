@@ -14,6 +14,9 @@ PROGRAM_MOD = $(PROGRAM)/Program_Module
 PROGRAM_SYS = $(PROGRAM)/Program_System
 _PROJECTFC_ = $(PROGRAM)/ProjectFC
 
+TOOLCHAIN_PATH ?= /usr/local/csl/arm-2012.03/arm-none-eabi
+C_LIB= $(TOOLCHAIN_PATH)/lib/thumb2
+
 CFLAGS=-g -O2 -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
 CFLAGS+=-mfpu=fpv4-sp-d16
@@ -57,8 +60,9 @@ all:$(BIN_IMAGE)
 $(BIM_IMAGE):$(EXECUTABLE)
 	$(OBJCOPY) -O binary $^ $@
 
-$(EXECUTABLE):$(SRC) $(STARTUP)
-	$(CC) $(CFLAGS) $^ -o $@
+$(EXECUTABLE): main.c $(SRC)
+	$(CC) $(CFLAGS) $^ -o $@  -L./libstm/STM32F4xx_StdPeriph_Driver/build \
+		-lSTM32F4xx_StdPeriph_Driver -L$(C_LIB)
 
 #Make clean
 clean:
