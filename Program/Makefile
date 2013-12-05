@@ -7,6 +7,13 @@ BIN_IMAGE=QuadrotorFlightControl.bin
 CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
 
+PROGRAM = ./Program
+PROGRAM_ALG = $(PROGRAM)/Program_Algorithm
+PROGRAM_DIR = $(PROGRAM)/Program_Dirver
+PROGRAM_MOD = $(PROGRAM)/Program_Module
+PROGRAM_SYS = $(PROGRAM)/Program_System
+_PROJECTFC_ = $(PROGRAM)/ProjectFC
+
 CFLAGS=-g -O2 -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
 CFLAGS+=-mfpu=fpv4-sp-d16
@@ -34,10 +41,11 @@ SRC=$(wildcard ./Liraries/CMSIS/*.c)
 SRC+=$(wildcard ./Libraries/STM32F4xx_StdPeriph_Driver/src/*.c)
 
 #Major programs source code
-SRC+=$(wildcard ./Program_System/*.c)
-SRC+=$(wildcard ./Program_Algorithm/*.c)
-SRC+=$(wildcard ./Program_Driver/*.c)
-SRC+=$(wildcard ./Program_Module/*.c)
+SRC += $(PROGRAM_ALG)/algorithm_*.c \
+		$(PROGRAM_DIR)/stm32f4_*.c \
+		$(PROGRAM_MOD)/module_*.c \
+		$(PROGRAM_SYS)/QCopterFC_*.c 
+
 
 #STM32 startup file
 STARTUP=./Liraries/CMSIS/startup_stm32f40xx.s
