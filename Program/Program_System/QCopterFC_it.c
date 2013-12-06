@@ -33,10 +33,16 @@ __IO uint16_t PWM1_InputCaptureValue = 0;
 __IO uint16_t PWM1_PreviousValue = 0;
 __IO uint16_t PWM2_InputCaptureValue = 0;
 __IO uint16_t PWM2_PreviousValue = 0;
+__IO uint16_t PWM3_InputCaptureValue = 0;
+__IO uint16_t PWM3_PreviousValue = 0;
+__IO uint16_t PWM4_InputCaptureValue = 0;
+__IO uint16_t PWM4_PreviousValue = 0;
 //__IO uint16_t current1=0;
 //__IO uint16_t current=0;
 __IO u8 PWM1_IsRising = 1;
 __IO u8 PWM2_IsRising = 1;
+__IO u8 PWM3_IsRising = 1;
+__IO u8 PWM4_IsRising = 1;
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 /*=====================================================================================================*/
 /*=====================================================================================================*/
@@ -315,7 +321,77 @@ void SysTick_Handler( void )
       break;
   }
 }
+void TIM2_IRQHandler(void)
+{
+   uint16_t current[2];
+   TIM_ICInitTypeDef TIM_ICInitStructure;
+   TIM_ICStructInit( &TIM_ICInitStructure);
+   if (TIM_GetITStatus(TIM2, TIM_IT_CC1) == SET)
+   {
+		  /* Clear TIM1 Capture compare interrupt pending bit */
+	    TIM_ClearITPendingBit(TIM2, TIM_IT_CC1);
+	  
+	  if(PWM3_IsRising)
+	  {
+	    TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
+	    TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
+	
+	    /* Get the Input Capture value */
+	    PWM3_PreviousValue = TIM_GetCapture1(TIM2);
+	    PWM3_IsRising = 0;
+	
+	  }
+	  else
+	  {
+	    TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
+	    TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
+	    
+	    /* Get the Input Capture value */
+	    current[0] =  TIM_GetCapture1(TIM2);
+	    
+	    if ( current[0] > PWM3_PreviousValue)
+	        PWM3_InputCaptureValue =  current[0] - PWM3_PreviousValue;
+	    else if ( current[0] < PWM3_PreviousValue)
+	      PWM3_InputCaptureValue = 0xFFFFFFFF- PWM3_PreviousValue + current[0] ; 
+	      
+	    PWM3_IsRising = 1;
+	  }
+	  TIM_ICInit(TIM2, &TIM_ICInitStructure);
 
+   }
+   if (TIM_GetITStatus(TIM2, TIM_IT_CC2) == SET)
+   {
+		   /* Clear TIM1 Capture compare interrupt pending bit */
+	    TIM_ClearITPendingBit(TIM2, TIM_IT_CC2);
+		
+	    if(PWM4_IsRising)
+	  	{
+	  		TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
+	  		TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
+	  		
+	  	  /* Get the Input Capture value */
+	  	  PWM4_PreviousValue = TIM_GetCapture2(TIM2);
+	  		PWM4_IsRising = 0;
+	  	}
+	  	else
+	  	{
+	  		TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
+	  		TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
+	  		
+	  		/* Get the Input Capture value */
+	  		current[1] =  TIM_GetCapture2(TIM2);
+	  		if ( current[1] > PWM4_PreviousValue)
+	  	    	PWM4_InputCaptureValue =  current[1] - PWM4_PreviousValue;
+	  		else if(current[1] < PWM4_PreviousValue)
+	  			PWM4_InputCaptureValue = 0xFFFFFFFF - PWM4_PreviousValue + current[1] ; 
+	  	    
+	  		PWM4_IsRising = 1;
+	  		
+	  		
+	  	}
+	  	TIM_ICInit(TIM2, &TIM_ICInitStructure);
+   }
+}
 void TIM4_IRQHandler(void)
 {
   uint16_t current[2];
