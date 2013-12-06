@@ -7,12 +7,11 @@ BIN_IMAGE=QuadrotorFlightControl.bin
 CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
 
-PROGRAM = ./Program
-PROGRAM_ALG = $(PROGRAM)/Program_Algorithm
-PROGRAM_DIR = $(PROGRAM)/Program_Dirver
-PROGRAM_MOD = $(PROGRAM)/Program_Module
-PROGRAM_SYS = $(PROGRAM)/Program_System
-_PROJECTFC_ = $(PROGRAM)/ProjectFC
+PROGRAM_ALG = ./Program_Algorithm
+PROGRAM_DIR = ./Program_Dirver
+PROGRAM_MOD = ./Program_Module
+PROGRAM_SYS = ./Program_System
+_PROJECTFC_ = ./ProjectFC
 
 TOOLCHAIN_PATH ?= /usr/local/csl/arm-2012.03/arm-none-eabi
 C_LIB= $(TOOLCHAIN_PATH)/lib/thumb2
@@ -60,7 +59,7 @@ all:$(BIN_IMAGE)
 $(BIN_IMAGE):$(EXECUTABLE)
 	$(OBJCOPY) -O binary $^ $@
 
-$(EXECUTABLE): main.c $(SRC)
+$(EXECUTABLE):$(SRC) $(STARTUP)
 	$(CC) $(CFLAGS) $^ -o $@ 
 
 #Make clean
