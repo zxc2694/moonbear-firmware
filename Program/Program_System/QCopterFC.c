@@ -51,6 +51,7 @@ int main( void )
   /* System Init */
   System_Init();
 
+  RS232_SendStr(USART3,"12234");
   /* Throttle Config */
   if(KEY == 1) {
     LED_B = 0;
