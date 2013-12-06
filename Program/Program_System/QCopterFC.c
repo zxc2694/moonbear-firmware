@@ -22,8 +22,7 @@ void System_Init( void )
   Motor_Config();
   Sensor_Config();
   nRF24L01_Config();
-  PWM_Capture_Config();
-  
+
   PID_Init(&PID_Yaw);
   PID_Init(&PID_Roll);
   PID_Init(&PID_Pitch);
@@ -52,6 +51,7 @@ int main( void )
   /* System Init */
   System_Init();
 
+  RS232_SendStr(USART3,"12234");
   /* Throttle Config */
   if(KEY == 1) {
     LED_B = 0;
