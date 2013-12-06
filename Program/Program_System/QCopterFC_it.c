@@ -37,12 +37,15 @@ __IO uint16_t PWM3_InputCaptureValue = 0;
 __IO uint16_t PWM3_PreviousValue = 0;
 __IO uint16_t PWM4_InputCaptureValue = 0;
 __IO uint16_t PWM4_PreviousValue = 0;
+__IO uint16_t PWM5_InputCaptureValue = 0;
+__IO uint16_t PWM5_PreviousValue = 0;
 //__IO uint16_t current1=0;
 //__IO uint16_t current=0;
 __IO u8 PWM1_IsRising = 1;
 __IO u8 PWM2_IsRising = 1;
 __IO u8 PWM3_IsRising = 1;
 __IO u8 PWM4_IsRising = 1;
+__IO u8 PWM5_IsRising = 1;
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 /*=====================================================================================================*/
 /*=====================================================================================================*/
@@ -323,7 +326,7 @@ void SysTick_Handler( void )
 }
 void TIM2_IRQHandler(void)
 {
-   uint16_t current[2];
+   uint16_t current[3];
    TIM_ICInitTypeDef TIM_ICInitStructure;
    TIM_ICStructInit( &TIM_ICInitStructure);
    if (TIM_GetITStatus(TIM2, TIM_IT_CC1) == SET)
@@ -390,6 +393,39 @@ void TIM2_IRQHandler(void)
 	  		
 	  	}
 	  	TIM_ICInit(TIM2, &TIM_ICInitStructure);
+   }
+
+   if (TIM_GetITStatus(TIM2, TIM_IT_CC3) == SET)
+   {
+       /* Clear TIM1 Capture compare interrupt pending bit */
+      TIM_ClearITPendingBit(TIM2, TIM_IT_CC3);
+    
+      if(PWM5_IsRising)
+      {
+        TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
+        TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
+        
+        /* Get the Input Capture value */
+        PWM5_PreviousValue = TIM_GetCapture3(TIM2);
+        PWM5_IsRising = 0;
+      }
+      else
+      {
+        TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
+        TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
+        
+        /* Get the Input Capture value */
+        current[2] =  TIM_GetCapture3(TIM2);
+        if ( current[2] > PWM5_PreviousValue)
+            PWM5_InputCaptureValue =  current[2] - PWM5_PreviousValue;
+        else if(current[2] < PWM5_PreviousValue)
+          PWM5_InputCaptureValue = 0xFFFFFFFF - PWM5_PreviousValue + current[2] ; 
+          
+        PWM5_IsRising = 1;
+        
+        
+      }
+      TIM_ICInit(TIM2, &TIM_ICInitStructure);
    }
 }
 void TIM4_IRQHandler(void)

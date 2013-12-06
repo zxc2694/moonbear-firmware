@@ -115,7 +115,7 @@ void PWM_Capture_Config()
   
 
   /* TIM2 PWM3  PA0 */  /* TIM2 PWM4  PA1 */
-  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_0 | GPIO_Pin_1;
+  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -129,6 +129,8 @@ void PWM_Capture_Config()
   
   /* Connect TIM pin to AF2 */
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource0, GPIO_AF_TIM2);
+  GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_TIM2);
+  GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_TIM2);
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_TIM2);
   GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_TIM4);
   GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_TIM4);
@@ -169,7 +171,8 @@ void PWM_Capture_Config()
   TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
   TIM_ICInit(TIM4, &TIM_ICInitStructure);
   TIM_ICInit(TIM2, &TIM_ICInitStructure);
-
+  TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
+  TIM_ICInit(TIM2, &TIM_ICInitStructure);
  
   /* Select the TIM4 Input Trigger: TI2FP2 */
   TIM_SelectInputTrigger(TIM4, TIM_TS_TI2FP2);
@@ -184,6 +187,7 @@ void PWM_Capture_Config()
   /* Enable the CC2 Interrupt Request */
   TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
   TIM_ITConfig(TIM2, TIM_IT_CC2, ENABLE);
+  TIM_ITConfig(TIM2, TIM_IT_CC3, ENABLE);
   TIM_ITConfig(TIM4, TIM_IT_CC1, ENABLE);
   TIM_ITConfig(TIM4, TIM_IT_CC2, ENABLE);
 }
