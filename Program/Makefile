@@ -57,12 +57,11 @@ STARTUP=./Liraries/CMSIS/startup_stm32f40xx.s
 #Make all
 all:$(BIN_IMAGE)
 
-$(BIM_IMAGE):$(EXECUTABLE)
+$(BIN_IMAGE):$(EXECUTABLE)
 	$(OBJCOPY) -O binary $^ $@
 
 $(EXECUTABLE): main.c $(SRC)
-	$(CC) $(CFLAGS) $^ -o $@  -L./libstm/STM32F4xx_StdPeriph_Driver/build \
-		-lSTM32F4xx_StdPeriph_Driver -L$(C_LIB)
+	$(CC) $(CFLAGS) $^ -o $@ 
 
 #Make clean
 clean:
