@@ -115,39 +115,54 @@ void PWM_Capture_Config()
   TIM_TimeBaseInitTypeDef TIM_TimeBaseStruct;
   uint16_t PrescalerValue = (uint16_t) ((SystemCoreClock / 4) / 6000000) - 1;
   /* TIM4 clock enable */
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2 | RCC_APB1Periph_TIM4, ENABLE);
 
   /* GPIOB clock enable */
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB, ENABLE);
   
+
+  /* TIM2 PWM3  PA0 */  /* TIM2 PWM4  PA1 */
+  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_0 | GPIO_Pin_1;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
   
 
   /* TIM4 chennel2 configuration : PB.07 */
   GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_6 | GPIO_Pin_7;
-  GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_25MHz;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_UP ;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
   
   /* Connect TIM pin to AF2 */
+  GPIO_PinAFConfig(GPIOA, GPIO_PinSource0, GPIO_AF_TIM2);
+  GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_TIM2);
   GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_TIM4);
   GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_TIM4);
+
   /* Enable the TIM4 global Interrupt */
   NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
+  
+  NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
 
-
+  TIM_DeInit(TIM2);
   TIM_DeInit(TIM4);
   TIM_TimeBaseStruct.TIM_Period = 0xFFFF;              // 週期 = 2.5ms, 400kHz
   TIM_TimeBaseStruct.TIM_Prescaler = 0;             // 除頻84 = 1M ( 1us )
   TIM_TimeBaseStruct.TIM_ClockDivision = 0;
   TIM_TimeBaseStruct.TIM_CounterMode = TIM_CounterMode_Up;    // 上數
   TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStruct);
+  TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStruct);
   TIM_PrescalerConfig(TIM4, PrescalerValue, TIM_PSCReloadMode_Immediate);
+  TIM_PrescalerConfig(TIM2, PrescalerValue, TIM_PSCReloadMode_Immediate);
 
   TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
   TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
@@ -158,17 +173,22 @@ void PWM_Capture_Config()
   TIM_ICInit(TIM4, &TIM_ICInitStructure);
   TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
   TIM_ICInit(TIM4, &TIM_ICInitStructure);
+  TIM_ICInit(TIM2, &TIM_ICInitStructure);
+  TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
+  TIM_ICInit(TIM2, &TIM_ICInitStructure);
   /* Select the TIM4 Input Trigger: TI2FP2 */
   TIM_SelectInputTrigger(TIM4, TIM_TS_TI2FP2);
-
+  TIM_SelectInputTrigger(TIM2, TIM_TS_TI2FP2);
   /* Select the slave Mode: Reset Mode */
 //  TIM_SelectSlaveMode(TIM4, TIM_SlaveMode_Reset);
 //  TIM_SelectMasterSlaveMode(TIM4,TIM_MasterSlaveMode_Enable);
 
   /* TIM enable counter */
   TIM_Cmd(TIM4, ENABLE);
-
+  TIM_Cmd(TIM2, ENABLE);
   /* Enable the CC2 Interrupt Request */
+  TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
+  TIM_ITConfig(TIM2, TIM_IT_CC2, ENABLE);
   TIM_ITConfig(TIM4, TIM_IT_CC1, ENABLE);
   TIM_ITConfig(TIM4, TIM_IT_CC2, ENABLE);
 }
