@@ -164,11 +164,13 @@ void PWM_Capture_Config()
   TIM_ICInitStructure.TIM_ICFilter = 0x0;
 
   TIM_ICInit(TIM4, &TIM_ICInitStructure);
+  TIM_ICInit(TIM2, &TIM_ICInitStructure);
+
   TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
   TIM_ICInit(TIM4, &TIM_ICInitStructure);
   TIM_ICInit(TIM2, &TIM_ICInitStructure);
-  TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
-  TIM_ICInit(TIM2, &TIM_ICInitStructure);
+
+ 
   /* Select the TIM4 Input Trigger: TI2FP2 */
   TIM_SelectInputTrigger(TIM4, TIM_TS_TI2FP2);
   TIM_SelectInputTrigger(TIM2, TIM_TS_TI2FP2);
