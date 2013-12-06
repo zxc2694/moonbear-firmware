@@ -50,7 +50,7 @@ SRC += $(PROGRAM_ALG)/algorithm_*.c \
 
 
 #STM32 startup file
-STARTUP=./Liraries/CMSIS/startup_stm32f40xx.s
+STARTUP=./Libraries/CMSIS/startup_stm32f40xx.s
 #======================================================================#
 
 #Make all
