@@ -11,6 +11,13 @@
 #include "module_sensor.h"
 #include "module_nrf24l01.h"
 /*=====================================================================================================*/
+
+extern __IO uint16_t PWM1_InputCaptureValue ;
+extern __IO uint16_t PWM2_InputCaptureValue ;
+extern __IO uint16_t PWM3_InputCaptureValue ;
+extern __IO uint16_t PWM4_InputCaptureValue ;
+extern __IO uint16_t PWM5_InputCaptureValue ;
+
 /*=====================================================================================================*/
 void System_Init( void )
 {
@@ -20,6 +27,7 @@ void System_Init( void )
   KEY_Config();
   RS232_Config();
   Motor_Config();
+  PWM_Capture_Config();
   Sensor_Config();
   nRF24L01_Config();
 
@@ -92,7 +100,10 @@ int main( void )
     LED_B = ~LED_B;
     Delay_10ms(1);
     Transport_Send(TxBuf[0]);
-    printf("Roll%d,Pitch%d,Yaw%d\r\n",(int)AngE.Roll,(int)AngE.Pitch,(int)AngE.Yaw);
+    printf("Roll%d,Pitch%d,Yaw%d,CH1 %u,CH2 %u,CH3 %u,CH4 %u,CH5 %u\r\n",
+      (int)AngE.Roll,(int)AngE.Pitch,(int)AngE.Yaw,
+      PWM1_InputCaptureValue, PWM2_InputCaptureValue, PWM3_InputCaptureValue,
+      PWM4_InputCaptureValue, PWM5_InputCaptureValue);
   }
   LED_B = 1;
 
