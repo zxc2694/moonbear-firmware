@@ -8,7 +8,7 @@ CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
 ST_LIB = ./Libraries/STM32F4xx_StdPeriph_Driver
 PROGRAM_ALG = ./Program_Algorithm
-PROGRAM_DIR = ./Program_Dirver
+PROGRAM_DIR = ./Program_Driver
 PROGRAM_MOD = ./Program_Module
 PROGRAM_SYS = ./Program_System
 _PROJECTFC_ = ./ProjectFC
@@ -19,7 +19,7 @@ C_LIB= $(TOOLCHAIN_PATH)/lib/thumb2
 CFLAGS=-g -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
 CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
-CFLAGS+=-ffreestanding -nostdlib
+CFLAGS+=-ffreestanding -nostdlib -Wall
 
 #Flash
 CFLAGS+=-Wl,-T,stm32_flash.ld
@@ -40,7 +40,7 @@ CFLAGS+=-I./Libraries/STM32F4xx_StdPeriph_Driver/inc
 #Major programs including
 CFLAGS+=-I./Program_System
 CFLAGS+=-I./Program_Algorithm
-CFLAGS+=-I./Program_Dirver
+CFLAGS+=-I./Program_Driver
 CFLAGS+=-I./Program_Module
 
 LDFLAGS += -lm -lc -lgcc
