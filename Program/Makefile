@@ -16,7 +16,7 @@ _PROJECTFC_ = ./ProjectFC
 TOOLCHAIN_PATH ?= /usr/local/csl/arm-2012.03/arm-none-eabi
 C_LIB= $(TOOLCHAIN_PATH)/lib/thumb2
 
-CFLAGS=-g -O2 -mlittle-endian -mthumb
+CFLAGS=-g -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
 CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
 CFLAGS+=-ffreestanding -nostdlib
@@ -98,5 +98,9 @@ clean:
 flash:
 	st-flash write $(BIN_IMAGE) 0x8000000
 #======================================================================#
+openocd: flash
+	openocd -s /opt/openocd/share/openocd/scripts/
+gdbauto:
+	arm-none-eabi-gdb -x openocd_gdb.gdb
 
-.PHONY:all clean flash
+.PHONY:all clean flash openocd gdbauto
