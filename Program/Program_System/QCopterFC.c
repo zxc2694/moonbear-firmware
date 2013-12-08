@@ -50,8 +50,14 @@ int main( void )
 
   /* System Init */
   System_Init();
+  /*test  TX RX  */
+  RS232_SendStr(USART3,"abcde");
+  
+  /*test printf can support USART*/
+  int c=10;
+  printf("printf\n\r");
+  printf("%d\n\r",c);
 
-  RS232_SendStr(USART3,"12234");
   /* Throttle Config */
   if(KEY == 1) {
     LED_B = 0;
