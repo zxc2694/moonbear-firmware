@@ -4,6 +4,8 @@
 #include "stm32f4_usart.h"
 #include "module_rs232.h"
 #include "algorithm_string.h"
+#include <unistd.h>
+#include <stdarg.h>
 /*=====================================================================================================*/
 /*=====================================================================================================*
 **函數 : RS232_Config
@@ -89,13 +91,14 @@ void RS232_SendNum( USART_TypeDef* USARTx, u8 Type, u8 NumLen, s32 SendData )
 **使用 : RS232_SendData(USART1, SendData, DataLen);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void RS232_SendData( USART_TypeDef* USARTx, uc8 *SendData, u16 DataLen )
+int RS232_SendData( USART_TypeDef* USARTx, uc8 *SendData, u16 DataLen )
 {
   do {
     USART_SendByte(USARTx, SendData);
     SendData++;
     DataLen--;
   } while(DataLen);
+  return 1;
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*
@@ -180,5 +183,142 @@ void RS232_VisualScope( USART_TypeDef* USARTx, u8 *pWord, u16 Len )
     pWord++;
   }
 }
+
 /*=====================================================================================================*/
+/*=====================================================================================================*
+**函數 : itoa
+**功能 : Support the sprintf & printf function
+**輸入 : 
+**輸出 : 
+**使用 : 
+**=====================================================================================================*/
 /*=====================================================================================================*/
+char* itoa(int value, char* str)
+{
+    int base = 10;
+    int divideNum = base;
+    int i=0;
+    while(value/divideNum > 0)
+    {
+        divideNum*=base;
+    }
+    if(value < 0)
+    {
+        str[0] = '-';
+        i++;
+    }
+    while(divideNum/base > 0)
+    {
+        divideNum/=base;
+        str[i++]=value/divideNum+48;
+        value%=divideNum;
+    }
+    str[i]='\0';
+    return str;
+
+}
+
+/*=====================================================================================================*/
+/*=====================================================================================================*
+**函數 : sprintf 
+**功能 : 
+**輸入 : ( char * str, const char * format, ... )
+**輸出 : strlen(str)
+**使用 : 
+**=====================================================================================================*/
+/*=====================================================================================================*/
+int sprintf ( char * str, const char * format, ... )
+{
+    va_list para;
+    va_start(para,format);
+    int curr_pos=0;
+    char ch[]={'0','\0'};
+    char integer[11];
+    str[0]='\0';
+    while(format[curr_pos]!='\0')
+    {
+        if(format[curr_pos]!='%')
+        {
+            ch[0]=format[curr_pos];
+            strcat(str,ch);
+        }
+        else
+        {
+            switch(format[++curr_pos])
+            {
+                case 's':
+                    strcat(str,va_arg(para,char*));
+                    break;
+                case 'c':
+                    ch[0]=(char)va_arg(para,int);
+                    strcat(str,ch);
+                    break;
+                case 'i':
+                case 'd':
+                    strcat(str,itoa(va_arg(para,int),integer));
+                    break;
+                case 'u':
+                    strcat(str,itoa(va_arg(para,unsigned),integer));
+                    break;
+                default:
+                    break;
+            }
+        }
+        curr_pos++;
+    }
+    va_end(para);
+    return strlen(str);
+}
+
+/*=====================================================================================================*
+**函數 : printf 
+**功能 : 
+**輸入 : 
+**輸出 : RS232_SendData(USART3, str, strlen(str));
+**使用 : 
+**=====================================================================================================*/
+/*=====================================================================================================*/
+
+int printf ( const char * format, ... )
+{
+    char str[128];
+    va_list para;
+    va_start(para,format);
+    int curr_pos=0;
+    char ch[]={'0','\0'};
+    char integer[11];
+    str[0]='\0';
+    while(format[curr_pos]!='\0')
+    {
+        if(format[curr_pos]!='%')
+        {
+            ch[0]=format[curr_pos];
+            strcat(str,ch);
+        }
+        else
+        {
+            switch(format[++curr_pos])
+            {
+                case 's':
+                    strcat(str,va_arg(para,char*));
+                    break;
+                case 'c':
+                    ch[0]=(char)va_arg(para,int);
+                    strcat(str,ch);
+                    break;
+                case 'i':
+                case 'd':
+                    strcat(str,itoa(va_arg(para,int),integer));
+                    break;
+                case 'u':
+                    strcat(str,itoa(va_arg(para,unsigned),integer));
+                    break;
+                default:
+                    break;
+            }
+        }
+        curr_pos++;
+    }
+    va_end(para);
+    return RS232_SendData(USART3, str, strlen(str));
+}
