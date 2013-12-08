@@ -92,7 +92,7 @@ int main( void )
     LED_B = ~LED_B;
     Delay_10ms(1);
     Transport_Send(TxBuf[0]);
-    RS232_VisualScope(USART3, TxBuf[0]+20, 8);
+    printf("Roll%d,Pitch%d,Yaw%d\r\n",(int)AngE.Roll,(int)AngE.Pitch,(int)AngE.Yaw);
   }
   LED_B = 1;
 
