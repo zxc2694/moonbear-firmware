@@ -6,7 +6,7 @@ BIN_IMAGE=QuadrotorFlightControl.bin
 #Cross Compiler
 CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
-
+ST_LIB = ./Libraries/STM32F4xx_StdPeriph_Driver
 PROGRAM_ALG = ./Program_Algorithm
 PROGRAM_DIR = ./Program_Dirver
 PROGRAM_MOD = ./Program_Module
@@ -37,12 +37,10 @@ CFLAGS+= \
 CFLAGS+=-I./Libraries/CMSIS
 #STM32F4xx Peripherys including
 CFLAGS+=-I./Libraries/STM32F4xx_StdPeriph_Driver/inc
-
 #Major programs including
 CFLAGS+=-I./Program_System
 CFLAGS+=-I./Program_Algorithm
 CFLAGS+=-I./Program_Dirver
-CFLAGS+=-I./Program_Driver
 CFLAGS+=-I./Program_Module
 
 LDFLAGS += -lm -lc -lgcc
@@ -50,7 +48,18 @@ LDFLAGS += -lm -lc -lgcc
 #STM32 CMSIS
 SRC=$(wildcard ./Libraries/CMSIS/*.c)
 #STM32F4xx Peripherys source code
-SRC+=$(wildcard ./Libraries/STM32F4xx_StdPeriph_Driver/src/*.c)
+#SRC+=$(wildcard ./Libraries/STM32F4xx_StdPeriph_Driver/src/*.c)
+SRC+= ./Libraries/CMSIS/system_stm32f4xx.c \
+	$(ST_LIB)/src/misc.c \
+	$(ST_LIB)/src/stm32f4xx_rcc.c \
+	$(ST_LIB)/src/stm32f4xx_dma.c \
+	$(ST_LIB)/src/stm32f4xx_flash.c \
+	$(ST_LIB)/src/stm32f4xx_gpio.c \
+	$(ST_LIB)/src/stm32f4xx_usart.c \
+	$(ST_LIB)/src/stm32f4xx_tim.c\
+	$(ST_LIB)/src/stm32f4xx_spi.c\
+	$(ST_LIB)/src/stm32f4xx_i2c.c
+
 
 #Major programs source code
 SRC += $(PROGRAM_ALG)/algorithm_*.c \
