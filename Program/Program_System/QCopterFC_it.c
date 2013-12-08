@@ -11,7 +11,7 @@
 #include "module_sensor.h"
 #include "module_mpu9150.h"
 #include "module_ms5611.h"
-#include "algorithm_PID.h"
+#include "algorithm_pid.h"
 #include "algorithm_moveAve.h"
 #include "algorithm_mathUnit.h"
 #include "algorithm_quaternion.h"
