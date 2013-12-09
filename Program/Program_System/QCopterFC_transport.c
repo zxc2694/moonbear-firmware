@@ -42,13 +42,9 @@ void Transport_Recv( u8* RecvBuf )
   KEYL_R    = (u16)RecvBuf[11];
   KEYL_S1   = (u16)RecvBuf[12];
   KEYL_S2   = (u16)RecvBuf[13];
-  Exp_Pitch = (u16)((RecvBuf[15] << 8) | RecvBuf[14]);
-  Exp_Roll  = (u16)((RecvBuf[17] << 8) | RecvBuf[16]);
 //   JSR_X     = (u16)((RecvBuf[15] << 8) | RecvBuf[14]);
 //   JSR_Y     = (u16)((RecvBuf[17] << 8) | RecvBuf[16]);
   JSR_Z     = (u16)((RecvBuf[19] << 8) | RecvBuf[18]);
-  Exp_Yaw   = (u16)((RecvBuf[21] << 8) | RecvBuf[20]);
-  Exp_Thr   = (u16)((RecvBuf[23] << 8) | RecvBuf[22]);
 //   JSL_X     = (u16)((RecvBuf[21] << 8) | RecvBuf[20]);
 //   JSL_Y     = (u16)((RecvBuf[23] << 8) | RecvBuf[22]);
   JSL_Z     = (u16)((RecvBuf[25] << 8) | RecvBuf[24]);

@@ -29,10 +29,6 @@
 #define JSL_Y       RecvData[18]
 #define JSL_Z       RecvData[19]
 
-#define Exp_Pitch   RecvData[20]
-#define Exp_Roll    RecvData[21]
-#define Exp_Yaw     RecvData[22]
-#define Exp_Thr     RecvData[23]
 /*====================================================================================================*/
 /*====================================================================================================*/
 void Transport_Recv( u8* RecvBuf );
