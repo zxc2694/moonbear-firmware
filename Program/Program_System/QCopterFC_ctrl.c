@@ -62,7 +62,7 @@ void Update_RC_Control(s16* Roll, s16* Pitch, s16* Yaw, s16* Thr)
   
   *Thr = (PWM_MOTOR_MAX - PWM_MOTOR_MIN)/(23179.0 - 13285.0) * (PWM3_InputCaptureValue- 13285) + 800; 
   //TODO: Control Roll,Pich, Yaw angle
-  //*Roll = (PWM_MOTOR_MAX - PWM_MOTOR_MIN)/(22591.0 - 12715.0) * (PWM1_InputCaptureValue- 12715) + 800;
-  //*Pitch = (PWM_MOTOR_MAX - PWM_MOTOR_MIN)/(23180.0 - 13290.0) * (PWM2_InputCaptureValue- 13290) + 800;
-  //*Yaw = (PWM_MOTOR_MAX - PWM_MOTOR_MIN)/(23230.0 - 13344.0) * (PWM4_InputCaptureValue- 13344) + 800;
+  *Roll = (180)/(22591.0 - 12715.0) * (PWM1_InputCaptureValue - 12715) + (-90);
+  *Pitch = (180)/(23180.0 - 13290.0) * (PWM2_InputCaptureValue- 13290) + (-90);
+  *Yaw = (180)/(23230.0 - 13344.0) * (PWM4_InputCaptureValue- 13344) + (-90);
 }
