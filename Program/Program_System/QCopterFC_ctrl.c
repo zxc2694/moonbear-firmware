@@ -12,6 +12,12 @@ vs16 PWM_M1 = PWM_MOTOR_MIN;
 vs16 PWM_M2 = PWM_MOTOR_MIN;
 vs16 PWM_M3 = PWM_MOTOR_MIN;
 vs16 PWM_M4 = PWM_MOTOR_MIN;
+
+extern __IO uint16_t PWM1_InputCaptureValue;
+extern __IO uint16_t PWM2_InputCaptureValue;
+extern __IO uint16_t PWM3_InputCaptureValue;
+extern __IO uint16_t PWM4_InputCaptureValue;
+extern __IO uint16_t PWM5_InputCaptureValue;
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 void CTRL_FlightControl( void )
@@ -51,3 +57,12 @@ void CTRL_FlightControl( void )
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
+void Update_RC_Control(s16* Roll, s16* Pitch, s16* Yaw, s16* Thr)
+{
+  
+  *Thr = (PWM_MOTOR_MAX - PWM_MOTOR_MIN)/(23179.0 - 13285.0) * (PWM3_InputCaptureValue- 13285) + 800; 
+  //TODO: Control Roll,Pich, Yaw angle
+  //*Roll = (PWM_MOTOR_MAX - PWM_MOTOR_MIN)/(22591.0 - 12715.0) * (PWM1_InputCaptureValue- 12715) + 800;
+  //*Pitch = (PWM_MOTOR_MAX - PWM_MOTOR_MIN)/(23180.0 - 13290.0) * (PWM2_InputCaptureValue- 13290) + 800;
+  //*Yaw = (PWM_MOTOR_MAX - PWM_MOTOR_MIN)/(23230.0 - 13344.0) * (PWM4_InputCaptureValue- 13344) + 800;
+}

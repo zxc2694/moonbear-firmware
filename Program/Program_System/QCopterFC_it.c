@@ -39,6 +39,10 @@ __IO uint16_t PWM4_InputCaptureValue = 0;
 __IO uint16_t PWM4_PreviousValue = 0;
 __IO uint16_t PWM5_InputCaptureValue = 0;
 __IO uint16_t PWM5_PreviousValue = 0;
+__IO int global_rc_thr = 0;
+__IO int global_rc_roll = 0;
+__IO int global_rc_pitch = 0;
+__IO int global_rc_yaw = 0;
 //__IO uint16_t current1=0;
 //__IO uint16_t current=0;
 __IO u8 PWM1_IsRising = 1;
@@ -59,6 +63,7 @@ void SysTick_Handler( void )
   u16 Final_M4 = 0;
 
   s16 Thr = 0, Pitch = 0, Roll = 0, Yaw = 0;
+  s16 Exp_Thr = 0, Exp_Pitch = 0, Exp_Roll = 0, Exp_Yaw = 0;
 
   float Ellipse[5] = {0};
 
@@ -292,7 +297,12 @@ void SysTick_Handler( void )
 //      if(KEYR_R == 0)	{	PID_Yaw.Kd += 0.0001f;	 }
 //      if(KEYR_D == 0)	{	PID_Yaw.Kd -= 0.0001f;	 }
 //      if(KEYR_L == 0)	{	PID_Roll.SumErr = 0.0f;	 }
-
+      /*Get RC Control*/
+      Update_RC_Control(&Exp_Roll, &Exp_Pitch, &Exp_Yaw, &Exp_Thr);
+      global_rc_thr  = Exp_Thr;
+      global_rc_roll = Exp_Roll;
+      global_rc_pitch = Exp_Pitch;
+      global_rc_yaw = Exp_Yaw;
       /* Get ZeroErr */
       PID_Pitch.ZeroErr = (float)((s16)Exp_Pitch/4.5f);
       PID_Roll.ZeroErr  = (float)((s16)Exp_Roll/4.5f);

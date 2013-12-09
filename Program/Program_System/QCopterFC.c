@@ -17,6 +17,10 @@ extern __IO uint16_t PWM2_InputCaptureValue ;
 extern __IO uint16_t PWM3_InputCaptureValue ;
 extern __IO uint16_t PWM4_InputCaptureValue ;
 extern __IO uint16_t PWM5_InputCaptureValue ;
+extern __IO int global_rc_thr;
+extern __IO int global_rc_roll;
+extern __IO int global_rc_pitch;
+extern __IO int global_rc_yaw;
 
 /*=====================================================================================================*/
 void System_Init( void )
@@ -100,10 +104,13 @@ int main( void )
     LED_B = ~LED_B;
     Delay_10ms(1);
     Transport_Send(TxBuf[0]);
-    printf("Roll%d,Pitch%d,Yaw%d,CH1 %u,CH2 %u,CH3 %u,CH4 %u,CH5 %u\r\n",
+    printf("Roll%d,Pitch%d,Yaw%d,CH1 %u(%d),CH2 %u(%d),CH3 %u(%d),CH4 %u(%d),CH5 %u()\r\n",
       (int)AngE.Roll,(int)AngE.Pitch,(int)AngE.Yaw,
-      PWM1_InputCaptureValue, PWM2_InputCaptureValue, PWM3_InputCaptureValue,
-      PWM4_InputCaptureValue, PWM5_InputCaptureValue);
+      PWM1_InputCaptureValue, global_rc_roll, 
+      PWM2_InputCaptureValue, global_rc_pitch,
+      PWM3_InputCaptureValue, global_rc_thr,
+      PWM4_InputCaptureValue, global_rc_yaw,
+      PWM5_InputCaptureValue);
   }
   LED_B = 1;
 
