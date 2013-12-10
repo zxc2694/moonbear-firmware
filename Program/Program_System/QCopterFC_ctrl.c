@@ -6,6 +6,7 @@
 #include "module_board.h"
 #include "module_motor.h"
 #include "algorithm_pid.h"
+#include "sys_manager.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 vs16 PWM_M1 = PWM_MOTOR_MIN;
@@ -13,11 +14,6 @@ vs16 PWM_M2 = PWM_MOTOR_MIN;
 vs16 PWM_M3 = PWM_MOTOR_MIN;
 vs16 PWM_M4 = PWM_MOTOR_MIN;
 
-extern __IO uint16_t PWM1_InputCaptureValue;
-extern __IO uint16_t PWM2_InputCaptureValue;
-extern __IO uint16_t PWM3_InputCaptureValue;
-extern __IO uint16_t PWM4_InputCaptureValue;
-extern __IO uint16_t PWM5_InputCaptureValue;
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 void CTRL_FlightControl(void)
@@ -62,9 +58,9 @@ void CTRL_FlightControl(void)
 void Update_RC_Control(s16 *Roll, s16 *Pitch, s16 *Yaw, s16 *Thr)
 {
 
-	*Thr = (PWM_MOTOR_MAX - PWM_MOTOR_MIN) / (23179.0 - 13285.0) * (PWM3_InputCaptureValue - 13285) + 800;
+	*Thr = (PWM_MOTOR_MAX - PWM_MOTOR_MIN) / (23179.0 - 13285.0) * (global_var[PWM2_CCR].param - 13285) + 800;
 	//TODO: Control Roll,Pich, Yaw angle
-	*Roll = (180) / (22591.0 - 12715.0) * (PWM1_InputCaptureValue - 12715) + (-90);
-	*Pitch = (180) / (23180.0 - 13290.0) * (PWM2_InputCaptureValue - 13290) + (-90);
-	*Yaw = (180) / (23230.0 - 13344.0) * (PWM4_InputCaptureValue - 13344) + (-90);
+	*Roll = (180) / (22591.0 - 12715.0) * (global_var[PWM1_CCR].param - 12715) + (-90);
+	*Pitch = (180) / (23180.0 - 13290.0) * (global_var[PWM2_CCR].param - 13290) + (-90);
+	*Yaw = (180) / (23230.0 - 13344.0) * (global_var[PWM4_CCR].param - 13344) + (-90);
 }

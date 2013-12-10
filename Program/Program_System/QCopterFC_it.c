@@ -15,6 +15,7 @@
 #include "algorithm_moveAve.h"
 #include "algorithm_mathUnit.h"
 #include "algorithm_quaternion.h"
+#include "sys_manager.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 vu8 Time_Sec = 0;
@@ -28,16 +29,10 @@ vs16 Tmp_PID_KI;
 vs16 Tmp_PID_KD;
 vs16 Tmp_PID_Pitch;
 
-
-__IO uint16_t PWM1_InputCaptureValue = 0;
 __IO uint16_t PWM1_PreviousValue = 0;
-__IO uint16_t PWM2_InputCaptureValue = 0;
 __IO uint16_t PWM2_PreviousValue = 0;
-__IO uint16_t PWM3_InputCaptureValue = 0;
 __IO uint16_t PWM3_PreviousValue = 0;
-__IO uint16_t PWM4_InputCaptureValue = 0;
 __IO uint16_t PWM4_PreviousValue = 0;
-__IO uint16_t PWM5_InputCaptureValue = 0;
 __IO uint16_t PWM5_PreviousValue = 0;
 __IO int global_rc_thr = 0;
 __IO int global_rc_roll = 0;
@@ -380,9 +375,9 @@ void TIM2_IRQHandler(void)
 			current[0] =  TIM_GetCapture1(TIM2);
 
 			if (current[0] > PWM3_PreviousValue)
-				PWM3_InputCaptureValue =  current[0] - PWM3_PreviousValue;
+				global_var[PWM3_CCR].param =  current[0] - PWM3_PreviousValue;
 			else if (current[0] < PWM3_PreviousValue)
-				PWM3_InputCaptureValue = 0xFFFFFFFF - PWM3_PreviousValue + current[0] ;
+				global_var[PWM3_CCR].param = 0xFFFFFFFF - PWM3_PreviousValue + current[0] ;
 
 			PWM3_IsRising = 1;
 		}
@@ -411,9 +406,9 @@ void TIM2_IRQHandler(void)
 			current[1] =  TIM_GetCapture2(TIM2);
 
 			if (current[1] > PWM4_PreviousValue)
-				PWM4_InputCaptureValue =  current[1] - PWM4_PreviousValue;
+				global_var[PWM4_CCR].param =  current[1] - PWM4_PreviousValue;
 			else if (current[1] < PWM4_PreviousValue)
-				PWM4_InputCaptureValue = 0xFFFFFFFF - PWM4_PreviousValue + current[1] ;
+				global_var[PWM4_CCR].param = 0xFFFFFFFF - PWM4_PreviousValue + current[1] ;
 
 			PWM4_IsRising = 1;
 
@@ -443,9 +438,9 @@ void TIM2_IRQHandler(void)
 			current[2] =  TIM_GetCapture3(TIM2);
 
 			if (current[2] > PWM5_PreviousValue)
-				PWM5_InputCaptureValue =  current[2] - PWM5_PreviousValue;
+				global_var[PWM5_CCR].param =  current[2] - PWM5_PreviousValue;
 			else if (current[2] < PWM5_PreviousValue)
-				PWM5_InputCaptureValue = 0xFFFFFFFF - PWM5_PreviousValue + current[2] ;
+				global_var[PWM5_CCR].param = 0xFFFFFFFF - PWM5_PreviousValue + current[2] ;
 
 			PWM5_IsRising = 1;
 
@@ -481,9 +476,9 @@ void TIM4_IRQHandler(void)
 			current[0] =  TIM_GetCapture1(TIM4);
 
 			if (current[0] > PWM1_PreviousValue)
-				PWM1_InputCaptureValue =  current[0] - PWM1_PreviousValue;
+				global_var[PWM1_CCR].param =  current[0] - PWM1_PreviousValue;
 			else if (current[0] < PWM1_PreviousValue)
-				PWM1_InputCaptureValue = 0xFFFF - PWM1_PreviousValue + current[0] ;
+				global_var[PWM1_CCR].param = 0xFFFF - PWM1_PreviousValue + current[0] ;
 
 			PWM1_IsRising = 1;
 		}
@@ -512,9 +507,9 @@ void TIM4_IRQHandler(void)
 			current[1] =  TIM_GetCapture2(TIM4);
 
 			if (current[1] > PWM2_PreviousValue)
-				PWM2_InputCaptureValue =  current[1] - PWM2_PreviousValue;
+				global_var[PWM2_CCR].param =  current[1] - PWM2_PreviousValue;
 			else if (current[1] < PWM2_PreviousValue)
-				PWM2_InputCaptureValue = 0xFFFF - PWM2_PreviousValue + current[1] ;
+				global_var[PWM2_CCR].param = 0xFFFF - PWM2_PreviousValue + current[1] ;
 
 			PWM2_IsRising = 1;
 

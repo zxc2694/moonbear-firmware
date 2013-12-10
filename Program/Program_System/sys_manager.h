@@ -25,10 +25,10 @@ typedef struct global_struct
 {
 	
 	char *param_name;
-	float param;
+	uint16_t param;
 
 }global_struct;
 
-
+global_struct global_var[GLOABAL_PARAM_COUNT];
 
 #endif

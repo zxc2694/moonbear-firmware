@@ -10,13 +10,9 @@
 #include "module_motor.h"
 #include "module_sensor.h"
 #include "module_nrf24l01.h"
+#include "sys_manager.h"
 /*=====================================================================================================*/
 
-extern __IO uint16_t PWM1_InputCaptureValue ;
-extern __IO uint16_t PWM2_InputCaptureValue ;
-extern __IO uint16_t PWM3_InputCaptureValue ;
-extern __IO uint16_t PWM4_InputCaptureValue ;
-extern __IO uint16_t PWM5_InputCaptureValue ;
 extern __IO int global_rc_thr;
 extern __IO int global_rc_roll;
 extern __IO int global_rc_pitch;
@@ -59,7 +55,6 @@ int main(void)
 {
 	u8 Sta = ERROR;
 	FSM_Mode FSM_State = FSM_Rx;
-
 	/* System Init */
 	System_Init();
 	/*test  TX RX  */
@@ -110,11 +105,11 @@ int main(void)
 		Transport_Send(TxBuf[0]);
 		printf("Roll%d,Pitch%d,Yaw%d,CH1 %u(%d),CH2 %u(%d),CH3 %u(%d),CH4 %u(%d),CH5 %u()\r\n",
 		       (int)AngE.Roll, (int)AngE.Pitch, (int)AngE.Yaw,
-		       PWM1_InputCaptureValue, global_rc_roll,
-		       PWM2_InputCaptureValue, global_rc_pitch,
-		       PWM3_InputCaptureValue, global_rc_thr,
-		       PWM4_InputCaptureValue, global_rc_yaw,
-		       PWM5_InputCaptureValue);
+		       global_var[PWM1_CCR].param, global_rc_roll,
+		       global_var[PWM2_CCR].param, global_rc_pitch,
+		       global_var[PWM3_CCR].param, global_rc_thr,
+		       global_var[PWM4_CCR].param, global_rc_yaw,
+		       global_var[PWM5_CCR].param);
 	}
 
 	LED_B = 1;
