@@ -11,13 +11,15 @@
 **使用 : Read = SPI_RW(SPI1, 0xFF);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-u8 SPI_RW( SPI_TypeDef* SPIx, u8 WriteByte )
+u8 SPI_RW(SPI_TypeDef *SPIx, u8 WriteByte)
 {
-  while((SPIx->SR & SPI_I2S_FLAG_TXE) == (u16)RESET);
-  SPIx->DR = WriteByte;
-  while((SPIx->SR & SPI_I2S_FLAG_RXNE) == (u16)RESET);
+	while ((SPIx->SR & SPI_I2S_FLAG_TXE) == (u16)RESET);
 
-  return SPIx->DR;
+	SPIx->DR = WriteByte;
+
+	while ((SPIx->SR & SPI_I2S_FLAG_RXNE) == (u16)RESET);
+
+	return SPIx->DR;
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*
@@ -28,12 +30,15 @@ u8 SPI_RW( SPI_TypeDef* SPIx, u8 WriteByte )
 **使用 : SPI_WriteByte(SPI1, 0xFF);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void SPI_WriteByte( SPI_TypeDef* SPIx, u8 WriteByte )
+void SPI_WriteByte(SPI_TypeDef *SPIx, u8 WriteByte)
 {
-  while((SPIx->SR & SPI_I2S_FLAG_TXE) == (u16)RESET);
-  SPIx->DR = WriteByte;
-  while((SPIx->SR & SPI_I2S_FLAG_RXNE) == (u16)RESET);
-  SPIx->DR;
+	while ((SPIx->SR & SPI_I2S_FLAG_TXE) == (u16)RESET);
+
+	SPIx->DR = WriteByte;
+
+	while ((SPIx->SR & SPI_I2S_FLAG_RXNE) == (u16)RESET);
+
+	SPIx->DR;
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*
@@ -44,13 +49,15 @@ void SPI_WriteByte( SPI_TypeDef* SPIx, u8 WriteByte )
 **使用 : Read = SPI_ReadByte(SPI1);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-u8 SPI_ReadByte( SPI_TypeDef* SPIx )
+u8 SPI_ReadByte(SPI_TypeDef *SPIx)
 {
-  while((SPIx->SR & SPI_I2S_FLAG_TXE) == (u16)RESET);
-  SPIx->DR = 0xFF;
-  while((SPIx->SR & SPI_I2S_FLAG_RXNE) == (u16)RESET);
+	while ((SPIx->SR & SPI_I2S_FLAG_TXE) == (u16)RESET);
 
-  return SPIx->DR;
+	SPIx->DR = 0xFF;
+
+	while ((SPIx->SR & SPI_I2S_FLAG_RXNE) == (u16)RESET);
+
+	return SPIx->DR;
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/

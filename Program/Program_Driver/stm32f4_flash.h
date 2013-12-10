@@ -24,14 +24,14 @@
 #define FLASH_PAGE_ADDR(PAGE)   ((u32)(FLASH_START_ADDR + FLASH_PAGE_SIZE*(PAGE)))
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-void Flash_WritePageU8( u32 WritePage, uc8 *WriteData, u32 DataLen );
-void Flash_WritePageU16( u32 WritePage, uc16 *WriteData, u32 DataLen );
-void Flash_WritePageU32( u32 WritePage, uc32 *WriteData, u32 DataLen );
-void Flash_ReadPageU8( u32 ReadPage, u8 *ReadData, u32 DataLen );
-void Flash_ReadPageU16( u32 ReadPage, u16 *ReadData, u32 DataLen );
-void Flash_ReadPageU32( u32 ReadPage, u32 *ReadData, u32 DataLen );
-void Flash_ErasePage( u32 ErasePage );
-void Flash_ErasePages( u32 ErasePageStart, u32 ErasePageEnd );
+void Flash_WritePageU8(u32 WritePage, uc8 *WriteData, u32 DataLen);
+void Flash_WritePageU16(u32 WritePage, uc16 *WriteData, u32 DataLen);
+void Flash_WritePageU32(u32 WritePage, uc32 *WriteData, u32 DataLen);
+void Flash_ReadPageU8(u32 ReadPage, u8 *ReadData, u32 DataLen);
+void Flash_ReadPageU16(u32 ReadPage, u16 *ReadData, u32 DataLen);
+void Flash_ReadPageU32(u32 ReadPage, u32 *ReadData, u32 DataLen);
+void Flash_ErasePage(u32 ErasePage);
+void Flash_ErasePages(u32 ErasePageStart, u32 ErasePageEnd);
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-#endif	 
+#endif

@@ -11,10 +11,11 @@
 **使用 : USART_SendByte(USART1, 'A');
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void USART_SendByte( USART_TypeDef* USARTx, uc8 *SendData )
+void USART_SendByte(USART_TypeDef *USARTx, uc8 *SendData)
 {
-  USART_SendData(USARTx, *SendData);
-  while(USART_GetFlagStatus(USARTx, USART_FLAG_TXE) == RESET);
+	USART_SendData(USARTx, *SendData);
+
+	while (USART_GetFlagStatus(USARTx, USART_FLAG_TXE) == RESET);
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*
@@ -25,11 +26,11 @@ void USART_SendByte( USART_TypeDef* USARTx, uc8 *SendData )
 **使用 : RecvData = USART_RecvByte(USART1);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-u16 USART_RecvByte( USART_TypeDef* USARTx )
+u16 USART_RecvByte(USART_TypeDef *USARTx)
 {
-  while(USART_GetFlagStatus(USARTx, USART_FLAG_RXNE) == RESET);
+	while (USART_GetFlagStatus(USARTx, USART_FLAG_RXNE) == RESET);
 
-  return USART_ReceiveData(USARTx);
+	return USART_ReceiveData(USARTx);
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
