@@ -54,7 +54,7 @@ void SysTick_Handler(void)
 
 	s16 Thr = 0, Pitch = 0, Roll = 0, Yaw = 0;
 	s16 Exp_Thr = 0, Exp_Pitch = 0, Exp_Roll = 0, Exp_Yaw = 0;
-
+	uint8_t safety = 0;
 	float Ellipse[5] = {0};
 
 	static u8 BaroCnt = 0;
@@ -295,7 +295,7 @@ void SysTick_Handler(void)
 
 
 		/*Get RC Control*/
-		Update_RC_Control(&Exp_Roll, &Exp_Pitch, &Exp_Yaw, &Exp_Thr);
+		Update_RC_Control(&Exp_Roll, &Exp_Pitch, &Exp_Yaw, &Exp_Thr, &safety);
 		global_var[RC_EXP_THR].param  = Exp_Thr;
 		global_var[RC_EXP_ROLL].param = Exp_Roll;
 		global_var[RC_EXP_PITCH].param = Exp_Pitch;
@@ -320,8 +320,11 @@ void SysTick_Handler(void)
 
 		/* Check Connection */
 #define NoSignal 1  // 1 sec
-		Motor_Control(Final_M1, Final_M2, Final_M3, Final_M4);
-
+		if ( safety == 1 ){
+			Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
+		}else{
+			Motor_Control(Final_M1, Final_M2, Final_M3, Final_M4);
+		}
 		/* DeBug */
 		Tmp_PID_KP = PID_Yaw.Kp * 1000;
 		Tmp_PID_KI = PID_Yaw.Ki * 1000;
