@@ -55,7 +55,7 @@ void CTRL_FlightControl(void)
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-void Update_RC_Control(s16 *Roll, s16 *Pitch, s16 *Yaw, s16 *Thr)
+void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *Thr)
 {
 
 	*Thr = (PWM_MOTOR_MAX - PWM_MOTOR_MIN) / (23179.0 - 13285.0) * (global_var[PWM2_CCR].param - 13285) + 800;

@@ -29,16 +29,16 @@ vs16 Tmp_PID_KI;
 vs16 Tmp_PID_KD;
 vs16 Tmp_PID_Pitch;
 
-static __IO uint16_t PWM1_PreviousValue = 0;
-static __IO uint16_t PWM2_PreviousValue = 0;
-static __IO uint16_t PWM3_PreviousValue = 0;
-static __IO uint16_t PWM4_PreviousValue = 0;
-static __IO uint16_t PWM5_PreviousValue = 0;
-static __IO uint8_t PWM1_IsRising = 1;
-static __IO uint8_t PWM2_IsRising = 1;
-static __IO uint8_t PWM3_IsRising = 1;
-static __IO uint8_t PWM4_IsRising = 1;
-static __IO uint8_t PWM5_IsRising = 1;
+static __IO uint16_t pwm1_previous_value = 0;
+static __IO uint16_t pwm2_previous_value = 0;
+static __IO uint16_t pwm3_previous_value = 0;
+static __IO uint16_t pwm4_previous_value = 0;
+static __IO uint16_t pwm5_previous_value = 0;
+static __IO uint8_t pwm1_is_rising = 1;
+static __IO uint8_t pwm2_is_rising = 1;
+static __IO uint8_t pwm3_is_rising = 1;
+static __IO uint8_t pwm4_is_rising = 1;
+static __IO uint8_t pwm5_is_rising = 1;
 
 __IO int global_rc_thr = 0;
 __IO int global_rc_roll = 0;
@@ -299,20 +299,7 @@ void SysTick_Handler(void)
 		/* Get Attitude Angle */
 		AHRS_Update();
 
-//      if(KEYL_U == 0)	{	PID_Roll.Kp += 0.001f;	PID_Pitch.Kp += 0.001f;  }
-//      if(KEYL_L == 0)	{	PID_Roll.Kp -= 0.001f;	PID_Pitch.Kp -= 0.001f;  }
-//      if(KEYL_R == 0)	{	PID_Roll.Ki += 0.0001f;	PID_Pitch.Ki += 0.0001f; }
-//      if(KEYL_D == 0)	{	PID_Roll.Ki -= 0.0001f;	PID_Pitch.Ki -= 0.0001f; }
-//      if(KEYR_R == 0)	{	PID_Roll.Kd += 0.0001f;	PID_Pitch.Kd += 0.0001f; }
-//      if(KEYR_D == 0)	{	PID_Roll.Kd -= 0.0001f;	PID_Pitch.Kd -= 0.0001f; }
-//      if(KEYR_L == 0)	{	PID_Roll.SumErr = 0.0f;	PID_Pitch.SumErr = 0.0f; }
-//      if(KEYL_U == 0)	{	PID_Yaw.Kp += 0.001f;    }
-//      if(KEYL_L == 0)	{	PID_Yaw.Kp -= 0.001f;    }
-//      if(KEYL_R == 0)	{	PID_Yaw.Ki += 0.001f;	 }
-//      if(KEYL_D == 0)	{	PID_Yaw.Ki -= 0.001f;	 }
-//      if(KEYR_R == 0)	{	PID_Yaw.Kd += 0.0001f;	 }
-//      if(KEYR_D == 0)	{	PID_Yaw.Kd -= 0.0001f;	 }
-//      if(KEYR_L == 0)	{	PID_Roll.SumErr = 0.0f;	 }
+
 		/*Get RC Control*/
 		Update_RC_Control(&Exp_Roll, &Exp_Pitch, &Exp_Yaw, &Exp_Thr);
 		global_rc_thr  = Exp_Thr;
@@ -360,13 +347,13 @@ void TIM2_IRQHandler(void)
 		/* Clear TIM1 Capture compare interrupt pending bit */
 		TIM_ClearITPendingBit(TIM2, TIM_IT_CC1);
 
-		if (PWM3_IsRising) {
+		if (pwm3_is_rising) {
 			TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
 			TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
 
 			/* Get the Input Capture value */
-			PWM3_PreviousValue = TIM_GetCapture1(TIM2);
-			PWM3_IsRising = 0;
+			pwm3_previous_value = TIM_GetCapture1(TIM2);
+			pwm3_is_rising = 0;
 
 		} else {
 			TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
@@ -375,12 +362,12 @@ void TIM2_IRQHandler(void)
 			/* Get the Input Capture value */
 			current[0] =  TIM_GetCapture1(TIM2);
 
-			if (current[0] > PWM3_PreviousValue)
-				global_var[PWM3_CCR].param =  current[0] - PWM3_PreviousValue;
-			else if (current[0] < PWM3_PreviousValue)
-				global_var[PWM3_CCR].param = 0xFFFFFFFF - PWM3_PreviousValue + current[0] ;
+			if (current[0] > pwm3_previous_value)
+				global_var[PWM3_CCR].param =  current[0] - pwm3_previous_value;
+			else if (current[0] < pwm3_previous_value)
+				global_var[PWM3_CCR].param = 0xFFFFFFFF - pwm3_previous_value + current[0] ;
 
-			PWM3_IsRising = 1;
+			pwm3_is_rising = 1;
 		}
 
 		TIM_ICInit(TIM2, &TIM_ICInitStructure);
@@ -391,13 +378,13 @@ void TIM2_IRQHandler(void)
 		/* Clear TIM1 Capture compare interrupt pending bit */
 		TIM_ClearITPendingBit(TIM2, TIM_IT_CC2);
 
-		if (PWM4_IsRising) {
+		if (pwm4_is_rising) {
 			TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
 			TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
 
 			/* Get the Input Capture value */
-			PWM4_PreviousValue = TIM_GetCapture2(TIM2);
-			PWM4_IsRising = 0;
+			pwm4_previous_value = TIM_GetCapture2(TIM2);
+			pwm4_is_rising = 0;
 
 		} else {
 			TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
@@ -406,12 +393,12 @@ void TIM2_IRQHandler(void)
 			/* Get the Input Capture value */
 			current[1] =  TIM_GetCapture2(TIM2);
 
-			if (current[1] > PWM4_PreviousValue)
-				global_var[PWM4_CCR].param =  current[1] - PWM4_PreviousValue;
-			else if (current[1] < PWM4_PreviousValue)
-				global_var[PWM4_CCR].param = 0xFFFFFFFF - PWM4_PreviousValue + current[1] ;
+			if (current[1] > pwm4_previous_value)
+				global_var[PWM4_CCR].param =  current[1] - pwm4_previous_value;
+			else if (current[1] < pwm4_previous_value)
+				global_var[PWM4_CCR].param = 0xFFFFFFFF - pwm4_previous_value + current[1] ;
 
-			PWM4_IsRising = 1;
+			pwm4_is_rising = 1;
 
 
 		}
@@ -423,13 +410,13 @@ void TIM2_IRQHandler(void)
 		/* Clear TIM1 Capture compare interrupt pending bit */
 		TIM_ClearITPendingBit(TIM2, TIM_IT_CC3);
 
-		if (PWM5_IsRising) {
+		if (pwm5_is_rising) {
 			TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
 			TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
 
 			/* Get the Input Capture value */
-			PWM5_PreviousValue = TIM_GetCapture3(TIM2);
-			PWM5_IsRising = 0;
+			pwm5_previous_value = TIM_GetCapture3(TIM2);
+			pwm5_is_rising = 0;
 
 		} else {
 			TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
@@ -438,12 +425,12 @@ void TIM2_IRQHandler(void)
 			/* Get the Input Capture value */
 			current[2] =  TIM_GetCapture3(TIM2);
 
-			if (current[2] > PWM5_PreviousValue)
-				global_var[PWM5_CCR].param =  current[2] - PWM5_PreviousValue;
-			else if (current[2] < PWM5_PreviousValue)
-				global_var[PWM5_CCR].param = 0xFFFFFFFF - PWM5_PreviousValue + current[2] ;
+			if (current[2] > pwm5_previous_value)
+				global_var[PWM5_CCR].param =  current[2] - pwm5_previous_value;
+			else if (current[2] < pwm5_previous_value)
+				global_var[PWM5_CCR].param = 0xFFFFFFFF - pwm5_previous_value + current[2] ;
 
-			PWM5_IsRising = 1;
+			pwm5_is_rising = 1;
 
 
 		}
@@ -461,13 +448,13 @@ void TIM4_IRQHandler(void)
 		/* Clear TIM1 Capture compare interrupt pending bit */
 		TIM_ClearITPendingBit(TIM4, TIM_IT_CC1);
 
-		if (PWM1_IsRising) {
+		if (pwm1_is_rising) {
 			TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
 			TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
 
 			/* Get the Input Capture value */
-			PWM1_PreviousValue = TIM_GetCapture1(TIM4);
-			PWM1_IsRising = 0;
+			pwm1_previous_value = TIM_GetCapture1(TIM4);
+			pwm1_is_rising = 0;
 
 		} else {
 			TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
@@ -476,12 +463,12 @@ void TIM4_IRQHandler(void)
 			/* Get the Input Capture value */
 			current[0] =  TIM_GetCapture1(TIM4);
 
-			if (current[0] > PWM1_PreviousValue)
-				global_var[PWM1_CCR].param =  current[0] - PWM1_PreviousValue;
-			else if (current[0] < PWM1_PreviousValue)
-				global_var[PWM1_CCR].param = 0xFFFF - PWM1_PreviousValue + current[0] ;
+			if (current[0] > pwm1_previous_value)
+				global_var[PWM1_CCR].param =  current[0] - pwm1_previous_value;
+			else if (current[0] < pwm1_previous_value)
+				global_var[PWM1_CCR].param = 0xFFFF - pwm1_previous_value + current[0] ;
 
-			PWM1_IsRising = 1;
+			pwm1_is_rising = 1;
 		}
 
 		TIM_ICInit(TIM4, &TIM_ICInitStructure);
@@ -492,13 +479,13 @@ void TIM4_IRQHandler(void)
 		/* Clear TIM1 Capture compare interrupt pending bit */
 		TIM_ClearITPendingBit(TIM4, TIM_IT_CC2);
 
-		if (PWM2_IsRising) {
+		if (pwm2_is_rising) {
 			TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
 			TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
 
 			/* Get the Input Capture value */
-			PWM2_PreviousValue = TIM_GetCapture2(TIM4);
-			PWM2_IsRising = 0;
+			pwm2_previous_value = TIM_GetCapture2(TIM4);
+			pwm2_is_rising = 0;
 
 		} else {
 			TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
@@ -507,12 +494,12 @@ void TIM4_IRQHandler(void)
 			/* Get the Input Capture value */
 			current[1] =  TIM_GetCapture2(TIM4);
 
-			if (current[1] > PWM2_PreviousValue)
-				global_var[PWM2_CCR].param =  current[1] - PWM2_PreviousValue;
-			else if (current[1] < PWM2_PreviousValue)
-				global_var[PWM2_CCR].param = 0xFFFF - PWM2_PreviousValue + current[1] ;
+			if (current[1] > pwm2_previous_value)
+				global_var[PWM2_CCR].param =  current[1] - pwm2_previous_value;
+			else if (current[1] < pwm2_previous_value)
+				global_var[PWM2_CCR].param = 0xFFFF - pwm2_previous_value + current[1] ;
 
-			PWM2_IsRising = 1;
+			pwm2_is_rising = 1;
 
 
 		}
