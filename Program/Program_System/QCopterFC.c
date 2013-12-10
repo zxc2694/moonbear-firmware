@@ -13,10 +13,6 @@
 #include "sys_manager.h"
 /*=====================================================================================================*/
 
-extern __IO int global_rc_thr;
-extern __IO int global_rc_roll;
-extern __IO int global_rc_pitch;
-extern __IO int global_rc_yaw;
 
 /*=====================================================================================================*/
 void System_Init(void)
@@ -105,10 +101,10 @@ int main(void)
 		Transport_Send(TxBuf[0]);
 		printf("Roll%d,Pitch%d,Yaw%d,CH1 %u(%d),CH2 %u(%d),CH3 %u(%d),CH4 %u(%d),CH5 %u()\r\n",
 		       (int)AngE.Roll, (int)AngE.Pitch, (int)AngE.Yaw,
-		       global_var[PWM1_CCR].param, global_rc_roll,
-		       global_var[PWM2_CCR].param, global_rc_pitch,
-		       global_var[PWM3_CCR].param, global_rc_thr,
-		       global_var[PWM4_CCR].param, global_rc_yaw,
+		       global_var[PWM1_CCR].param, global_var[RC_EXP_ROLL].param,
+		       global_var[PWM2_CCR].param, global_var[RC_EXP_PITCH].param,
+		       global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
+		       global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
 		       global_var[PWM5_CCR].param);
 	}
 

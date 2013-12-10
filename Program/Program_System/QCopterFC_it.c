@@ -40,12 +40,6 @@ static __IO uint8_t pwm3_is_rising = 1;
 static __IO uint8_t pwm4_is_rising = 1;
 static __IO uint8_t pwm5_is_rising = 1;
 
-__IO int global_rc_thr = 0;
-__IO int global_rc_roll = 0;
-__IO int global_rc_pitch = 0;
-__IO int global_rc_yaw = 0;
-
-
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 /*=====================================================================================================*/
 /*=====================================================================================================*/
@@ -302,10 +296,10 @@ void SysTick_Handler(void)
 
 		/*Get RC Control*/
 		Update_RC_Control(&Exp_Roll, &Exp_Pitch, &Exp_Yaw, &Exp_Thr);
-		global_rc_thr  = Exp_Thr;
-		global_rc_roll = Exp_Roll;
-		global_rc_pitch = Exp_Pitch;
-		global_rc_yaw = Exp_Yaw;
+		global_var[RC_EXP_THR].param  = Exp_Thr;
+		global_var[RC_EXP_ROLL].param = Exp_Roll;
+		global_var[RC_EXP_PITCH].param = Exp_Pitch;
+		global_var[RC_EXP_YAW].param = Exp_Yaw;
 		/* Get ZeroErr */
 		PID_Pitch.ZeroErr = (float)((s16)Exp_Pitch / 4.5f);
 		PID_Roll.ZeroErr  = (float)((s16)Exp_Roll / 4.5f);
