@@ -29,22 +29,23 @@ vs16 Tmp_PID_KI;
 vs16 Tmp_PID_KD;
 vs16 Tmp_PID_Pitch;
 
-__IO uint16_t PWM1_PreviousValue = 0;
-__IO uint16_t PWM2_PreviousValue = 0;
-__IO uint16_t PWM3_PreviousValue = 0;
-__IO uint16_t PWM4_PreviousValue = 0;
-__IO uint16_t PWM5_PreviousValue = 0;
+static __IO uint16_t PWM1_PreviousValue = 0;
+static __IO uint16_t PWM2_PreviousValue = 0;
+static __IO uint16_t PWM3_PreviousValue = 0;
+static __IO uint16_t PWM4_PreviousValue = 0;
+static __IO uint16_t PWM5_PreviousValue = 0;
+static __IO uint8_t PWM1_IsRising = 1;
+static __IO uint8_t PWM2_IsRising = 1;
+static __IO uint8_t PWM3_IsRising = 1;
+static __IO uint8_t PWM4_IsRising = 1;
+static __IO uint8_t PWM5_IsRising = 1;
+
 __IO int global_rc_thr = 0;
 __IO int global_rc_roll = 0;
 __IO int global_rc_pitch = 0;
 __IO int global_rc_yaw = 0;
-//__IO uint16_t current1=0;
-//__IO uint16_t current=0;
-__IO u8 PWM1_IsRising = 1;
-__IO u8 PWM2_IsRising = 1;
-__IO u8 PWM3_IsRising = 1;
-__IO u8 PWM4_IsRising = 1;
-__IO u8 PWM5_IsRising = 1;
+
+
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 /*=====================================================================================================*/
 /*=====================================================================================================*/
