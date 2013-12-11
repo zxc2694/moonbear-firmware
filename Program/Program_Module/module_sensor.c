@@ -117,7 +117,7 @@ void EllipseFitting(float *Ans, s16 *MagDataX, s16 *MagDataY, u8 Num)
 	float MAG_X2Y2 = 0.0f;
 	float MAG_X3Y1 = 0.0f;
 
-	float MagArr[5][6] = {0};
+	float MagArr[5][6] = {{0}};
 
 	for (i = 0; i < Num; i++) {
 		tempArrX[i] = (float)MagDataX[i] / 1000.0f;

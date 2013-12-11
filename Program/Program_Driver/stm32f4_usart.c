@@ -11,9 +11,9 @@
 **使用 : USART_SendByte(USART1, 'A');
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void USART_SendByte(USART_TypeDef *USARTx, uc8 *SendData)
+void USART_SendByte(USART_TypeDef *USARTx, char *SendData)
 {
-	USART_SendData(USARTx, *SendData);
+	USART_SendData(USARTx, (uint16_t)*SendData);
 
 	while (USART_GetFlagStatus(USARTx, USART_FLAG_TXE) == RESET);
 }

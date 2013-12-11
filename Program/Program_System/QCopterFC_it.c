@@ -59,9 +59,9 @@ void SysTick_Handler(void)
 
 	static u8 BaroCnt = 0;
 
-	static s16 ACC_FIFO[3][256] = {0};
-	static s16 GYR_FIFO[3][256] = {0};
-	static s16 MAG_FIFO[3][256] = {0};
+	static s16 ACC_FIFO[3][256] = {{0}};
+	static s16 GYR_FIFO[3][256] = {{0}};
+	static s16 MAG_FIFO[3][256] = {{0}};
 
 	static s16 MagDataX[8] = {0};
 	static s16 MagDataY[8] = {0};

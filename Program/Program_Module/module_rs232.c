@@ -6,6 +6,7 @@
 #include "algorithm_string.h"
 #include <unistd.h>
 #include <stdarg.h>
+#include <string.h>
 /*=====================================================================================================*/
 /*=====================================================================================================*
 **函數 : RS232_Config
@@ -54,10 +55,10 @@ void RS232_Config(void)
 **使用 : RS232_SendStr(USART1, (u8*)"Hellow World!");
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void RS232_SendStr(USART_TypeDef *USARTx, uc8 *pWord)
+void RS232_SendStr(USART_TypeDef *USARTx, char *pWord)
 {
 	while (*pWord != '\0') {
-		USART_SendByte(USARTx, (u8 *)pWord);
+		USART_SendByte(USARTx, (char *)pWord);
 		pWord++;
 	}
 }
@@ -78,7 +79,7 @@ void RS232_SendNum(USART_TypeDef *USARTx, u8 Type, u8 NumLen, s32 SendData)
 	Str_NumToChar(Type, NumLen, TrData, SendData);
 
 	while (*pWord != '\0') {
-		USART_SendByte(USARTx, (u8 *)pWord);
+		USART_SendByte(USARTx, (char *)pWord);
 		pWord++;
 	}
 }
@@ -91,7 +92,7 @@ void RS232_SendNum(USART_TypeDef *USARTx, u8 Type, u8 NumLen, s32 SendData)
 **使用 : RS232_SendData(USART1, SendData, DataLen);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-int RS232_SendData(USART_TypeDef *USARTx, uc8 *SendData, u16 DataLen)
+int RS232_SendData(USART_TypeDef *USARTx, char *SendData, u16 DataLen)
 {
 	do {
 		USART_SendByte(USARTx, SendData);
@@ -110,7 +111,7 @@ int RS232_SendData(USART_TypeDef *USARTx, uc8 *SendData, u16 DataLen)
 **使用 : RS232_RecvStr(USART1, Stirng);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void RS232_RecvStr(USART_TypeDef *USARTx, u8 *pWord)
+void RS232_RecvStr(USART_TypeDef *USARTx, char *pWord)
 {
 	do {
 		*pWord = USART_RecvByte(USARTx);

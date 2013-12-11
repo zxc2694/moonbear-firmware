@@ -3,6 +3,10 @@
 #include "stm32f4_system.h"
 #include "stm32f4_i2c.h"
 #include "module_ms5611.h"
+static void MS5611_ReadPROM(MS5611_ST *COEFF);
+static void MS5611_ReadADC(MS5611_ST *COEFF, u8 ADC_Sel);
+static void MS5611_Calculate(MS5611_ST *COEFF);
+static void MS5611_ConvADC(u8 ADC_ConvMode);
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 MS5611_ST Baro;
@@ -53,7 +57,7 @@ static void MS5611_ReadPROM(MS5611_ST *COEFF)
 {
 	u8 i = 0;
 	u8 WriteCMD = 0;
-	u8 ReadC[6][2] = {0};
+	u8 ReadC[6][2] = {{0}};
 
 	for (i = 0; i < 6; i++) {
 		WriteCMD = MS5611_PROM_COEFF_1 + i;
