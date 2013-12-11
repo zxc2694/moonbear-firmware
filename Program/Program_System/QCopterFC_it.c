@@ -31,9 +31,9 @@ vs16 Tmp_PID_Pitch;
 
 static __IO uint16_t pwm1_previous_value = 0;
 static __IO uint16_t pwm2_previous_value = 0;
-static __IO uint16_t pwm3_previous_value = 0;
-static __IO uint16_t pwm4_previous_value = 0;
-static __IO uint16_t pwm5_previous_value = 0;
+static __IO uint32_t pwm3_previous_value = 0;
+static __IO uint32_t pwm4_previous_value = 0;
+static __IO uint32_t pwm5_previous_value = 0;
 static __IO uint8_t pwm1_is_rising = 1;
 static __IO uint8_t pwm2_is_rising = 1;
 static __IO uint8_t pwm3_is_rising = 1;
@@ -336,7 +336,7 @@ void SysTick_Handler(void)
 }
 void TIM2_IRQHandler(void)
 {
-	uint16_t current[3];
+	uint32_t current[3];
 	TIM_ICInitTypeDef TIM_ICInitStructure;
 	TIM_ICStructInit(&TIM_ICInitStructure);
 
