@@ -12,8 +12,7 @@
 #include "module_nrf24l01.h"
 #include "sys_manager.h"
 /*=====================================================================================================*/
-
-
+#define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
 /*=====================================================================================================*/
 void System_Init(void)
 {
@@ -60,7 +59,7 @@ int main(void)
 	int c = 10;
 	printf("printf\n\r");
 	printf("%d\n\r", c);
-
+	PRINT_DEBUG(555);
 	/* Throttle Config */
 	if (KEY == 1) {
 		LED_B = 0;
@@ -106,6 +105,7 @@ int main(void)
 		       global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
 		       global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
 		       global_var[PWM5_CCR].param);
+		PRINT_DEBUG(global_var[PWM5_CCR].param);
 	}
 
 	LED_B = 1;
