@@ -10,6 +10,11 @@
 #include "module_motor.h"
 #include "module_sensor.h"
 #include "module_nrf24l01.h"
+
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 /*=====================================================================================================*/
 
 extern __IO uint16_t PWM1_InputCaptureValue ;
@@ -21,6 +26,21 @@ extern __IO int global_rc_thr;
 extern __IO int global_rc_roll;
 extern __IO int global_rc_pitch;
 extern __IO int global_rc_yaw;
+
+/*=====================================================================================================*/
+
+void vApplicationTickHook( void )
+{
+}
+
+
+void vApplicationStackOverflowHook( xTaskHandle pxTask, signed char *pcTaskName )
+{
+}
+
+void vApplicationIdleHook( void )
+{
+}
 
 /*=====================================================================================================*/
 void System_Init(void)

@@ -89,6 +89,7 @@ SRC+=$(FREERTOS_SRC)/croutine.c\
 	$(FREERTOS_SRC)/list.c\
 	$(FREERTOS_SRC)/queue.c\
 	$(FREERTOS_SRC)/tasks.c\
+	$(FREERTOS_SRC)/timers.c\
 	$(FREERTOS_SRC)/portable/MemMang/heap_1.c\
 	$(FREERTOS_SRC)/portable/GCC/ARM_$(ARCH)/port.c\
 
