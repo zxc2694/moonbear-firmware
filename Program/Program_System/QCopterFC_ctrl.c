@@ -7,6 +7,7 @@
 #include "module_motor.h"
 #include "algorithm_pid.h"
 #include "sys_manager.h"
+#include "QCopterFC_ctrl.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 vs16 PWM_M1 = PWM_MOTOR_MIN;
@@ -57,16 +58,32 @@ void CTRL_FlightControl(void)
 /*=====================================================================================================*/
 void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *Thr, uint8_t *safety)
 {
-	if( global_var[PWM3_CCR].param > 0)
-		*Thr = (PWM_MOTOR_MAX - PWM_MOTOR_MIN) / (23179.0 - 13285.0) * 
-			(global_var[PWM3_CCR].param - 13285) + PWM_MOTOR_MIN;
-	if( global_var[PWM1_CCR].param > 0)
-		*Roll = (180) / (22591.0 - 12715.0) * (global_var[PWM1_CCR].param - 12715) + (-90);
-	if( global_var[PWM2_CCR].param > 0)
-		*Pitch = (180) / (23180.0 - 13290.0) * (global_var[PWM2_CCR].param - 13290) + (-90);
-	if( global_var[PWM4_CCR].param > 0)	
-		*Yaw = (180) / (23230.0 - 13344.0) * (global_var[PWM4_CCR].param - 13344) + (-90);
-	if( global_var[PWM5_CCR].param > 22000)
+	if( global_var[PWM3_CCR].param > MIN_PWM_INPUT){
+
+		*Thr = (PWM_MOTOR_MAX - PWM_MOTOR_MIN) / (MAX_PWM3_INPUT - MIN_PWM3_INPUT) * 
+			(global_var[PWM3_CCR].param - MIN_PWM3_INPUT) + PWM_MOTOR_MIN;
+	}
+
+	if( global_var[PWM1_CCR].param > MIN_PWM_INPUT){
+
+		*Roll = (MAX_CTRL_ROLL - MIN_CTRL_ROLL) / (MAX_PWM1_INPUT - MIN_PWM1_INPUT) * 
+			(global_var[PWM1_CCR].param - MIN_PWM1_INPUT) +  MIN_CTRL_ROLL;
+	}
+
+	if( global_var[PWM2_CCR].param > MIN_PWM_INPUT){
+
+		*Pitch = (MAX_CTRL_PITCH - MIN_CTRL_PITCH) / (MAX_PWM2_INPUT - MIN_PWM2_INPUT) * 
+			(global_var[PWM2_CCR].param - MIN_PWM2_INPUT) + MIN_CTRL_PITCH;
+	}
+
+	if( global_var[PWM4_CCR].param > MIN_PWM_INPUT){	
+
+		*Yaw = (MAX_CTRL_YAW- MIN_CTRL_YAW) / (MAX_PWM4_INPUT - MIN_PWM4_INPUT) * 
+			(global_var[PWM4_CCR].param - MIN_PWM4_INPUT) + MIN_CTRL_YAW;
+
+	}
+
+	if( global_var[PWM5_CCR].param > (MAX_PWM5_INPUT - MIN_PWM5_INPUT)/2 )
 		*safety = 1;
 
 }
