@@ -57,13 +57,16 @@ void CTRL_FlightControl(void)
 /*=====================================================================================================*/
 void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *Thr, uint8_t *safety)
 {
-
-	*Thr = (PWM_MOTOR_MAX - PWM_MOTOR_MIN) / (23179.0 - 13285.0) * (global_var[PWM2_CCR].param - 13285) + 800;
-	//TODO: Control Roll,Pich, Yaw angle
-	*Roll = (180) / (22591.0 - 12715.0) * (global_var[PWM1_CCR].param - 12715) + (-90);
-	*Pitch = (180) / (23180.0 - 13290.0) * (global_var[PWM2_CCR].param - 13290) + (-90);
-	*Yaw = (180) / (23230.0 - 13344.0) * (global_var[PWM4_CCR].param - 13344) + (-90);
-	if( global_var[PWM4_CCR].param > 22000)
+	if( global_var[PWM3_CCR].param > 0)
+		*Thr = (PWM_MOTOR_MAX - PWM_MOTOR_MIN) / (23179.0 - 13285.0) * 
+			(global_var[PWM3_CCR].param - 13285) + PWM_MOTOR_MIN;
+	if( global_var[PWM1_CCR].param > 0)
+		*Roll = (180) / (22591.0 - 12715.0) * (global_var[PWM1_CCR].param - 12715) + (-90);
+	if( global_var[PWM2_CCR].param > 0)
+		*Pitch = (180) / (23180.0 - 13290.0) * (global_var[PWM2_CCR].param - 13290) + (-90);
+	if( global_var[PWM4_CCR].param > 0)	
+		*Yaw = (180) / (23230.0 - 13344.0) * (global_var[PWM4_CCR].param - 13344) + (-90);
+	if( global_var[PWM5_CCR].param > 22000)
 		*safety = 1;
 
 }
