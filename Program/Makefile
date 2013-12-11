@@ -71,6 +71,12 @@ SRC += $(PROGRAM_ALG)/algorithm_*.c \
 		Libraries/CMSIS/FastMathFunctions/arm_cos_f32.c \
 		Libraries/CMSIS/FastMathFunctions/arm_sin_f32.c
 
+INC_HEADERS =$(PROGRAM_ALG)/*.h \
+		$(PROGRAM_DIR)/*.h \
+		$(PROGRAM_MOD)/*.h \
+		$(PROGRAM_SYS)/*.h
+
+
 
 
 #STM32 startup file
@@ -85,10 +91,10 @@ $(BIN_IMAGE):$(EXECUTABLE)
 
 STARTUP_OBJ = startup_stm32f4xx.o
 
-$(STARTUP_OBJ): $(STARTUP)
+$(STARTUP_OBJ): $(STARTUP) 
 	$(CC) $(CFLAGS) $^ -c $(STARTUP)
 
-$(EXECUTABLE):$(SRC) $(STARTUP_OBJ)
+$(EXECUTABLE):$(SRC) $(STARTUP_OBJ) ${INC_HEADERS}
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 #Make clean
