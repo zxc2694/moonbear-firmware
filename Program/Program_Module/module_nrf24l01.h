@@ -68,16 +68,16 @@
 #define NRF_IRQ   PCI(5)    // PC5
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-void nRF24L01_Config( void );
-void nRF_WriteReg( u8, u8 );
-u8 nRF_ReadReg( u8 );
-void nRF_WriteBuf( u8, u8*, u8 );
-void nRF_ReadBuf( u8, u8*, u8 );
-void nRF_RX_Mode( void );
-void nRF_TX_Mode( void );
-u8 nRF_Check( void );
-u8 nRF_Tx_Data( u8* );
-u8 nRF_Rx_Data( u8* );
+void nRF24L01_Config(void);
+void nRF_WriteReg(u8, u8);
+u8 nRF_ReadReg(u8);
+void nRF_WriteBuf(u8, u8 *, u8);
+void nRF_ReadBuf(u8, u8 *, u8);
+void nRF_RX_Mode(void);
+void nRF_TX_Mode(void);
+u8 nRF_Check(void);
+u8 nRF_Tx_Data(u8 *);
+u8 nRF_Rx_Data(u8 *);
 /*====================================================================================================*/
 /*====================================================================================================*/
 extern u8 TxBuf[SendTimes][TxBufSize];

@@ -1,18 +1,6 @@
-# Object files
+.tags*
 *.o
-*.ko
-
-# Libraries
-*.lib
-*.a
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
+cscope*
+*.bin
+*.elf
 *.out
-*.app
