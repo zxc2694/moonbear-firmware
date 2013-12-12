@@ -111,6 +111,6 @@ flash:
 openocd: flash
 	openocd -s /opt/openocd/share/openocd/scripts/
 gdbauto:
-	arm-none-eabi-gdb -x openocd_gdb.gdb
+	arm-none-eabi-gdbtui -x openocd_gdb.gdb
 
 .PHONY:all clean flash openocd gdbauto
