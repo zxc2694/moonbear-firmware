@@ -69,7 +69,8 @@ SRC += $(PROGRAM_ALG)/algorithm_*.c \
 		Program_System/QCopterFC.c \
 		Program_System/sys_manager.c \
 		Libraries/CMSIS/FastMathFunctions/arm_cos_f32.c \
-		Libraries/CMSIS/FastMathFunctions/arm_sin_f32.c
+		Libraries/CMSIS/FastMathFunctions/arm_sin_f32.c \
+		test.c
 
 INC_HEADERS =$(PROGRAM_ALG)/*.h \
 		$(PROGRAM_DIR)/*.h \

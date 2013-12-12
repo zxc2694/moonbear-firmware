@@ -50,10 +50,10 @@ int main(void)
 {
 	u8 Sta = ERROR;
 	FSM_Mode FSM_State = FSM_Rx;
+
 	/* System Init */
 	System_Init();
-	/*test  TX RX  */
-	RS232_SendStr(USART3, "abcde");
+	test_printf();
 
 	/*test printf can support USART*/
 	int c = 10;
