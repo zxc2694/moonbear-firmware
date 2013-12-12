@@ -75,7 +75,8 @@ SRC += $(PROGRAM_ALG)/algorithm_*.c \
 INC_HEADERS =$(PROGRAM_ALG)/*.h \
 		$(PROGRAM_DIR)/*.h \
 		$(PROGRAM_MOD)/*.h \
-		$(PROGRAM_SYS)/*.h
+		$(PROGRAM_SYS)/*.h \
+		*.h
 
 
 

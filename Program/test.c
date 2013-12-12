@@ -15,14 +15,13 @@
 void test_printf(void)
 {
 	/*test printf can support USART*/
-	float c = 5.04;
-	int d =-23;
-	int e =56;
-	printf("printf\n\r");
-	printf("%f\n\r", c);
-	printf("%d\n\r", d);
-	printf("%d\n\r", e);
+	float f1 = 5.04, f2 = 0xFFFF, f3=0xFFFFFFFF-1;
+	int i1 = -23, i2 =56, i3 =0xFFFF;
+	printf("test printf!\n\r");
+	printf("float: 5.04=%f, 0xFFFF = %f, 0xFFFFFFF = %f\n\r", f1,f2,f3);
+	printf("int: -23 = %d, 56 = %d, 0xFFFF = %d\n\r", i1, i2, i3);
 
+	
 
 }
 
