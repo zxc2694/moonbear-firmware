@@ -55,11 +55,6 @@ int main(void)
 	/* System Init */
 	System_Init();
 	test_printf();
-
-	/*test printf can support USART*/
-	int c = 10;
-	printf("printf\n\r");
-	printf("%d\n\r", c);
 	PRINT_DEBUG(555);
 	/* Throttle Config */
 	if (KEY == 1) {
@@ -148,30 +143,6 @@ int main(void)
 
 			// FSM_Rx End
 			FSM_State = FSM_CTRL;
-			break;
-
-		/************************** FSM CTRL **************************************/
-		case FSM_CTRL:
-			// FSM_CTRL
-			CTRL_FlightControl();
-			// FSM_CTRL End
-			FSM_State = FSM_UART;
-			break;
-
-		/************************** FSM UART ***************************************/
-		case FSM_UART:
-			// FSM_USART
-			RS232_VisualScope(USART3, TxBuf[0] + 20, 8);
-			// FSM_USART End
-			FSM_State = FSM_DATA;
-			break;
-
-		/************************** FSM DATA **************************************/
-		case FSM_DATA:
-			// FSM_DATA
-			Transport_Send(TxBuf[0]);
-			// FSM_DATA End
-			FSM_State = FSM_Tx;
 			break;
 		}
 	}
