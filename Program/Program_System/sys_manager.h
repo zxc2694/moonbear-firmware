@@ -26,7 +26,7 @@ typedef struct global_struct
 {
 	
 	char *param_name;
-	__IO uint16_t param;
+	__IO float param;
 
 }global_struct;
 
