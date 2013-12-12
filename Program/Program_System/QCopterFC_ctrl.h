@@ -31,7 +31,10 @@
 
 #define MAX_CTRL_YAW 90
 #define MIN_CTRL_YAW -90
-
+typedef enum RC_State{
+	GET_SIGNAL = 0x00,
+	NO_SIGNAL = 0x01
+}RC_State;
 
 
 /*=====================================================================================================*/

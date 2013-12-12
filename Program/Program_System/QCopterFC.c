@@ -98,14 +98,20 @@ int main(void)
 		LED_B = ~LED_B;
 		Delay_10ms(1);
 		Transport_Send(TxBuf[0]);
-		printf("Roll%d,Pitch%d,Yaw%d,CH1 %u(%d),CH2 %u(%d),CH3 %u(%d),CH4 %u(%d),CH5 %u()\r\n",
-		       (int)AngE.Roll, (int)AngE.Pitch, (int)AngE.Yaw,
-		       global_var[PWM1_CCR].param, global_var[RC_EXP_ROLL].param,
-		       global_var[PWM2_CCR].param, global_var[RC_EXP_PITCH].param,
-		       global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
-		       global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
-		       global_var[PWM5_CCR].param);
-		PRINT_DEBUG(global_var[PWM5_CCR].param);
+		if ( global_var[NO_RC_SIGNAL_MSG].param == 1 ) {
+
+			printf("!WARNING: NO SIGNAL!");
+
+		} else {
+			printf("Roll%d,Pitch%d,Yaw%d,CH1 %u(%d),CH2 %u(%d),CH3 %u(%d),CH4 %u(%d),CH5 %u()\r\n",
+			       (int)AngE.Roll, (int)AngE.Pitch, (int)AngE.Yaw,
+			       global_var[PWM1_CCR].param, global_var[RC_EXP_ROLL].param,
+			       global_var[PWM2_CCR].param, global_var[RC_EXP_PITCH].param,
+			       global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
+			       global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
+			       global_var[PWM5_CCR].param);
+		}
+		//PRINT_DEBUG(global_var[PWM5_CCR].param);
 	}
 
 	LED_B = 1;

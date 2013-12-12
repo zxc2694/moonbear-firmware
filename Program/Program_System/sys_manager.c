@@ -12,5 +12,6 @@ global_struct global_var[] = {
 	[RC_EXP_THR] = {.param_name ="RC Expect THROTTLE", .param = 0},
 	[TRUE_ROLL] = {.param_name ="IMU ROLL", .param = 0},
 	[TRUE_PITCH] = {.param_name ="IMU PITCH", .param = 0},
-	[TRUE_YAW] = {.param_name ="IMU YAW", .param = 0}
+	[TRUE_YAW] = {.param_name ="IMU YAW", .param = 0},
+	[NO_RC_SIGNAL_MSG] = {.param_name ="Show current RC control signal status", .param = 0}
 };
