@@ -62,16 +62,12 @@ void System_Init(void)
 	Delay_10ms(2);
 }
 /*=====================================================================================================*/
-/*=====================================================================================================*/
-int main(void)
+
+void flightControl_Task()
 {
 	u8 Sta = ERROR;
 	FSM_Mode FSM_State = FSM_Rx;
 
-	/* System Init */
-	System_Init();
-	test_printf();
-	PRINT_DEBUG(555);
 	/* Throttle Config */
 	if (KEY == 1) {
 		LED_B = 0;
@@ -162,6 +158,25 @@ int main(void)
 			break;
 		}
 	}
+}
+
+/*=====================================================================================================*/
+int main(void)
+{
+
+	/* System Init */
+	System_Init();
+	test_printf();
+	PRINT_DEBUG(555);
+
+	xTaskCreate(flightControl_Task,
+		(signed portCHAR *) "Flight Control",
+		512, NULL,
+		tskIDLE_PRIORITY + 5, NULL);
+
+	vTaskStartScheduler();
+
+	return 0;
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
