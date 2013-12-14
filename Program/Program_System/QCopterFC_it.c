@@ -301,9 +301,9 @@ void SysTick_Handler(void)
 		global_var[RC_EXP_PITCH].param = Exp_Pitch;
 		global_var[RC_EXP_YAW].param = Exp_Yaw;
 		/* Get ZeroErr */
-		PID_Pitch.ZeroErr = (float)((s16)Exp_Pitch / 4.5f);
-		PID_Roll.ZeroErr  = (float)((s16)Exp_Roll / 4.5f);
-		PID_Yaw.ZeroErr   = (float)((s16)Exp_Yaw) + 180.0f;
+		PID_Pitch.ZeroErr = 0;//(float)((s16)Exp_Pitch / 4.5f);
+		PID_Roll.ZeroErr  = 0;//(float)((s16)Exp_Roll / 4.5f);
+		PID_Yaw.ZeroErr   = 0;//(float)((s16)Exp_Yaw) + 180.0f;
 
 		/* PID */
 		Roll  = (s16)PID_AHRS_Cal(&PID_Roll,   AngE.Roll,  Gyr.TrueX);
@@ -313,18 +313,18 @@ void SysTick_Handler(void)
 		Thr   = (s16)Exp_Thr;
 
 		/* Motor Ctrl */
-		Final_M1 = PWM_M1 + Thr + Pitch + Roll + Yaw;
-		Final_M2 = PWM_M2 + Thr - Pitch + Roll - Yaw;
-		Final_M3 = PWM_M3 + Thr - Pitch - Roll + Yaw;
-		Final_M4 = PWM_M4 + Thr + Pitch - Roll - Yaw;
+		Final_M1 = Thr - Pitch + Roll + Yaw;
+		Final_M2 = Thr - Pitch - Roll - Yaw;
+		Final_M3 = Thr + Pitch - Roll + Yaw;
+		Final_M4 = Thr + Pitch + Roll - Yaw;
 
 		/* Check Connection */
 #define NoSignal 1  // 1 sec
-		if ( safety == 1 ){
-			Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
-		}else{
+		// ( safety == 1 ){
+		//	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
+		//}else{
 			Motor_Control(Final_M1, Final_M2, Final_M3, Final_M4);
-		}
+		//}
 		/* DeBug */
 		Tmp_PID_KP = PID_Yaw.Kp * 1000;
 		Tmp_PID_KI = PID_Yaw.Ki * 1000;
@@ -344,30 +344,30 @@ void TIM2_IRQHandler(void)
 		/* Clear TIM1 Capture compare interrupt pending bit */
 		TIM_ClearITPendingBit(TIM2, TIM_IT_CC1);
 
-		if (pwm3_is_rising) {
-			TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
-			TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
+		// if (pwm3_is_rising) {
+		// 	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
+		// 	TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
 
-			/* Get the Input Capture value */
-			pwm3_previous_value = TIM_GetCapture1(TIM2);
-			pwm3_is_rising = 0;
+		// 	/* Get the Input Capture value */
+		// 	pwm3_previous_value = TIM_GetCapture1(TIM2);
+		// 	pwm3_is_rising = 0;
 
-		} else {
-			TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
-			TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
+		// } else {
+		// 	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
+		// 	TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
 
-			/* Get the Input Capture value */
-			current[0] =  TIM_GetCapture1(TIM2);
+		// 	 Get the Input Capture value 
+		// 	current[0] =  TIM_GetCapture1(TIM2);
 
-			if (current[0] > pwm3_previous_value)
-				global_var[PWM3_CCR].param =  current[0] - pwm3_previous_value;
-			else if (current[0] < pwm3_previous_value)
-				global_var[PWM3_CCR].param = 0xFFFFFFFF - pwm3_previous_value + current[0] ;
+		// 	if (current[0] > pwm3_previous_value)
+		// 		global_var[PWM3_CCR].param =  current[0] - pwm3_previous_value;
+		// 	else if (current[0] < pwm3_previous_value)
+		// 		global_var[PWM3_CCR].param = 0xFFFFFFFF - pwm3_previous_value + current[0] ;
 
-			pwm3_is_rising = 1;
-		}
+		// 	pwm3_is_rising = 1;
+		// }
 
-		TIM_ICInit(TIM2, &TIM_ICInitStructure);
+		// TIM_ICInit(TIM2, &TIM_ICInitStructure);
 
 	}
 

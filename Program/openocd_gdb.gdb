@@ -1,8 +1,7 @@
 file QuadrotorFlightControl.elf
 target remote :3333
-b  QCopterFC.c:65
-b  QCopterFC.c:56
-b  QCopterFC.c:69
-b  QCopterFC.c:74
+b  QCopterFC_it.c:324
+b  QCopterFC_it.c:326
+b  QCopterFC.c:90
 monitor reset halt
 c

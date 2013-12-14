@@ -86,7 +86,7 @@ void PWM_Capture_Config()
 	NVIC_InitTypeDef NVIC_InitStructure;
 	TIM_ICInitTypeDef  TIM_ICInitStructure;
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStruct;
-	uint16_t PrescalerValue = (uint16_t)((SystemCoreClock / 4) / 6000000) - 1;
+	uint16_t PrescalerValue = (uint16_t)((SystemCoreClock / 4) / 1000000) - 1;
 	/* TIM4 clock enable */
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2 | RCC_APB1Periph_TIM4, ENABLE);
 
@@ -117,14 +117,14 @@ void PWM_Capture_Config()
 
 	/* Enable the TIM4 global Interrupt */
 	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
 	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
@@ -155,8 +155,8 @@ void PWM_Capture_Config()
 	TIM_ICInit(TIM2, &TIM_ICInitStructure);
 
 	/* Select the TIM4 Input Trigger: TI2FP2 */
-	TIM_SelectInputTrigger(TIM4, TIM_TS_TI2FP2);
-	TIM_SelectInputTrigger(TIM2, TIM_TS_TI2FP2);
+	//TIM_SelectInputTrigger(TIM4, TIM_TS_TI2FP2);
+	//TIM_SelectInputTrigger(TIM2, TIM_TS_TI2FP2);
 	/* Select the slave Mode: Reset Mode */
 //  TIM_SelectSlaveMode(TIM4, TIM_SlaveMode_Reset);
 //  TIM_SelectMasterSlaveMode(TIM4,TIM_MasterSlaveMode_Enable);
@@ -167,7 +167,7 @@ void PWM_Capture_Config()
 	/* Enable the CC2 Interrupt Request */
 	TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
 	TIM_ITConfig(TIM2, TIM_IT_CC2, ENABLE);
-	TIM_ITConfig(TIM2, TIM_IT_CC3, ENABLE);
+	//TIM_ITConfig(TIM2, TIM_IT_CC3, ENABLE);
 	TIM_ITConfig(TIM4, TIM_IT_CC1, ENABLE);
 	TIM_ITConfig(TIM4, TIM_IT_CC2, ENABLE);
 }

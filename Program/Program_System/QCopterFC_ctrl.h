@@ -6,22 +6,22 @@
 #include "stm32f4xx.h"
 #include "algorithm_pid.h"
 /*=====================================================================================================*/
-#define MIN_PWM_INPUT 10000
+#define MIN_PWM_INPUT 1000
 
-#define MAX_PWM1_INPUT 22591.0
-#define MIN_PWM1_INPUT 12715.0
+#define MAX_PWM1_INPUT 3766.0
+#define MIN_PWM1_INPUT 2120.0
 
-#define MAX_PWM2_INPUT 23180.0
-#define MIN_PWM2_INPUT 13290.0
+#define MAX_PWM2_INPUT 3854.0
+#define MIN_PWM2_INPUT 2206.0
 
-#define MAX_PWM3_INPUT 23179.0
-#define MIN_PWM3_INPUT 13285.0
+#define MAX_PWM3_INPUT 3853.0
+#define MIN_PWM3_INPUT 2205.0
 
-#define MAX_PWM4_INPUT 23230.0
-#define MIN_PWM4_INPUT 13344.0
+#define MAX_PWM4_INPUT 3872.0
+#define MIN_PWM4_INPUT 2224.0
 
-#define MAX_PWM5_INPUT 24870.0
-#define MIN_PWM5_INPUT 11588.0
+#define MAX_PWM5_INPUT 4145.0
+#define MIN_PWM5_INPUT 1931.0
 
 #define MAX_CTRL_ROLL 90
 #define MIN_CTRL_ROLL -90

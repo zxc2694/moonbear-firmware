@@ -15,10 +15,19 @@
 /*=====================================================================================================*/
 #define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
 /*=====================================================================================================*/
+void set_nvic()
+{
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+
+}
+void set_systick()
+{
+
+}
 void System_Init(void)
 {
 	SystemInit();
-
+	set_nvic();
 	LED_Config();
 	KEY_Config();
 	RS232_Config();
@@ -31,19 +40,19 @@ void System_Init(void)
 	PID_Init(&PID_Roll);
 	PID_Init(&PID_Pitch);
 
-	PID_Pitch.Kp = +1.5f;
-	PID_Pitch.Ki = +0.002f;
+	PID_Pitch.Kp = +0.8f;
+	PID_Pitch.Ki = 0;//0.002f;
 	PID_Pitch.Kd = +1.0f;
 
-	PID_Roll.Kp  = +1.5f;
-	PID_Roll.Ki  = +0.002f;
+	PID_Roll.Kp  = +0.8f;
+	PID_Roll.Ki  = 0;//0.002f;
 	PID_Roll.Kd  = +1.0f;
 
 	PID_Yaw.Kp   = +0.0f;
 	PID_Yaw.Ki   = +0.0f;
 	PID_Yaw.Kd   = +0.0f;
 
-	Delay_10ms(2);
+	Delay_10ms(200);
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
@@ -79,8 +88,16 @@ int main(void)
 
 	/* Systick Config */
 	if (SysTick_Config(SystemCoreClock / SampleRateFreg)) { // SampleRateFreg = 500 Hz
+		
+		
 		while (1);
 	}
+	// NVIC_InitTypeDef NVIC_InitStructure;
+	// NVIC_InitStructure.NVIC_IRQChannel = SysTick_IRQn;
+	// NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	// NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	// NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	// NVIC_Init(&NVIC_InitStructure);
 
 	/* Wait Correction */
 	while (SensorMode != Mode_Algorithm);
@@ -90,25 +107,25 @@ int main(void)
 	LED_G = 1;
 	LED_B = 1;
 
-	while (!KEY) {
-		LED_B = ~LED_B;
-		Delay_10ms(1);
-		Transport_Send(TxBuf[0]);
-		if ( global_var[NO_RC_SIGNAL_MSG].param == 1 ) {
+	// while (!KEY) {
+	// 	LED_B = ~LED_B;
+	// 	Delay_10ms(1);
+	// 	Transport_Send(TxBuf[0]);
+	// 	//if ( global_var[NO_RC_SIGNAL_MSG].param == 1 ) {
 
-			printf("!WARNING: NO SIGNAL!");
+	// 	//	printf("!WARNING: NO SIGNAL!");
 
-		} else {
-			printf("Roll%f,Pitch%f,Yaw%f,CH1 %f(%f),CH2 %f(%f),CH3 %f(%f),CH4 %f(%f),CH5 %f()\r\n",
-			       AngE.Roll, AngE.Pitch, AngE.Yaw,
-			       global_var[PWM1_CCR].param, global_var[RC_EXP_ROLL].param,
-			       global_var[PWM2_CCR].param, global_var[RC_EXP_PITCH].param,
-			       global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
-			       global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
-			       global_var[PWM5_CCR].param);
-		}
-		//PRINT_DEBUG(global_var[PWM5_CCR].param);
-	}
+	// 	//} else {
+	// 		printf("Roll%f,Pitch%f,Yaw%f,CH1 %f(%f),CH2 %f(%f),CH3 %f(%f),CH4 %f(%f),CH5 %f()\r\n",
+	// 		       AngE.Roll, AngE.Pitch, AngE.Yaw,
+	// 		       global_var[PWM1_CCR].param, global_var[RC_EXP_ROLL].param,
+	// 		       global_var[PWM2_CCR].param, global_var[RC_EXP_PITCH].param,
+	// 		       global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
+	// 		       global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
+	// 		       global_var[PWM5_CCR].param);
+	// 	//}
+	// 	//PRINT_DEBUG(global_var[PWM5_CCR].param);
+	// }
 
 	LED_B = 1;
 
