@@ -6,6 +6,7 @@
 #include "algorithm_string.h"
 #include <unistd.h>
 #include <stdarg.h>
+#include <string.h>
 /*=====================================================================================================*/
 /*=====================================================================================================*
 **函數 : RS232_Config
@@ -54,10 +55,10 @@ void RS232_Config(void)
 **使用 : RS232_SendStr(USART1, (u8*)"Hellow World!");
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void RS232_SendStr(USART_TypeDef *USARTx, uc8 *pWord)
+void RS232_SendStr(USART_TypeDef *USARTx, char *pWord)
 {
 	while (*pWord != '\0') {
-		USART_SendByte(USARTx, (u8 *)pWord);
+		USART_SendByte(USARTx, (char *)pWord);
 		pWord++;
 	}
 }
@@ -78,7 +79,7 @@ void RS232_SendNum(USART_TypeDef *USARTx, u8 Type, u8 NumLen, s32 SendData)
 	Str_NumToChar(Type, NumLen, TrData, SendData);
 
 	while (*pWord != '\0') {
-		USART_SendByte(USARTx, (u8 *)pWord);
+		USART_SendByte(USARTx, (char *)pWord);
 		pWord++;
 	}
 }
@@ -91,7 +92,7 @@ void RS232_SendNum(USART_TypeDef *USARTx, u8 Type, u8 NumLen, s32 SendData)
 **使用 : RS232_SendData(USART1, SendData, DataLen);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-int RS232_SendData(USART_TypeDef *USARTx, uc8 *SendData, u16 DataLen)
+int RS232_SendData(USART_TypeDef *USARTx, char *SendData, u16 DataLen)
 {
 	do {
 		USART_SendByte(USARTx, SendData);
@@ -110,7 +111,7 @@ int RS232_SendData(USART_TypeDef *USARTx, uc8 *SendData, u16 DataLen)
 **使用 : RS232_RecvStr(USART1, Stirng);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void RS232_RecvStr(USART_TypeDef *USARTx, u8 *pWord)
+void RS232_RecvStr(USART_TypeDef *USARTx, char *pWord)
 {
 	do {
 		*pWord = USART_RecvByte(USARTx);
@@ -206,14 +207,17 @@ char *itoa(int value, char *str)
 	int divideNum = base;
 	int i = 0;
 
+	if (value < 0) {
+		str[0] = '-';
+		i++;
+		value*=-1;
+	}
+
 	while (value / divideNum > 0) {
 		divideNum *= base;
 	}
 
-	if (value < 0) {
-		str[0] = '-';
-		i++;
-	}
+	
 
 	while (divideNum / base > 0) {
 		divideNum /= base;
@@ -226,6 +230,125 @@ char *itoa(int value, char *str)
 
 }
 
+void ltoa(char *buf, unsigned long i, int base)
+{
+        char *s;
+        #define LEN        25
+        int rem;
+        char rev[LEN+1];
+
+        if (i == 0)
+                s = "0";
+        else
+                {
+                rev[LEN] = 0;
+                s = &rev[LEN];
+                while (i)
+                        {
+                        rem = i % base;
+                        if (rem < 10)
+                                *--s = rem + '0';
+                        else if (base == 16)
+                                *--s = "abcdef"[rem - 10];
+                        i /= base;
+                        }
+                }
+        strcpy(buf, s);
+}
+
+typedef union {
+long        L;
+float        F;
+}         LF_t;
+
+char *ftoa(float f) //, int *status)
+{
+        long mantissa, int_part, frac_part;
+        short exp2;
+        LF_t x;
+        char *p;
+        static char outbuf[15];
+
+        //*status = 0;
+        if (f == 0.0)
+        {
+                outbuf[0] = '0';
+                outbuf[1] = '.';
+                outbuf[2] = '0';
+                outbuf[3] = 0;
+                return outbuf;
+        }
+        x.F = f;
+
+        exp2 = (unsigned char)(x.L >> 23) - 127;
+        mantissa = (x.L & 0xFFFFFF) | 0x800000;
+        frac_part = 0;
+        int_part = 0;
+
+        if (exp2 >= 31)
+        {
+                //*status = _FTOA_TOO_LARGE;
+                return 0;
+        }
+        else if (exp2 < -23)
+        {
+                //*status = _FTOA_TOO_SMALL;
+                return 0;
+        }
+        else if (exp2 >= 23)
+        int_part = mantissa << (exp2 - 23);
+        else if (exp2 >= 0)
+        {
+                int_part = mantissa >> (23 - exp2);
+                frac_part = (mantissa << (exp2 + 1)) & 0xFFFFFF;
+        }
+        else /* if (exp2 < 0) */
+        frac_part = (mantissa & 0xFFFFFF) >> -(exp2 + 1);
+
+        p = outbuf;
+
+        if (x.L < 0)
+                *p++ = '-';
+
+        if (int_part == 0)
+                *p++ = '0';
+        else
+        {
+                ltoa(p, int_part, 10);
+                while (*p)
+                p++;
+        }
+        *p++ = '.';
+
+        if (frac_part == 0)
+                *p++ = '0';
+        else
+        {
+                char m, max;
+
+                max = sizeof (outbuf) - (p - outbuf) - 1;
+                if (max > 7)
+                        max = 7;
+                /* print BCD */
+                for (m = 0; m < max; m++)
+                {
+                        /* frac_part *= 10;        */
+                        frac_part = (frac_part << 3) + (frac_part << 1);
+
+                        *p++ = (frac_part >> 24) + '0';
+                        frac_part &= 0xFFFFFF;
+                }
+                /* delete ending zeroes */
+                for (--p; p[0] == '0' && p[-1] != '.'; --p)
+                        ;
+                        ++p;
+        }
+        *p = 0;
+
+        return outbuf;
+}
+
+
 /*=====================================================================================================*/
 /*=====================================================================================================*
 **函數 : sprintf
@@ -235,6 +358,7 @@ char *itoa(int value, char *str)
 **使用 :
 **=====================================================================================================*/
 /*=====================================================================================================*/
+
 int sprintf(char *str, const char *format, ...)
 {
 	va_list para;
@@ -317,6 +441,9 @@ int printf(const char *format, ...)
 				break;
 
 			case 'i':
+			case 'f':
+				strcat(str, ftoa(va_arg(para, double)));
+				break;
 			case 'd':
 				strcat(str, itoa(va_arg(para, int), integer));
 				break;

@@ -81,8 +81,18 @@ SRC+=$(PROGRAM_ALG)/algorithm_*.c \
 		$(PROGRAM_MOD)/module_*.c \
 		$(PROGRAM_SYS)/QCopterFC_*.c \
 		Program_System/QCopterFC.c \
+		Program_System/sys_manager.c \
 		Libraries/CMSIS/FastMathFunctions/arm_cos_f32.c \
-		Libraries/CMSIS/FastMathFunctions/arm_sin_f32.c
+		Libraries/CMSIS/FastMathFunctions/arm_sin_f32.c \
+		test.c
+
+INC_HEADERS =$(PROGRAM_ALG)/*.h \
+		$(PROGRAM_DIR)/*.h \
+		$(PROGRAM_MOD)/*.h \
+		$(PROGRAM_SYS)/*.h \
+		*.h
+
+
 
 #FreeRTOS source code
 SRC+=$(FREERTOS_SRC)/croutine.c\
@@ -105,10 +115,10 @@ $(BIN_IMAGE):$(EXECUTABLE)
 
 STARTUP_OBJ = startup_stm32f4xx.o
 
-$(STARTUP_OBJ): $(STARTUP)
+$(STARTUP_OBJ): $(STARTUP) 
 	$(CC) $(CFLAGS) $^ -c $(STARTUP)
 
-$(EXECUTABLE):$(SRC) $(STARTUP_OBJ)
+$(EXECUTABLE):$(SRC) $(STARTUP_OBJ) ${INC_HEADERS}
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 #Make clean
@@ -123,6 +133,6 @@ flash:
 openocd: flash
 	openocd -s /opt/openocd/share/openocd/scripts/
 gdbauto:
-	arm-none-eabi-gdb -x openocd_gdb.gdb
+	arm-none-eabi-gdbtui -x openocd_gdb.gdb
 
 .PHONY:all clean flash openocd gdbauto

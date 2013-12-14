@@ -15,8 +15,8 @@ extern vs16 Tmp_PID_KD;
 extern vs16 Tmp_PID_Pitch;
 
 vu16 RecvData[KeyNums] = {0};
-u8 TxBuf[SendTimes][TxBufSize] = {0};
-u8 RxBuf[ReadTimes][RxBufSize] = {0};
+u8 TxBuf[SendTimes][TxBufSize] = {{0}};
+u8 RxBuf[ReadTimes][RxBufSize] = {{0}};
 /*=====================================================================================================*/
 /*=====================================================================================================*
 **函數 : Transport_Recv
