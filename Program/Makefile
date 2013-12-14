@@ -1,11 +1,18 @@
 #Output files
 EXECUTABLE=QuadrotorFlightControl.elf
 BIN_IMAGE=QuadrotorFlightControl.bin
-
 #======================================================================#
+
 #Cross Compiler
 CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
+
+#FreeRTOS
+ARCH=CM4F
+FREERTOS_SRC=./Libraries/FreeRTOS/Source
+FREERTOS_INC=./Libraries/FreeRTOS/Source/include
+FREERTOS_PORT_INC=./Libraries/FreeRTOS/Source/portable/GCC/ARM_$(ARCH)
+
 ST_LIB = ./Libraries/STM32F4xx_StdPeriph_Driver
 PROGRAM_ALG = ./Program_Algorithm
 PROGRAM_DIR = ./Program_Driver
@@ -14,7 +21,7 @@ PROGRAM_SYS = ./Program_System
 _PROJECTFC_ = ./ProjectFC
 
 TOOLCHAIN_PATH ?= /usr/local/csl/arm-2012.03/arm-none-eabi
-C_LIB= $(TOOLCHAIN_PATH)/lib/thumb2
+C_LIB=$(TOOLCHAIN_PATH)/lib/thumb2
 
 CFLAGS=-g -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
@@ -35,21 +42,28 @@ CFLAGS+= \
 	# __FPU_USED=1
 	#__CC_ARM
 CFLAGS+=-I./Libraries/CMSIS
+
+#FreeRTOS including
+CFLAGS+=-I$(FREERTOS_INC)
+CFLAGS+=-I$(FREERTOS_PORT_INC)
+
 #STM32F4xx Peripherys including
 CFLAGS+=-I./Libraries/STM32F4xx_StdPeriph_Driver/inc
+
 #Major programs including
 CFLAGS+=-I./Program_System
 CFLAGS+=-I./Program_Algorithm
 CFLAGS+=-I./Program_Driver
 CFLAGS+=-I./Program_Module
 
-LDFLAGS += -lm -lc -lgcc
+LDFLAGS+=-lm -lc -lgcc
 
 #STM32 CMSIS
 SRC=$(wildcard ./Libraries/CMSIS/*.c)
+
 #STM32F4xx Peripherys source code
 #SRC+=$(wildcard ./Libraries/STM32F4xx_StdPeriph_Driver/src/*.c)
-SRC+= ./Libraries/CMSIS/system_stm32f4xx.c \
+SRC+=./Libraries/CMSIS/system_stm32f4xx.c \
 	$(ST_LIB)/src/misc.c \
 	$(ST_LIB)/src/stm32f4xx_rcc.c \
 	$(ST_LIB)/src/stm32f4xx_dma.c \
@@ -62,7 +76,7 @@ SRC+= ./Libraries/CMSIS/system_stm32f4xx.c \
 
 
 #Major programs source code
-SRC += $(PROGRAM_ALG)/algorithm_*.c \
+SRC+=$(PROGRAM_ALG)/algorithm_*.c \
 		$(PROGRAM_DIR)/stm32f4_*.c \
 		$(PROGRAM_MOD)/module_*.c \
 		$(PROGRAM_SYS)/QCopterFC_*.c \
@@ -80,6 +94,14 @@ INC_HEADERS =$(PROGRAM_ALG)/*.h \
 
 
 
+#FreeRTOS source code
+SRC+=$(FREERTOS_SRC)/croutine.c\
+	$(FREERTOS_SRC)/list.c\
+	$(FREERTOS_SRC)/queue.c\
+	$(FREERTOS_SRC)/tasks.c\
+	$(FREERTOS_SRC)/timers.c\
+	$(FREERTOS_SRC)/portable/MemMang/heap_1.c\
+	$(FREERTOS_SRC)/portable/GCC/ARM_$(ARCH)/port.c\
 
 #STM32 startup file
 STARTUP=./Libraries/CMSIS/startup_stm32f4xx.s
