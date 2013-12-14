@@ -167,7 +167,7 @@ void PWM_Capture_Config()
 	/* Enable the CC2 Interrupt Request */
 	TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
 	TIM_ITConfig(TIM2, TIM_IT_CC2, ENABLE);
-	//TIM_ITConfig(TIM2, TIM_IT_CC3, ENABLE);
+	TIM_ITConfig(TIM2, TIM_IT_CC3, ENABLE);
 	TIM_ITConfig(TIM4, TIM_IT_CC1, ENABLE);
 	TIM_ITConfig(TIM4, TIM_IT_CC2, ENABLE);
 }
