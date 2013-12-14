@@ -12,9 +12,25 @@
 #include "module_nrf24l01.h"
 #include "sys_manager.h"
 #include "test.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 /*=====================================================================================================*/
 #define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
 /*=====================================================================================================*/
+void vApplicationTickHook( void )
+{
+}
+
+
+void vApplicationStackOverflowHook( xTaskHandle pxTask, signed char *pcTaskName )
+{
+}
+
+void vApplicationIdleHook( void )
+{
+}
 void System_Init(void)
 {
 	SystemInit();
