@@ -7,7 +7,7 @@
 #include "algorithm_pid.h"
 /*=====================================================================================================*/
 #define MIN_PWM_INPUT 1000
-
+#define MAX_PWM_INPUT 5000
 #define MAX_PWM1_INPUT 3766.0
 #define MIN_PWM1_INPUT 2120.0
 
