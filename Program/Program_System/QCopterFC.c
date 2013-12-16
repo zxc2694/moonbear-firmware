@@ -60,18 +60,10 @@ void System_Init(void)
 	PID_Yaw.Kd   = +0.0f;
 
 	Delay_10ms(2);
-}
-/*=====================================================================================================*/
-
-void nrf()
-{
-} 
-
-void flightControl_Task()
-{
-	u8 Sta = ERROR;
 
 	/* Throttle Config */
+	u8 Sta = ERROR;
+
 	if (KEY == 1) {
 		LED_B = 0;
 		Motor_Control(PWM_MOTOR_MAX, PWM_MOTOR_MAX, PWM_MOTOR_MAX, PWM_MOTOR_MAX);
@@ -92,11 +84,6 @@ void flightControl_Task()
 
 	Delay_10ms(10);
 
-	/* Systick Config */
-	if (SysTick_Config(SystemCoreClock / SampleRateFreg)) { // SampleRateFreg = 500 Hz
-		while (1);
-	}
-
 	/* Wait Correction */
 	while (SensorMode != Mode_Algorithm);
 
@@ -104,11 +91,18 @@ void flightControl_Task()
 	LED_R = 1;
 	LED_G = 1;
 	LED_B = 1;
+}
+/*=====================================================================================================*/
 
-	while (!KEY) {
+void nrf()
+{
+} 
+
+void StatusReport_Task()
+{
+	while (1) {
 		LED_B = ~LED_B;
 		Delay_10ms(1);
-		Transport_Send(TxBuf[0]);
 		if ( global_var[NO_RC_SIGNAL_MSG].param == 1 ) {
 
 			printf("!WARNING: NO SIGNAL!");
@@ -124,10 +118,6 @@ void flightControl_Task()
 		}
 		//PRINT_DEBUG(global_var[PWM5_CCR].param);
 	}
-
-	LED_B = 1;
-
-	while(1);
 }
 
 /*=====================================================================================================*/
@@ -139,8 +129,8 @@ int main(void)
 	test_printf();
 	PRINT_DEBUG(555);
 
-	xTaskCreate(flightControl_Task,
-		(signed portCHAR *) "Flight Control",
+	xTaskCreate(StatusReport_Task,
+		(signed portCHAR *) "Status report",
 		512, NULL,
 		tskIDLE_PRIORITY + 5, NULL);
 
