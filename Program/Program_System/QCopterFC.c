@@ -40,20 +40,21 @@ void System_Init(void)
 	PID_Init(&PID_Roll);
 	PID_Init(&PID_Pitch);
 
-	PID_Pitch.Kp = +0.8f;
+	PID_Pitch.Kp = +50.0f;
 	PID_Pitch.Ki = 0;//0.002f;
-	PID_Pitch.Kd = +1.0f;
+	PID_Pitch.Kd = +11.5f;
 
-	PID_Roll.Kp  = +0.8f;
+	PID_Roll.Kp  = +50.0f;
 	PID_Roll.Ki  = 0;//0.002f;
-	PID_Roll.Kd  = +1.0f;
+	PID_Roll.Kd  = 11.5f;
 
-	PID_Yaw.Kp   = +0.0f;
+	PID_Yaw.Kp   = +10.0f;
 	PID_Yaw.Ki   = +0.0f;
 	PID_Yaw.Kd   = +0.0f;
 
 	Delay_10ms(200);
 }
+
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 int main(void)
@@ -65,6 +66,7 @@ int main(void)
 	System_Init();
 	test_printf();
 	PRINT_DEBUG(555);
+	while( remote_signal_check() == NO_SIGNAL);
 	/* Throttle Config */
 	if (KEY == 1) {
 		LED_B = 0;
