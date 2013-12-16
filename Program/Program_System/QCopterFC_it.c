@@ -301,15 +301,15 @@ void SysTick_Handler(void)
 		global_var[RC_EXP_PITCH].param = Exp_Pitch;
 		global_var[RC_EXP_YAW].param = Exp_Yaw;
 		/* Get ZeroErr */
-		PID_Pitch.ZeroErr = (float)((s16)Exp_Pitch / 4.5f);
-		PID_Roll.ZeroErr  = (float)((s16)Exp_Roll / 4.5f);
+		PID_Pitch.ZeroErr = (float)((s16)Exp_Pitch);
+		PID_Roll.ZeroErr  = (float)((s16)Exp_Roll );
 		PID_Yaw.ZeroErr   = (float)((s16)Exp_Yaw) + 180.0f;
 
 		/* PID */
 		Roll  = (s16)PID_AHRS_Cal(&PID_Roll,   AngE.Roll,  Gyr.TrueX);
 		Pitch = (s16)PID_AHRS_Cal(&PID_Pitch,  AngE.Pitch, Gyr.TrueY);
 //      Yaw   = (s16)PID_AHRS_CalYaw(&PID_Yaw, AngE.Yaw,   Gyr.TrueZ);
-		Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ);
+		Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ) + 3*(s16)Exp_Yaw;
 		Thr   = (s16)Exp_Thr;
 
 		/* Motor Ctrl */
@@ -320,11 +320,11 @@ void SysTick_Handler(void)
 
 		/* Check Connection */
 #define NoSignal 1  // 1 sec
-		// ( safety == 1 ){
-		//	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
-		//}else{
+		if ( safety == 1 ){
+			Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
+		}else{
 			Motor_Control(Final_M1, Final_M2, Final_M3, Final_M4);
-		//}
+		}
 		/* DeBug */
 		Tmp_PID_KP = PID_Yaw.Kp * 1000;
 		Tmp_PID_KI = PID_Yaw.Ki * 1000;
