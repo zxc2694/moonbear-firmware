@@ -422,6 +422,8 @@ int main(void)
 	test_printf();
 	PRINT_DEBUG(555);
 
+	NVIC_PriorityGroupConfig( NVIC_PriorityGroup_4 );
+
 	xTaskCreate(StatusReport_Task,
 		(signed portCHAR *) "Status report",
 		512, NULL,
