@@ -432,7 +432,7 @@ int main(void)
         xTaskCreate(FlightControl_Task,
                 (signed portCHAR *) "Flight control",
                 512, NULL,
-                tskIDLE_PRIORITY + 5, NULL);
+                tskIDLE_PRIORITY + 10, NULL);
 
 	vTaskStartScheduler();
 
