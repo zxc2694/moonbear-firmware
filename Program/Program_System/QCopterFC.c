@@ -42,11 +42,11 @@ void vApplicationStackOverflowHook( xTaskHandle pxTask, signed char *pcTaskName 
 
 void vApplicationIdleHook( void )
 {
+
 }
 void System_Init(void)
 {
 	SystemInit();
-
 	LED_Config();
 	KEY_Config();
 	RS232_Config();
@@ -59,22 +59,27 @@ void System_Init(void)
 	PID_Init(&PID_Roll);
 	PID_Init(&PID_Pitch);
 
-	PID_Pitch.Kp = +1.5f;
-	PID_Pitch.Ki = +0.002f;
-	PID_Pitch.Kd = +1.0f;
+	PID_Pitch.Kp = +50.0f;
+	PID_Pitch.Ki = 0;//0.002f;
+	PID_Pitch.Kd = +11.5f;
 
-	PID_Roll.Kp  = +1.5f;
-	PID_Roll.Ki  = +0.002f;
-	PID_Roll.Kd  = +1.0f;
+	PID_Roll.Kp  = +50.0f;
+	PID_Roll.Ki  = 0;//0.002f;
+	PID_Roll.Kd  = 11.5f;
 
-	PID_Yaw.Kp   = +0.0f;
+	PID_Yaw.Kp   = +10.0f;
 	PID_Yaw.Ki   = +0.0f;
 	PID_Yaw.Kd   = +0.0f;
 
-	Delay_10ms(2);
+	Delay_10ms(200);
 
-	/* Throttle Config */
 	u8 Sta = ERROR;
+	FSM_Mode FSM_State = FSM_Rx;
+
+	test_printf();
+	PRINT_DEBUG(555);
+
+	while( remote_signal_check() == NO_SIGNAL);
 
 	if (KEY == 1) {
 		LED_B = 0;
@@ -96,6 +101,7 @@ void System_Init(void)
 
 	Delay_10ms(10);
 
+
 	/* Wait Correction */
 	while (SensorMode != Mode_Algorithm);
 
@@ -103,8 +109,8 @@ void System_Init(void)
 	LED_R = 1;
 	LED_G = 1;
 	LED_B = 1;
+
 }
-/*=====================================================================================================*/
 
 vs16 Tmp_PID_KP;
 vs16 Tmp_PID_KI;
@@ -356,22 +362,22 @@ void FlightControl_Task()
 			global_var[RC_EXP_PITCH].param = Exp_Pitch;
 			global_var[RC_EXP_YAW].param = Exp_Yaw;
 			/* Get ZeroErr */
-			PID_Pitch.ZeroErr = (float)((s16)Exp_Pitch / 4.5f);
-			PID_Roll.ZeroErr  = (float)((s16)Exp_Roll / 4.5f);
+			PID_Pitch.ZeroErr = (float)((s16)Exp_Pitch );
+			PID_Roll.ZeroErr  = (float)((s16)Exp_Roll );
 			PID_Yaw.ZeroErr   = (float)((s16)Exp_Yaw) + 180.0f;
 	
 			/* PID */
 			Roll  = (s16)PID_AHRS_Cal(&PID_Roll,   AngE.Roll,  Gyr.TrueX);
 			Pitch = (s16)PID_AHRS_Cal(&PID_Pitch,  AngE.Pitch, Gyr.TrueY);
 //      Yaw   = (s16)PID_AHRS_CalYaw(&PID_Yaw, AngE.Yaw,   Gyr.TrueZ);
-			Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ);
+			Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ) + 3*(s16)Exp_Yaw;
 			Thr   = (s16)Exp_Thr;
 	
 			/* Motor Ctrl */
-			Final_M1 = PWM_M1 + Thr + Pitch + Roll + Yaw;
-			Final_M2 = PWM_M2 + Thr - Pitch + Roll - Yaw;
-			Final_M3 = PWM_M3 + Thr - Pitch - Roll + Yaw;
-			Final_M4 = PWM_M4 + Thr + Pitch - Roll - Yaw;
+			Final_M1 = Thr + Pitch - Roll - Yaw;
+            Final_M2 = Thr + Pitch + Roll + Yaw;
+            Final_M3 = Thr - Pitch + Roll - Yaw;
+            Final_M4 = Thr - Pitch - Roll + Yaw;
 
 			/* Check Connection */
 #define NoSignal 1  // 1 sec
@@ -386,30 +392,29 @@ void FlightControl_Task()
 			Tmp_PID_KD = PID_Yaw.Kd * 1000;
 			Tmp_PID_Pitch = Yaw;
 	
+			vTaskDelay(2);
+
 			break;
 		}
 	}
 } 
 
+
 void StatusReport_Task()
 {
 	while (1) {
-		LED_B = ~LED_B;
-		Delay_10ms(1);
-		if ( global_var[NO_RC_SIGNAL_MSG].param == 1 ) {
 
-			printf("!WARNING: NO SIGNAL!");
 
-		} else {
-			printf("Roll%f,Pitch%f,Yaw%f,CH1 %f(%f),CH2 %f(%f),CH3 %f(%f),CH4 %f(%f),CH5 %f()\r\n",
-			       AngE.Roll, AngE.Pitch, AngE.Yaw,
+			printf("Roll = %f,Pitch = %f,Yaw = %f \r\n",
+			       AngE.Roll, AngE.Pitch, AngE.Yaw);
+			printf("CH1 %f(%f),CH2 %f(%f),CH3 %f(%f),CH4 %f(%f),CH5 %f()\r\n",
 			       global_var[PWM1_CCR].param, global_var[RC_EXP_ROLL].param,
 			       global_var[PWM2_CCR].param, global_var[RC_EXP_PITCH].param,
 			       global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
 			       global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
 			       global_var[PWM5_CCR].param);
-		}
-		//PRINT_DEBUG(global_var[PWM5_CCR].param);
+			printf("\r\n");
+			vTaskDelay(500);
 	}
 }
 
@@ -429,10 +434,10 @@ int main(void)
 		512, NULL,
 		tskIDLE_PRIORITY + 5, NULL);
 
-        xTaskCreate(FlightControl_Task,
-                (signed portCHAR *) "Flight control",
-                512, NULL,
-                tskIDLE_PRIORITY + 10, NULL);
+    xTaskCreate(FlightControl_Task,
+            (signed portCHAR *) "Flight control",
+            512, NULL,
+            tskIDLE_PRIORITY + 10, NULL);
 
 	vTaskStartScheduler();
 

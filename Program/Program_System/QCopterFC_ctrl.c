@@ -21,12 +21,54 @@ static __IO uint16_t rc_ctrl_timeout = 0;
 /*=====================================================================================================*/
 void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *Thr, uint8_t *safety)
 {
-	RC_State rc_state = GET_SIGNAL;
 	/*Get PWM3 Input capture to control trottle*/
-	if( global_var[PWM3_CCR].param > MIN_PWM_INPUT){
+	if( (global_var[PWM3_CCR].param > MIN_PWM_INPUT) &&
+		(global_var[PWM3_CCR].param < MAX_PWM_INPUT) ){
 
 		*Thr = (PWM_MOTOR_MAX - PWM_MOTOR_MIN) / (MAX_PWM3_INPUT - MIN_PWM3_INPUT) * 
 			(global_var[PWM3_CCR].param - MIN_PWM3_INPUT) + PWM_MOTOR_MIN;
+
+	}
+	/*Get PWM1 Input capture to control roll*/
+	if( (global_var[PWM1_CCR].param > MIN_PWM_INPUT) &&
+		(global_var[PWM1_CCR].param < MAX_PWM_INPUT) ){
+
+		*Roll = (MAX_CTRL_ROLL - MIN_CTRL_ROLL) / (MAX_PWM1_INPUT - MIN_PWM1_INPUT) * 
+			(global_var[PWM1_CCR].param - MIN_PWM1_INPUT) +  MIN_CTRL_ROLL;
+
+
+	}
+	/*Get PWM2 Input capture to control pitch*/
+	if( (global_var[PWM2_CCR].param > MIN_PWM_INPUT) &&
+		(global_var[PWM2_CCR].param < MAX_PWM_INPUT) ){
+
+		*Pitch = (MAX_CTRL_PITCH - MIN_CTRL_PITCH) / (MAX_PWM2_INPUT - MIN_PWM2_INPUT) * 
+			(global_var[PWM2_CCR].param - MIN_PWM2_INPUT) + MIN_CTRL_PITCH;
+
+	}
+	/*Get PWM4 Input capture to control yaw*/
+	if( (global_var[PWM4_CCR].param > MIN_PWM_INPUT) &&
+		(global_var[PWM4_CCR].param < MAX_PWM_INPUT) ){	
+
+		*Yaw = (MAX_CTRL_YAW- MIN_CTRL_YAW) / (MAX_PWM4_INPUT - MIN_PWM4_INPUT) * 
+			(global_var[PWM4_CCR].param - MIN_PWM4_INPUT) + MIN_CTRL_YAW;
+
+	}
+	/*Get PWM5 Input capture to set safety switch*/
+	if( global_var[PWM5_CCR].param > (MAX_PWM5_INPUT + MIN_PWM5_INPUT)/2 )
+		*safety = 1;
+	else
+		*safety = 0;
+
+
+}
+
+RC_State remote_signal_check()
+{
+	RC_State rc_state = GET_SIGNAL;
+	/*Get PWM3 Input capture to control trottle*/
+	if( (global_var[PWM3_CCR].param > MIN_PWM_INPUT) &&
+		(global_var[PWM3_CCR].param < MAX_PWM_INPUT) ){
 
 		rc_state |= GET_SIGNAL;
 
@@ -36,10 +78,8 @@ void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *
 
 	}
 	/*Get PWM1 Input capture to control roll*/
-	if( global_var[PWM1_CCR].param > MIN_PWM_INPUT){
-
-		*Roll = (MAX_CTRL_ROLL - MIN_CTRL_ROLL) / (MAX_PWM1_INPUT - MIN_PWM1_INPUT) * 
-			(global_var[PWM1_CCR].param - MIN_PWM1_INPUT) +  MIN_CTRL_ROLL;
+	if( (global_var[PWM1_CCR].param > MIN_PWM_INPUT) &&
+		(global_var[PWM1_CCR].param < MAX_PWM_INPUT) ){
 
 		rc_state |= GET_SIGNAL;
 
@@ -49,10 +89,8 @@ void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *
 
 	}
 	/*Get PWM2 Input capture to control pitch*/
-	if( global_var[PWM2_CCR].param > MIN_PWM_INPUT){
-
-		*Pitch = (MAX_CTRL_PITCH - MIN_CTRL_PITCH) / (MAX_PWM2_INPUT - MIN_PWM2_INPUT) * 
-			(global_var[PWM2_CCR].param - MIN_PWM2_INPUT) + MIN_CTRL_PITCH;
+	if( (global_var[PWM2_CCR].param > MIN_PWM_INPUT) &&
+		(global_var[PWM2_CCR].param < MAX_PWM_INPUT) ){
 
 		rc_state |= GET_SIGNAL;
 
@@ -61,10 +99,8 @@ void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *
 		rc_state |= NO_SIGNAL;
 	}
 	/*Get PWM4 Input capture to control yaw*/
-	if( global_var[PWM4_CCR].param > MIN_PWM_INPUT){	
-
-		*Yaw = (MAX_CTRL_YAW- MIN_CTRL_YAW) / (MAX_PWM4_INPUT - MIN_PWM4_INPUT) * 
-			(global_var[PWM4_CCR].param - MIN_PWM4_INPUT) + MIN_CTRL_YAW;
+	if( (global_var[PWM4_CCR].param > MIN_PWM_INPUT) &&
+		(global_var[PWM4_CCR].param < MAX_PWM_INPUT) ){	
 
 		rc_state |= GET_SIGNAL;
 
@@ -73,16 +109,12 @@ void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *
 		rc_state |= NO_SIGNAL;
 		
 	}
-	/*Get PWM5 Input capture to set safety switch*/
-	if( global_var[PWM5_CCR].param > (MAX_PWM5_INPUT - MIN_PWM5_INPUT)/2 )
-		*safety = 1;
-	else
-		*safety = 0;
 
-	if ( rc_state == NO_SIGNAL)
-		rc_ctrl_timeout++;
+	// /*Get PWM5 Input capture to set safety switch*/
+	// if( global_var[PWM5_CCR].param > (MAX_PWM5_INPUT - MIN_PWM5_INPUT)/2 )
+	// 	rc_state |= NO_SIGNAL;
+	// else
+	// 	rc_state |= GET_SIGNAL;
 
-	if ( rc_ctrl_timeout >= 500)
-		global_var[NO_RC_SIGNAL_MSG].param = 1;
-
+	return rc_state;
 }
