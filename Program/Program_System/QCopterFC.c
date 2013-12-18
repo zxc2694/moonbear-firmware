@@ -27,7 +27,8 @@
 #include "algorithm_quaternion.h"
 
 #include "sys_manager.h"
-
+xSemaphoreHandle TIM2_Semaphore = NULL;
+xSemaphoreHandle TIM4_Semaphore = NULL;
 /*=====================================================================================================*/
 #define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
 /*=====================================================================================================*/
@@ -79,7 +80,7 @@ void System_Init(void)
 	test_printf();
 	PRINT_DEBUG(555);
 
-	while (remote_signal_check() == NO_SIGNAL);
+	//while (remote_signal_check() == NO_SIGNAL);
 
 	if (KEY == 1) {
 		LED_B = 0;
@@ -103,7 +104,7 @@ void System_Init(void)
 
 
 	/* Wait Correction */
-	while (SensorMode != Mode_Algorithm);
+	//while (SensorMode != Mode_Algorithm);
 
 	/* Lock */
 	LED_R = 1;
@@ -427,12 +428,15 @@ int main(void)
 {
 
 	/* System Init */
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 	System_Init();
 	test_printf();
 	PRINT_DEBUG(555);
 
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+	
 
+	vSemaphoreCreateBinary( TIM2_Semaphore );
+	vSemaphoreCreateBinary( TIM4_Semaphore );
 	xTaskCreate(StatusReport_Task,
 		    (signed portCHAR *) "Status report",
 		    512, NULL,

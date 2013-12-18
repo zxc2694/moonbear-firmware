@@ -2,6 +2,12 @@
 /*=====================================================================================================*/
 #include "stm32f4_system.h"
 #include "stm32f4_i2c.h"
+
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
+
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 #define I2Cx                  I2C1
@@ -91,12 +97,12 @@ void I2C_Config(void)
 	GPIO_Init(I2Cx_SDA_GPIO_PORT, &GPIO_InitStruct);
 
 	NVIC_InitStruct.NVIC_IRQChannel = DMAx_RX_IRQn;
-	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY - 3;
 	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStruct);
 	NVIC_InitStruct.NVIC_IRQChannel = DMAx_TX_IRQn;
-	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY - 3;
 	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStruct);

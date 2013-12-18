@@ -16,6 +16,11 @@
 #include "algorithm_mathUnit.h"
 #include "algorithm_quaternion.h"
 #include "sys_manager.h"
+
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 static __IO uint16_t pwm1_previous_value = 0;
@@ -28,7 +33,8 @@ static __IO uint8_t pwm2_is_rising = 1;
 static __IO uint8_t pwm3_is_rising = 1;
 static __IO uint8_t pwm4_is_rising = 1;
 static __IO uint8_t pwm5_is_rising = 1;
-
+extern xSemaphoreHandle TIM2_Semaphore ;
+extern xSemaphoreHandle TIM4_Semaphore ;
 void TIM2_IRQHandler(void)
 {
 	uint32_t current[3];
@@ -129,6 +135,20 @@ void TIM2_IRQHandler(void)
 
 		TIM_ICInit(TIM2, &TIM_ICInitStructure);
 	}
+
+	if ( (TIM_GetITStatus(TIM2, TIM_IT_CC1) == SET) || 
+		(TIM_GetITStatus(TIM2, TIM_IT_CC2) == SET) ||
+		(TIM_GetITStatus(TIM2, TIM_IT_CC3) == SET)) {
+
+
+	long lHigherPriorityTaskWoken = pdFALSE;
+
+	xSemaphoreGiveFromISR( TIM2_Semaphore, &lHigherPriorityTaskWoken );
+	
+
+	portEND_SWITCHING_ISR( lHigherPriorityTaskWoken );
+
+	}
 }
 void TIM4_IRQHandler(void)
 {
@@ -201,6 +221,18 @@ void TIM4_IRQHandler(void)
 
 	}
 
+	if ( (TIM_GetITStatus(TIM4, TIM_IT_CC1) == SET) || 
+		(TIM_GetITStatus(TIM4, TIM_IT_CC2) == SET)) {
+
+		
+	long lHigherPriorityTaskWoken = pdFALSE;
+
+	xSemaphoreGiveFromISR( TIM4_Semaphore, &lHigherPriorityTaskWoken );
+	
+
+	portEND_SWITCHING_ISR( lHigherPriorityTaskWoken );
+
+	}
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
