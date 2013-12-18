@@ -136,19 +136,6 @@ void TIM2_IRQHandler(void)
 		TIM_ICInit(TIM2, &TIM_ICInitStructure);
 	}
 
-	if ( (TIM_GetITStatus(TIM2, TIM_IT_CC1) == SET) || 
-		(TIM_GetITStatus(TIM2, TIM_IT_CC2) == SET) ||
-		(TIM_GetITStatus(TIM2, TIM_IT_CC3) == SET)) {
-
-
-	long lHigherPriorityTaskWoken = pdFALSE;
-
-	xSemaphoreGiveFromISR( TIM2_Semaphore, &lHigherPriorityTaskWoken );
-	
-
-	portEND_SWITCHING_ISR( lHigherPriorityTaskWoken );
-
-	}
 }
 void TIM4_IRQHandler(void)
 {
@@ -221,18 +208,6 @@ void TIM4_IRQHandler(void)
 
 	}
 
-	if ( (TIM_GetITStatus(TIM4, TIM_IT_CC1) == SET) || 
-		(TIM_GetITStatus(TIM4, TIM_IT_CC2) == SET)) {
-
-		
-	long lHigherPriorityTaskWoken = pdFALSE;
-
-	xSemaphoreGiveFromISR( TIM4_Semaphore, &lHigherPriorityTaskWoken );
-	
-
-	portEND_SWITCHING_ISR( lHigherPriorityTaskWoken );
-
-	}
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
