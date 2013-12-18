@@ -6,6 +6,15 @@
 #include "stm32f4xx.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
+typedef struct {
+    char (*getch) ();		 //If declare as getc will cause naming conflict
+    void (*putch) (char str); 	 //If declare as putc will cause naming conflict
+} serial_ops;
+
+typedef struct{
+	char str;
+} serial_msg;
+
 void RS232_Config(void);
 void RS232_DMA_Config(void);
 void RS232_SendStr(USART_TypeDef *USARTx, char *pWord);

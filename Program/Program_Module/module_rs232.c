@@ -194,6 +194,34 @@ void RS232_VisualScope(USART_TypeDef *USARTx, u8 *pWord, u16 Len)
 
 /*=====================================================================================================*/
 /*=====================================================================================================*
+**函數 : getch_base()  &  putch_base(char str)
+**功能 : Serial read/write callback functions
+**輸入 :
+**輸出 :
+**使用 :
+**=====================================================================================================*/
+/*=====================================================================================================*/
+char getch_base()
+{
+    char str;
+    RS232_RecvData(USART3, str, strlen(str));
+    return str;
+}
+
+void putch_base(char str)
+{
+    USART_SendData(USART3, (uint16_t)str);
+    while (USART_GetFlagStatus(USART3, USART_FLAG_TC) == RESET);
+}
+
+/* Serial read/write callback functions */
+serial_ops serial = {
+    .getch = getch_base,
+    .putch = putch_base,
+};
+
+/*=====================================================================================================*/
+/*=====================================================================================================*
 **函數 : itoa
 **功能 : Support the sprintf & printf function
 **輸入 :
