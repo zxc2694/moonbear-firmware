@@ -143,95 +143,95 @@ void correction_task()
 	BaroCnt++;
 
 	if (BaroCnt == SampleRateFreg / 100) {
-			MS5611_Read(&Baro, MS5611_D1_OSR_4096);
-			BaroCnt = 0;
-		}
+		MS5611_Read(&Baro, MS5611_D1_OSR_4096);
+		BaroCnt = 0;
+	}
 
-		Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
-		Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
-		Acc.Z  = (s16)((IMU_Buf[4]  << 8) | IMU_Buf[5]);
-		Temp.T = (s16)((IMU_Buf[6]  << 8) | IMU_Buf[7]);
-		Gyr.X  = (s16)((IMU_Buf[8]  << 8) | IMU_Buf[9]);
-		Gyr.Y  = (s16)((IMU_Buf[10] << 8) | IMU_Buf[11]);
-		Gyr.Z  = (s16)((IMU_Buf[12] << 8) | IMU_Buf[13]);
-		Mag.X  = (s16)((IMU_Buf[15] << 8) | IMU_Buf[14]);
-		Mag.Y  = (s16)((IMU_Buf[17] << 8) | IMU_Buf[16]);
-		Mag.Z  = (s16)((IMU_Buf[19] << 8) | IMU_Buf[18]);
+	Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
+	Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
+	Acc.Z  = (s16)((IMU_Buf[4]  << 8) | IMU_Buf[5]);
+	Temp.T = (s16)((IMU_Buf[6]  << 8) | IMU_Buf[7]);
+	Gyr.X  = (s16)((IMU_Buf[8]  << 8) | IMU_Buf[9]);
+	Gyr.Y  = (s16)((IMU_Buf[10] << 8) | IMU_Buf[11]);
+	Gyr.Z  = (s16)((IMU_Buf[12] << 8) | IMU_Buf[13]);
+	Mag.X  = (s16)((IMU_Buf[15] << 8) | IMU_Buf[14]);
+	Mag.Y  = (s16)((IMU_Buf[17] << 8) | IMU_Buf[16]);
+	Mag.Z  = (s16)((IMU_Buf[19] << 8) | IMU_Buf[18]);
 
-		/* Offset */
-		Acc.X -= Acc.OffsetX;
-		Acc.Y -= Acc.OffsetY;
-		Acc.Z -= Acc.OffsetZ;
-		Gyr.X -= Gyr.OffsetX;
-		Gyr.Y -= Gyr.OffsetY;
-		Gyr.Z -= Gyr.OffsetZ;
-		Mag.X *= Mag.AdjustX;
-		Mag.Y *= Mag.AdjustY;
-		Mag.Z *= Mag.AdjustZ;
+	/* Offset */
+	Acc.X -= Acc.OffsetX;
+	Acc.Y -= Acc.OffsetY;
+	Acc.Z -= Acc.OffsetZ;
+	Gyr.X -= Gyr.OffsetX;
+	Gyr.Y -= Gyr.OffsetY;
+	Gyr.Z -= Gyr.OffsetZ;
+	Mag.X *= Mag.AdjustX;
+	Mag.Y *= Mag.AdjustY;
+	Mag.Z *= Mag.AdjustZ;
 
 #define MovegAveFIFO_Size 250
 
-	
-		LED_R = !LED_R;
-		/* Simple Moving Average */
-		Gyr.X = (s16)MoveAve_SMA(Gyr.X, GYR_FIFO[0], MovegAveFIFO_Size);
-		Gyr.Y = (s16)MoveAve_SMA(Gyr.Y, GYR_FIFO[1], MovegAveFIFO_Size);
-		Gyr.Z = (s16)MoveAve_SMA(Gyr.Z, GYR_FIFO[2], MovegAveFIFO_Size);
 
-		Correction_Time++;  // 等待 FIFO 填滿空值 or 填滿靜態資料
+	LED_R = !LED_R;
+	/* Simple Moving Average */
+	Gyr.X = (s16)MoveAve_SMA(Gyr.X, GYR_FIFO[0], MovegAveFIFO_Size);
+	Gyr.Y = (s16)MoveAve_SMA(Gyr.Y, GYR_FIFO[1], MovegAveFIFO_Size);
+	Gyr.Z = (s16)MoveAve_SMA(Gyr.Z, GYR_FIFO[2], MovegAveFIFO_Size);
 
-		if (Correction_Time == SampleRateFreg) {
-			Gyr.OffsetX += (Gyr.X - GYR_X_OFFSET);  // 角速度為 0dps
-			Gyr.OffsetY += (Gyr.Y - GYR_Y_OFFSET);  // 角速度為 0dps
-			Gyr.OffsetZ += (Gyr.Z - GYR_Z_OFFSET);  // 角速度為 0dps
+	Correction_Time++;  // 等待 FIFO 填滿空值 or 填滿靜態資料
 
-			Correction_Time = 0;
+	if (Correction_Time == SampleRateFreg) {
+		Gyr.OffsetX += (Gyr.X - GYR_X_OFFSET);  // 角速度為 0dps
+		Gyr.OffsetY += (Gyr.Y - GYR_Y_OFFSET);  // 角速度為 0dps
+		Gyr.OffsetZ += (Gyr.Z - GYR_Z_OFFSET);  // 角速度為 0dps
 
-		}
+		Correction_Time = 0;
 
-		LED_R = ~LED_R;
-		/* Simple Moving Average */
-		Acc.X = (s16)MoveAve_SMA(Acc.X, ACC_FIFO[0], MovegAveFIFO_Size);
-		Acc.Y = (s16)MoveAve_SMA(Acc.Y, ACC_FIFO[1], MovegAveFIFO_Size);
-		Acc.Z = (s16)MoveAve_SMA(Acc.Z, ACC_FIFO[2], MovegAveFIFO_Size);
+	}
 
-		Correction_Time++;  // 等待 FIFO 填滿空值 or 填滿靜態資料
+	LED_R = ~LED_R;
+	/* Simple Moving Average */
+	Acc.X = (s16)MoveAve_SMA(Acc.X, ACC_FIFO[0], MovegAveFIFO_Size);
+	Acc.Y = (s16)MoveAve_SMA(Acc.Y, ACC_FIFO[1], MovegAveFIFO_Size);
+	Acc.Z = (s16)MoveAve_SMA(Acc.Z, ACC_FIFO[2], MovegAveFIFO_Size);
 
-		if (Correction_Time == SampleRateFreg) {
-			Acc.OffsetX += (Acc.X - ACC_X_OFFSET);  // 重力加速度為 0g
-			Acc.OffsetY += (Acc.Y - ACC_Y_OFFSET);  // 重力加速度為 0g
-			Acc.OffsetZ += (Acc.Z - ACC_Z_OFFSET);  // 重力加速度為 1g
+	Correction_Time++;  // 等待 FIFO 填滿空值 or 填滿靜態資料
 
-			Correction_Time = 0;
-		}
+	if (Correction_Time == SampleRateFreg) {
+		Acc.OffsetX += (Acc.X - ACC_X_OFFSET);  // 重力加速度為 0g
+		Acc.OffsetY += (Acc.Y - ACC_Y_OFFSET);  // 重力加速度為 0g
+		Acc.OffsetZ += (Acc.Z - ACC_Z_OFFSET);  // 重力加速度為 1g
+
+		Correction_Time = 0;
+	}
 
 
-		LED_R = !LED_R;
+	LED_R = !LED_R;
 
-		/* To Physical */
-		Acc.TrueX = Acc.X * MPU9150A_4g;      // g/LSB
-		Acc.TrueY = Acc.Y * MPU9150A_4g;      // g/LSB
-		Acc.TrueZ = Acc.Z * MPU9150A_4g;      // g/LSB
-		Gyr.TrueX = Gyr.X * MPU9150G_2000dps; // dps/LSB
-		Gyr.TrueY = Gyr.Y * MPU9150G_2000dps; // dps/LSB
-		Gyr.TrueZ = Gyr.Z * MPU9150G_2000dps; // dps/LSB
-		Mag.TrueX = Mag.X * MPU9150M_1200uT;  // uT/LSB
-		Mag.TrueY = Mag.Y * MPU9150M_1200uT;  // uT/LSB
-		Mag.TrueZ = Mag.Z * MPU9150M_1200uT;  // uT/LSB
-		Temp.TrueT = Temp.T * MPU9150T_85degC; // degC/LSB
+	/* To Physical */
+	Acc.TrueX = Acc.X * MPU9150A_4g;      // g/LSB
+	Acc.TrueY = Acc.Y * MPU9150A_4g;      // g/LSB
+	Acc.TrueZ = Acc.Z * MPU9150A_4g;      // g/LSB
+	Gyr.TrueX = Gyr.X * MPU9150G_2000dps; // dps/LSB
+	Gyr.TrueY = Gyr.Y * MPU9150G_2000dps; // dps/LSB
+	Gyr.TrueZ = Gyr.Z * MPU9150G_2000dps; // dps/LSB
+	Mag.TrueX = Mag.X * MPU9150M_1200uT;  // uT/LSB
+	Mag.TrueY = Mag.Y * MPU9150M_1200uT;  // uT/LSB
+	Mag.TrueZ = Mag.Z * MPU9150M_1200uT;  // uT/LSB
+	Temp.TrueT = Temp.T * MPU9150T_85degC; // degC/LSB
 
-		Ellipse[3] = (Mag.X * arm_cos_f32(Mag.EllipseSita) + Mag.Y * arm_sin_f32(Mag.EllipseSita)) / Mag.EllipseB;
-		Ellipse[4] = (-Mag.X * arm_sin_f32(Mag.EllipseSita) + Mag.Y * arm_cos_f32(Mag.EllipseSita)) / Mag.EllipseA;
+	Ellipse[3] = (Mag.X * arm_cos_f32(Mag.EllipseSita) + Mag.Y * arm_sin_f32(Mag.EllipseSita)) / Mag.EllipseB;
+	Ellipse[4] = (-Mag.X * arm_sin_f32(Mag.EllipseSita) + Mag.Y * arm_cos_f32(Mag.EllipseSita)) / Mag.EllipseA;
 
-		AngE.Pitch = toDeg(atan2f(Acc.TrueY, Acc.TrueZ));
-		AngE.Roll  = toDeg(-asinf(Acc.TrueX));
-		AngE.Yaw   = toDeg(atan2f(Ellipse[3], Ellipse[4])) + 180.0f;
+	AngE.Pitch = toDeg(atan2f(Acc.TrueY, Acc.TrueZ));
+	AngE.Roll  = toDeg(-asinf(Acc.TrueX));
+	AngE.Yaw   = toDeg(atan2f(Ellipse[3], Ellipse[4])) + 180.0f;
 
-		Quaternion_ToNumQ(&NumQ, &AngE);
-		vTaskDelay(10);
-		vTaskResume(FlightControl_Handle);
+	Quaternion_ToNumQ(&NumQ, &AngE);
+	vTaskDelay(10);
+	vTaskResume(FlightControl_Handle);
 
-		
+
 }
 
 void FlightControl_Task()
@@ -347,7 +347,7 @@ void FlightControl_Task()
 		Final_M3 = Thr - Pitch + Roll - Yaw;
 		Final_M4 = Thr - Pitch - Roll + Yaw;
 
-			/* Check Connection */
+		/* Check Connection */
 #define NoSignal 1  // 1 sec
 
 		if (safety == 1) {
@@ -391,9 +391,9 @@ void StatusReport_Task()
 
 void check_task()
 {
-	while( remote_signal_check() == NO_SIGNAL);
+	while (remote_signal_check() == NO_SIGNAL);
 
-	vTaskResume( correction_task_handle );
+	vTaskResume(correction_task_handle);
 }
 int main(void)
 {
@@ -404,31 +404,31 @@ int main(void)
 	test_printf();
 	PRINT_DEBUG(555);
 
-	
 
-	vSemaphoreCreateBinary( TIM2_Semaphore );
-	vSemaphoreCreateBinary( TIM4_Semaphore );
+
+	vSemaphoreCreateBinary(TIM2_Semaphore);
+	vSemaphoreCreateBinary(TIM4_Semaphore);
 	xTaskCreate(check_task,
-		(signed portCHAR *) "Initial checking",
-		512, NULL,
-		tskIDLE_PRIORITY + 5, NULL);
+		    (signed portCHAR *) "Initial checking",
+		    512, NULL,
+		    tskIDLE_PRIORITY + 5, NULL);
 	xTaskCreate(correction_task,
-		(signed portCHAR *) "Initial checking",
-		4096, NULL,
-		tskIDLE_PRIORITY + 5, &correction_task_handle);
+		    (signed portCHAR *) "Initial checking",
+		    4096, NULL,
+		    tskIDLE_PRIORITY + 5, &correction_task_handle);
 
 	xTaskCreate(StatusReport_Task,
-		(signed portCHAR *) "Status report",
-		512, NULL,
-		tskIDLE_PRIORITY + 5, NULL);
+		    (signed portCHAR *) "Status report",
+		    512, NULL,
+		    tskIDLE_PRIORITY + 5, NULL);
 
 	xTaskCreate(FlightControl_Task,
 		    (signed portCHAR *) "Flight control",
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, &FlightControl_Handle);
 
-	vTaskSuspend( FlightControl_Handle );
-	vTaskSuspend( correction_task_handle );
+	vTaskSuspend(FlightControl_Handle);
+	vTaskSuspend(correction_task_handle);
 	vTaskStartScheduler();
 
 
