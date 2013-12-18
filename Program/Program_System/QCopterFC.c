@@ -125,9 +125,11 @@ void system_init(void)
 	LED_G = 1;
 	LED_B = 1;
 
+	test_printf();
 	System_Status = SYSTEM_INITIALIZED;
 
-	while(1);
+	vTaskDelete(NULL);
+
 }
 
 vs16 Tmp_PID_KP;
@@ -253,7 +255,7 @@ void correction_task()
 void flightControl_task()
 {
 	//Waiting for system finish initialize
-	while(System_Status = SYSTEM_UNINITIALIZED);
+	while(System_Status == SYSTEM_UNINITIALIZED);
 
 	while (1) {
 		LED_B = ~LED_B; //task indicator
@@ -391,7 +393,7 @@ void flightControl_task()
 void statusReport_task()
 {
 	//Waiting for system finish initialize
-	while(System_Status = SYSTEM_UNINITIALIZED);
+	while(System_Status == SYSTEM_UNINITIALIZED);
 
 	while (1) {
 
@@ -414,7 +416,7 @@ void statusReport_task()
 void check_task()
 {
 	//Waiting for system finish initialize
-	while(System_Status = SYSTEM_UNINITIALIZED);
+	while(System_Status == SYSTEM_UNINITIALIZED);
 	while (remote_signal_check() == NO_SIGNAL);
 	vTaskResume(correction_task_handle);
 	vTaskDelete(NULL);
@@ -425,8 +427,8 @@ int main(void)
 
 	/* System Init */
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
-	test_printf();
-	PRINT_DEBUG(555);
+	//
+	//PRINT_DEBUG(555);
 
 
 
@@ -454,12 +456,10 @@ int main(void)
 	xTaskCreate(system_init,
 		(signed portCHAR *) "System Initialiation",
 		512, NULL,
-		tskIDLE_PRIORITY + 9, FlightControl_Handle);
+		tskIDLE_PRIORITY + 9, NULL);
 
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
-	vTaskStartScheduler();
-
 	vTaskStartScheduler();
 
 	return 0;
