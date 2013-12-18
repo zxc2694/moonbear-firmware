@@ -415,7 +415,7 @@ int main(void)
 	xTaskCreate(correction_task,
 		(signed portCHAR *) "Initial checking",
 		4096, NULL,
-		tskIDLE_PRIORITY + 5, correction_task_handle);
+		tskIDLE_PRIORITY + 5, &correction_task_handle);
 
 	xTaskCreate(StatusReport_Task,
 		(signed portCHAR *) "Status report",
@@ -425,7 +425,7 @@ int main(void)
 	xTaskCreate(FlightControl_Task,
 		    (signed portCHAR *) "Flight control",
 		    4096, NULL,
-		    tskIDLE_PRIORITY + 9, FlightControl_Handle);
+		    tskIDLE_PRIORITY + 9, &FlightControl_Handle);
 
 	vTaskSuspend( FlightControl_Handle );
 
