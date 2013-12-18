@@ -210,6 +210,7 @@ char getch_base()
 
 void putch_base(char str)
 {
+    while (USART_GetFlagStatus(USART3, USART_FLAG_TC) == RESET);
     USART_SendData(USART3, (uint16_t)str);
     while (USART_GetFlagStatus(USART3, USART_FLAG_TC) == RESET);
 }
