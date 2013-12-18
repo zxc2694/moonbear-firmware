@@ -24,6 +24,8 @@ void RS232_RecvStr(USART_TypeDef *USARTx, char *pWord);
 void RS232_RecvData(USART_TypeDef *USARTx, u8 *RecvData, u16 DataLen);
 void RS232_VisualScope(USART_TypeDef *, u8 *, u16);
 int printf(const char *format, ...);
+int puts(const char* msg);
+
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 #endif
