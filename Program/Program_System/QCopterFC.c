@@ -230,6 +230,7 @@ void correction_task()
 	Quaternion_ToNumQ(&NumQ, &AngE);
 	vTaskDelay(10);
 	vTaskResume(FlightControl_Handle);
+	vTaskDelete(NULL);
 
 
 }
@@ -394,6 +395,7 @@ void check_task()
 	while (remote_signal_check() == NO_SIGNAL);
 
 	vTaskResume(correction_task_handle);
+	vTaskDelete(NULL);
 }
 int main(void)
 {
