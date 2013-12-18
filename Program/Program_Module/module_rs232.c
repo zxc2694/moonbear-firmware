@@ -504,5 +504,6 @@ int printf(const char *format, ...)
 	}
 
 	va_end(para);
-	return RS232_SendData(USART3, str, strlen(str));
+	puts(str);
+	return 1;
 }
