@@ -29,6 +29,7 @@
 #include "sys_manager.h"
 xSemaphoreHandle TIM2_Semaphore = NULL;
 xSemaphoreHandle TIM4_Semaphore = NULL;
+xTaskHandle FlightControl_Handle = NULL;
 /*=====================================================================================================*/
 #define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
 /*=====================================================================================================*/
@@ -424,6 +425,13 @@ void StatusReport_Task()
 }
 
 /*=====================================================================================================*/
+
+void check_task()
+{
+	while( remote_signal_check() == NO_SIGNAL);
+	while (SensorMode != Mode_Algorithm);
+	vTaskResume( FlightControl_Handle );
+}
 int main(void)
 {
 
@@ -437,17 +445,26 @@ int main(void)
 
 	vSemaphoreCreateBinary( TIM2_Semaphore );
 	vSemaphoreCreateBinary( TIM4_Semaphore );
+	xTaskCreate(check_task,
+		(signed portCHAR *) "Initial checking",
+		512, NULL,
+		tskIDLE_PRIORITY + 5, NULL);
+
 	xTaskCreate(StatusReport_Task,
-		    (signed portCHAR *) "Status report",
-		    512, NULL,
-		    tskIDLE_PRIORITY + 5, NULL);
+		(signed portCHAR *) "Status report",
+		512, NULL,
+		tskIDLE_PRIORITY + 5, NULL);
 
 	xTaskCreate(FlightControl_Task,
 		    (signed portCHAR *) "Flight control",
-		    512, NULL,
-		    tskIDLE_PRIORITY + 10, NULL);
+		    4096, NULL,
+		    tskIDLE_PRIORITY + 9, FlightControl_Handle);
+
+	vTaskSuspend( FlightControl_Handle );
 
 	vTaskStartScheduler();
+
+
 
 	return 0;
 }
