@@ -63,8 +63,12 @@ int main(void)
 
 	/* System Init */
 	System_Init();
+
+	/* test function */
 	test_printf();
+	test_puts();
 	PRINT_DEBUG(555);
+
 	/* Throttle Config */
 	if (KEY == 1) {
 		LED_B = 0;
