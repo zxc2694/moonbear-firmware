@@ -122,6 +122,7 @@ Sensor_Mode SensorMode = Mode_GyrCorrect;
 void FlightControl_Task()
 {
 	while (1) {
+		LED_B = ~LED_B; //task indicator
 		u8 IMU_Buf[20] = {0};
 
 		u16 Final_M1 = 0;
