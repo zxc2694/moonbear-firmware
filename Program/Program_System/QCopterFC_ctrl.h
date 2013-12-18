@@ -23,22 +23,23 @@
 #define MAX_PWM5_INPUT 4145.0
 #define MIN_PWM5_INPUT 1931.0
 
-#define MAX_CTRL_ROLL 90
-#define MIN_CTRL_ROLL -90
+#define MAX_CTRL_ROLL 80
+#define MIN_CTRL_ROLL -80
 
-#define MAX_CTRL_PITCH 90
-#define MIN_CTRL_PITCH -90
+#define MAX_CTRL_PITCH 80
+#define MIN_CTRL_PITCH -80
 
-#define MAX_CTRL_YAW 90
-#define MIN_CTRL_YAW -90
-typedef enum RC_State{
+#define MAX_CTRL_YAW 180
+#define MIN_CTRL_YAW -180
+typedef enum RC_State {
 	GET_SIGNAL = 0x00,
 	NO_SIGNAL = 0x01
-}RC_State;
+} RC_State;
 
 
 /*=====================================================================================================*/
-void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *Thr, uint8_t *safety); 
+void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *Thr, uint8_t *safety);
+RC_State remote_signal_check();
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 extern vs16 PWM_M1;
