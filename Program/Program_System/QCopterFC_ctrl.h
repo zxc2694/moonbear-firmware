@@ -31,14 +31,14 @@
 
 #define MAX_CTRL_YAW 180
 #define MIN_CTRL_YAW -180
-typedef enum RC_State{
+typedef enum RC_State {
 	GET_SIGNAL = 0x00,
 	NO_SIGNAL = 0x01
-}RC_State;
+} RC_State;
 
 
 /*=====================================================================================================*/
-void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *Thr, uint8_t *safety); 
+void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *Thr, uint8_t *safety);
 RC_State remote_signal_check();
 /*=====================================================================================================*/
 /*=====================================================================================================*/

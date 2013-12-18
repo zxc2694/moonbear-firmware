@@ -40,29 +40,29 @@ void TIM2_IRQHandler(void)
 		TIM_ClearITPendingBit(TIM2, TIM_IT_CC1);
 
 		if (pwm3_is_rising) {
-		 	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
-		 	TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
+			TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
+			TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
 
-		 	/* Get the Input Capture value */
-		 	pwm3_previous_value = TIM_GetCapture1(TIM2);
-		 	pwm3_is_rising = 0;
+			/* Get the Input Capture value */
+			pwm3_previous_value = TIM_GetCapture1(TIM2);
+			pwm3_is_rising = 0;
 
-		 } else {
-		 	TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
-		 	TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
+		} else {
+			TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
+			TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
 
-		 	//Get the Input Capture value 
-		 	current[0] =  TIM_GetCapture1(TIM2);
+			//Get the Input Capture value
+			current[0] =  TIM_GetCapture1(TIM2);
 
-		 	if (current[0] > pwm3_previous_value)
-		 		global_var[PWM3_CCR].param =  current[0] - pwm3_previous_value;
-		 	else if (current[0] < pwm3_previous_value)
-		 		global_var[PWM3_CCR].param = 0xFFFF - pwm3_previous_value + current[0] ;
+			if (current[0] > pwm3_previous_value)
+				global_var[PWM3_CCR].param =  current[0] - pwm3_previous_value;
+			else if (current[0] < pwm3_previous_value)
+				global_var[PWM3_CCR].param = 0xFFFF - pwm3_previous_value + current[0] ;
 
-		 	pwm3_is_rising = 1;
-		 }
+			pwm3_is_rising = 1;
+		}
 
-		 TIM_ICInit(TIM2, &TIM_ICInitStructure);
+		TIM_ICInit(TIM2, &TIM_ICInitStructure);
 
 	}
 
