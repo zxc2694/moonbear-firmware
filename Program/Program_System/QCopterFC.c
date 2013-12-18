@@ -27,9 +27,19 @@
 #include "algorithm_quaternion.h"
 
 #include "sys_manager.h"
+
 xSemaphoreHandle TIM2_Semaphore = NULL;
 xSemaphoreHandle TIM4_Semaphore = NULL;
 xTaskHandle FlightControl_Handle = NULL;
+
+
+enum SYSTEM_STATUS {
+	SYSTEM_UNINITIALIZED,
+	SYSTEM_INITIALIZED
+};
+
+int System_Status = SYSTEM_UNINITIALIZED;
+
 /*=====================================================================================================*/
 #define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
 /*=====================================================================================================*/
@@ -46,7 +56,8 @@ void vApplicationIdleHook(void)
 {
 
 }
-void System_Init(void)
+
+void system_init(void)
 {
 	SystemInit();
 	LED_Config();
@@ -112,6 +123,9 @@ void System_Init(void)
 	LED_G = 1;
 	LED_B = 1;
 
+	System_Status = SYSTEM_INITIALIZED;
+
+	while(1);
 }
 
 vs16 Tmp_PID_KP;
@@ -121,8 +135,11 @@ vs16 Tmp_PID_Pitch;
 
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 
-void FlightControl_Task()
+void flightControl_task()
 {
+	//Waiting for system finish initialize
+	while(System_Status = SYSTEM_UNINITIALIZED);
+
 	while (1) {
 		LED_B = ~LED_B; //task indicator
 		u8 IMU_Buf[20] = {0};
@@ -406,8 +423,11 @@ void FlightControl_Task()
 }
 
 
-void StatusReport_Task()
+void statusReport_task()
 {
+	//Waiting for system finish initialize
+	while(System_Status = SYSTEM_UNINITIALIZED);
+
 	while (1) {
 
 
@@ -428,6 +448,9 @@ void StatusReport_Task()
 
 void check_task()
 {
+	//Waiting for system finish initialize
+	while(System_Status = SYSTEM_UNINITIALIZED);
+
 	while( remote_signal_check() == NO_SIGNAL);
 	while (SensorMode != Mode_Algorithm);
 	vTaskResume( FlightControl_Handle );
@@ -437,11 +460,9 @@ int main(void)
 
 	/* System Init */
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
-	System_Init();
 	test_printf();
 	PRINT_DEBUG(555);
 
-	
 
 	vSemaphoreCreateBinary( TIM2_Semaphore );
 	vSemaphoreCreateBinary( TIM4_Semaphore );
@@ -450,21 +471,24 @@ int main(void)
 		512, NULL,
 		tskIDLE_PRIORITY + 5, NULL);
 
-	xTaskCreate(StatusReport_Task,
+	xTaskCreate(statusReport_task,
 		(signed portCHAR *) "Status report",
 		512, NULL,
 		tskIDLE_PRIORITY + 5, NULL);
 
-	xTaskCreate(FlightControl_Task,
+	xTaskCreate(flightControl_task,
 		    (signed portCHAR *) "Flight control",
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, FlightControl_Handle);
 
-	vTaskSuspend( FlightControl_Handle );
+	xTaskCreate(system_init,
+		(signed portCHAR *) "System Initialiation",
+		512, NULL,
+		tskIDLE_PRIORITY + 9, FlightControl_Handle);
+
+	vTaskSuspend(FlightControl_Handle);
 
 	vTaskStartScheduler();
-
-
 
 	return 0;
 }
