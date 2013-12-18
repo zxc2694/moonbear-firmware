@@ -393,7 +393,7 @@ void check_task()
 {
 	while( remote_signal_check() == NO_SIGNAL);
 
-	vTaskResume( FlightControl_Handle );
+	vTaskResume( correction_task_handle );
 }
 int main(void)
 {
@@ -428,7 +428,7 @@ int main(void)
 		    tskIDLE_PRIORITY + 9, &FlightControl_Handle);
 
 	vTaskSuspend( FlightControl_Handle );
-
+	vTaskSuspend( correction_task_handle );
 	vTaskStartScheduler();
 
 
