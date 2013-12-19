@@ -33,8 +33,11 @@ void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *
 	if( (global_var[PWM1_CCR].param > MIN_PWM_INPUT) &&
 		(global_var[PWM1_CCR].param < MAX_PWM_INPUT) ){
 
-		*Roll = (MAX_CTRL_ROLL - MIN_CTRL_ROLL) / (MAX_PWM1_INPUT - MIN_PWM1_INPUT) * 
-			(global_var[PWM1_CCR].param - MIN_PWM1_INPUT) +  MIN_CTRL_ROLL;
+		//*Roll = (MAX_CTRL_ROLL - MIN_CTRL_ROLL) / (MAX_PWM1_INPUT - MIN_PWM1_INPUT) * 
+		//	(global_var[PWM1_CCR].param - MIN_PWM1_INPUT) +  MIN_CTRL_ROLL;
+		
+		*Roll = MAX_CTRL_ROLL/(MAX_PWM1_INPUT - MID_PWM1_INPUT) * 
+			(global_var[PWM1_CCR].param - MID_PWM1_INPUT) ;
 
 
 	}
@@ -42,16 +45,22 @@ void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *
 	if( (global_var[PWM2_CCR].param > MIN_PWM_INPUT) &&
 		(global_var[PWM2_CCR].param < MAX_PWM_INPUT) ){
 
-		*Pitch = (MAX_CTRL_PITCH - MIN_CTRL_PITCH) / (MAX_PWM2_INPUT - MIN_PWM2_INPUT) * 
-			(global_var[PWM2_CCR].param - MIN_PWM2_INPUT) + MIN_CTRL_PITCH;
+		//*Pitch = (MAX_CTRL_PITCH - MIN_CTRL_PITCH) / (MAX_PWM2_INPUT - MIN_PWM2_INPUT) * 
+		//	(global_var[PWM2_CCR].param - MIN_PWM2_INPUT) + MIN_CTRL_PITCH;
+
+		*Pitch = MAX_CTRL_PITCH/(MAX_PWM2_INPUT - MID_PWM2_INPUT) * 
+			(global_var[PWM2_CCR].param - MID_PWM2_INPUT) ;
 
 	}
 	/*Get PWM4 Input capture to control yaw*/
 	if( (global_var[PWM4_CCR].param > MIN_PWM_INPUT) &&
 		(global_var[PWM4_CCR].param < MAX_PWM_INPUT) ){	
 
-		*Yaw = (MAX_CTRL_YAW- MIN_CTRL_YAW) / (MAX_PWM4_INPUT - MIN_PWM4_INPUT) * 
-			(global_var[PWM4_CCR].param - MIN_PWM4_INPUT) + MIN_CTRL_YAW;
+		//*Yaw = (MAX_CTRL_YAW- MIN_CTRL_YAW) / (MAX_PWM4_INPUT - MIN_PWM4_INPUT) * 
+		//	(global_var[PWM4_CCR].param - MIN_PWM4_INPUT) + MIN_CTRL_YAW;
+
+		*Yaw = MAX_CTRL_YAW/(MAX_PWM4_INPUT - MID_PWM4_INPUT) * 
+			(global_var[PWM4_CCR].param - MID_PWM4_INPUT) ;
 
 	}
 	/*Get PWM5 Input capture to set safety switch*/
