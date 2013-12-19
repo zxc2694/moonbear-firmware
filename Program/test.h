@@ -7,4 +7,6 @@ void test_printf(void);
 void test_puts(void);
 void test_TXRX(void);
 void test_nRF(void);
+void test_Xbee(void);
+void test_gets(void);
 #endif
