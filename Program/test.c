@@ -1,5 +1,4 @@
 #include "stm32f4_system.h"
-#include "stm32f4_usart.h"
 #include "module_rs232.h"
 #include "module_nrf24l01.h"
 #include "algorithm_string.h"
@@ -76,7 +75,7 @@ void test_Xbee(void)
 	printf("Test Xbee .....\n\r");
 
 	while (1) {
-		x = USART_RecvByte(USART3);
+		x = getch_base();
 		printf("%c\n\r", x);
 	}
 }
