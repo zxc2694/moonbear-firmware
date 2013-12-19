@@ -7,16 +7,14 @@
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 typedef struct {
-    uint16_t (*getch) ();		 //If declare as getc will cause naming conflict
+    char (*getch) ();		 //If declare as getc will cause naming conflict
     void (*putch) (char str); 	 //If declare as putc will cause naming conflict
 } serial_ops;
 
-typedef struct{
-	char str;
-} serial_msg;
 
 void RS232_Config(void);
 void putch_base(char str);
+char getch_base(void);
 int printf(const char *format, ...);
 int puts(const char* msg);
 int gets(void);

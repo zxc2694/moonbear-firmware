@@ -55,10 +55,10 @@ void RS232_Config(void)
 **使用 :
 **=====================================================================================================*/
 /*=====================================================================================================*/
-uint16_t getch_base(void)
+char getch_base(void)
 {  
     while (USART_GetFlagStatus(USART3, USART_FLAG_RXNE) == RESET);
-    return USART_ReceiveData(USART3);
+    return (char)USART_ReceiveData(USART3);
 }
 
 void putch_base(char str)

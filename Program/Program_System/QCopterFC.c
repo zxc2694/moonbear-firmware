@@ -73,13 +73,14 @@ void System_Init(void)
 	PID_Yaw.Ki   = +0.0f;
 	PID_Yaw.Kd   = +0.0f;
 
-	Delay_10ms(200);
+	Delay_10ms(2);
 
 	u8 Sta = ERROR;
 	FSM_Mode FSM_State = FSM_Rx;
 
 	test_printf();
 	test_puts();
+	test_gets();
 	PRINT_DEBUG(555);
 
 	//while (remote_signal_check() == NO_SIGNAL);

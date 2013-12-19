@@ -90,6 +90,8 @@ void test_Xbee(void)
 
 void test_gets(void)
 {
+	printf("\n\n\r");
+	printf("Please, input the word....\n\r");
 	while(1){
 		gets();
 	}
