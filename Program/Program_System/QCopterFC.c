@@ -94,12 +94,6 @@ int main(void)
 		
 		while (1);
 	}
-	// NVIC_InitTypeDef NVIC_InitStructure;
-	// NVIC_InitStructure.NVIC_IRQChannel = SysTick_IRQn;
-	// NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	// NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	// NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	// NVIC_Init(&NVIC_InitStructure);
 
 	/* Wait Correction */
 	while (SensorMode != Mode_Algorithm);
@@ -110,30 +104,25 @@ int main(void)
 	LED_B = 1;
 
 	while (!KEY) {
-		LED_B = ~LED_B;
-		printf("\x1b[H\x1b[2J");
+
+	LED_B = ~LED_B;
+	printf("\x1b[H\x1b[2J");
+
+
+	printf("Roll = %f,Pitch = %f,Yaw = %f \r\n",
+		AngE.Roll, AngE.Pitch, AngE.Yaw);
+	printf("CH1 %f(%f),CH2 %f(%f),CH3 %f(%f),CH4 %f(%f),CH5 %f()\r\n",
+		global_var[PWM1_CCR].param, global_var[RC_EXP_ROLL].param,
+		global_var[PWM2_CCR].param, global_var[RC_EXP_PITCH].param,
+		global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
+		global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
+		global_var[PWM5_CCR].param);
+	printf("PID Roll,%f,PID PITCH,%f,PID YAW,%f\r\n",
+		global_var[PID_ROLL].param,
+		global_var[PID_PITCH].param,
+		global_var[PID_YAW].param);
+	Delay_10ms(50);	
 		
-		Transport_Send(TxBuf[0]);
-		//if ( global_var[NO_RC_SIGNAL_MSG].param == 1 ) {
-
-		//	printf("!WARNING: NO SIGNAL!");
-
-		//} else {
-			printf("Roll = %f,Pitch = %f,Yaw = %f \r\n",
-			       AngE.Roll, AngE.Pitch, AngE.Yaw);
-			printf("CH1 %f(%f),CH2 %f(%f),CH3 %f(%f),CH4 %f(%f),CH5 %f()\r\n",
-			       global_var[PWM1_CCR].param, global_var[RC_EXP_ROLL].param,
-			       global_var[PWM2_CCR].param, global_var[RC_EXP_PITCH].param,
-			       global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
-			       global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
-			       global_var[PWM5_CCR].param);
-			printf("PID Roll,%f,PID PITCH,%f,PID YAW,%f\r\n",
-				global_var[PID_ROLL].param,
-				global_var[PID_PITCH].param,
-				global_var[PID_YAW].param);
-		Delay_10ms(50);	
-		//}
-		//PRINT_DEBUG(global_var[PWM5_CCR].param);
 	}
 
 	LED_B = 1;
