@@ -126,7 +126,11 @@ int main(void)
 			       global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
 			       global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
 			       global_var[PWM5_CCR].param);
-			printf("\r\n");
+			printf("PID Roll,%f,PID PITCH,%f,PID YAW,%f\r\n",
+				global_var[PID_ROLL].param,
+				global_var[PID_PITCH].param,
+				global_var[PID_YAW].param);
+			printf("\x1b[H\x1b[2J");
 		//}
 		//PRINT_DEBUG(global_var[PWM5_CCR].param);
 	}

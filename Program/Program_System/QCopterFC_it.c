@@ -312,6 +312,11 @@ void SysTick_Handler(void)
 		Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ) + 3*(s16)Exp_Yaw;
 		Thr   = (s16)Exp_Thr;
 
+		global_var[PID_ROLL].param = Roll;
+		global_var[PID_PITCH].param = Pitch;
+		global_var[PID_YAW].param = Yaw;
+
+
 		/* Motor Ctrl */
 		Final_M1 = Thr + Pitch - Roll - Yaw;
 		Final_M2 = Thr + Pitch + Roll + Yaw;

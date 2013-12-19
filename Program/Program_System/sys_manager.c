@@ -13,5 +13,8 @@ global_struct global_var[] = {
 	[TRUE_ROLL] = {.param_name ="IMU ROLL", .param = 0},
 	[TRUE_PITCH] = {.param_name ="IMU PITCH", .param = 0},
 	[TRUE_YAW] = {.param_name ="IMU YAW", .param = 0},
-	[NO_RC_SIGNAL_MSG] = {.param_name ="Show current RC control signal status", .param = 0}
+	[NO_RC_SIGNAL_MSG] = {.param_name ="Show current RC control signal status", .param = 0},
+	[PID_ROLL] = {.param_name ="Show current PID ROLL output", .param = 0},
+	[PID_PITCH] = {.param_name ="Show current PID PITCHoutput", .param = 0},
+	[PID_YAW] = {.param_name ="Show current PID YAWoutput", .param = 0},
 };
