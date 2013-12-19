@@ -17,4 +17,9 @@ global_struct global_var[] = {
 	[PID_ROLL] = {.param_name ="Show current PID ROLL output", .param = 0},
 	[PID_PITCH] = {.param_name ="Show current PID PITCHoutput", .param = 0},
 	[PID_YAW] = {.param_name ="Show current PID YAWoutput", .param = 0},
+	[MOTOR1] = {.param_name ="Show current Motor 1 CCR", .param = 0},
+	[MOTOR2] = {.param_name ="Show current Motor 2 CCR", .param = 0},
+	[MOTOR3] = {.param_name ="Show current Motor 3 CCR", .param = 0},
+	[MOTOR4] = {.param_name ="Show current Motor 4 CCR", .param = 0}
+
 };

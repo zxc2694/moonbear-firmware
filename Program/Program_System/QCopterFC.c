@@ -121,7 +121,12 @@ int main(void)
 		global_var[PID_ROLL].param,
 		global_var[PID_PITCH].param,
 		global_var[PID_YAW].param);
-	Delay_10ms(50);	
+	printf("MOTOR 1,%f,MOTOR 2,%f,MOTOR 3,%f,MOTOR 4,%f",
+		global_var[MOTOR1].param,
+		global_var[MOTOR2].param,
+		global_var[MOTOR3].param,
+		global_var[MOTOR4].param);
+	Delay_10ms(20);	
 		
 	}
 

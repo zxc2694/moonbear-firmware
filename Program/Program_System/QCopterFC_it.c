@@ -323,6 +323,10 @@ void SysTick_Handler(void)
 		Final_M3 = Thr - Pitch + Roll - Yaw;
 		Final_M4 = Thr - Pitch - Roll + Yaw;
 
+		global_var[MOTOR1].param = Final_M1;
+		global_var[MOTOR2].param = Final_M2;
+		global_var[MOTOR3].param = Final_M3;
+		global_var[MOTOR4].param = Final_M4;
 		/* Check Connection */
 #define NoSignal 1  // 1 sec
 		if ( safety == 1 ){
