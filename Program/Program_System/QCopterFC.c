@@ -111,7 +111,8 @@ int main(void)
 
 	while (!KEY) {
 		LED_B = ~LED_B;
-		Delay_10ms(10);
+		printf("\x1b[H\x1b[2J");
+		
 		Transport_Send(TxBuf[0]);
 		//if ( global_var[NO_RC_SIGNAL_MSG].param == 1 ) {
 
@@ -130,7 +131,7 @@ int main(void)
 				global_var[PID_ROLL].param,
 				global_var[PID_PITCH].param,
 				global_var[PID_YAW].param);
-			printf("\x1b[H\x1b[2J");
+		Delay_10ms(50);	
 		//}
 		//PRINT_DEBUG(global_var[PWM5_CCR].param);
 	}
