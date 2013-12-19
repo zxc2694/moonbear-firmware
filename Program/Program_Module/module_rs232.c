@@ -201,11 +201,10 @@ void RS232_VisualScope(USART_TypeDef *USARTx, u8 *pWord, u16 Len)
 **使用 :
 **=====================================================================================================*/
 /*=====================================================================================================*/
-char getch_base()
-{
-    char str;
-    RS232_RecvData(USART3, str, strlen(str));
-    return str;
+uint16_t getch_base(void)
+{  
+    while (USART_GetFlagStatus(USART3, USART_FLAG_RXNE) == RESET);
+    return USART_ReceiveData(USART3);
 }
 
 void putch_base(char str)
