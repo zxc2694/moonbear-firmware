@@ -80,6 +80,7 @@ void System_Init(void)
 
 	test_printf();
 	test_puts();
+	Shell();
 	test_gets();
 	PRINT_DEBUG(555);
 
