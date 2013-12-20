@@ -8,6 +8,7 @@
 #include "algorithm_pid.h"
 #include "sys_manager.h"
 #include "QCopterFC_ctrl.h"
+#include "std.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 vs16 PWM_M1 = PWM_MOTOR_MIN;
@@ -68,6 +69,11 @@ void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *
 		*safety = 1;
 	else
 		*safety = 0;
+
+	Bound(*Roll, MIN_CTRL_ROLL, MAX_CTRL_ROLL);
+	Bound(*Pitch, MIN_CTRL_PITCH, MAX_CTRL_PITCH);
+	Bound(*Yaw, MIN_CTRL_YAW, MAX_CTRL_YAW);
+	Bound(*Thr, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
 
 
 }
