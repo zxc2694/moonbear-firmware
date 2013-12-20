@@ -317,21 +317,24 @@ void SysTick_Handler(void)
 		global_var[PID_PITCH].param = Pitch;
 		global_var[PID_YAW].param = Yaw;
 
+
 		/* Motor Ctrl */
 		Final_M1 = Thr + Pitch - Roll - Yaw;
 		Final_M2 = Thr + Pitch + Roll + Yaw;
 		Final_M3 = Thr - Pitch + Roll - Yaw;
 		Final_M4 = Thr - Pitch - Roll + Yaw;
+		
+		global_var[MOTOR1].param = Final_M1;
+		global_var[MOTOR2].param = Final_M2;
+		global_var[MOTOR3].param = Final_M3;
+		global_var[MOTOR4].param = Final_M4;
 
 		Bound(Final_M1, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
 		Bound(Final_M2, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
 		Bound(Final_M3, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
 		Bound(Final_M4, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
 
-		global_var[MOTOR1].param = Final_M1;
-		global_var[MOTOR2].param = Final_M2;
-		global_var[MOTOR3].param = Final_M3;
-		global_var[MOTOR4].param = Final_M4;
+
 		/* Check Connection */
 #define NoSignal 1  // 1 sec
 		if ( safety == 1 ){
