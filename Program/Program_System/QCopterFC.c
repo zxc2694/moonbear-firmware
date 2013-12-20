@@ -60,8 +60,7 @@ void vApplicationIdleHook(void)
 }
 
 void system_init(void)
-{
-	SystemInit();
+{	
 	LED_Config();
 	KEY_Config();
 	RS232_Config();
@@ -69,6 +68,7 @@ void system_init(void)
 	PWM_Capture_Config();
 	Sensor_Config();
 	nRF24L01_Config();
+
 
 	PID_Init(&PID_Yaw);
 	PID_Init(&PID_Roll);
@@ -90,11 +90,6 @@ void system_init(void)
 
 	u8 Sta = ERROR;
 
-
-	test_printf();
-	PRINT_DEBUG(555);
-        test_puts();
-	test_gets();
 
 	//while (remote_signal_check() == NO_SIGNAL);
 
@@ -127,9 +122,10 @@ void system_init(void)
 	LED_G = 1;
 	LED_B = 1;
 
-	test_printf();
 	System_Status = SYSTEM_INITIALIZED;
 
+	printf("[System status]Initialized successfully!\n\r");
+	
 	vTaskDelete(NULL);
 }
 
@@ -418,11 +414,20 @@ void check_task()
 {
 	//Waiting for system finish initialize
 	while(System_Status == SYSTEM_UNINITIALIZED);
+
 	while (remote_signal_check() == NO_SIGNAL);
 	vTaskResume(correction_task_handle);
 	vTaskDelete(NULL);
 
 }
+
+void shell_task()
+{
+	while(System_Status == SYSTEM_UNINITIALIZED);
+
+	while(1);
+}
+
 int main(void)
 {
 
@@ -447,6 +452,11 @@ int main(void)
 
 	xTaskCreate(statusReport_task,
 		(signed portCHAR *) "Status report",
+		512, NULL,
+		tskIDLE_PRIORITY + 5, NULL);
+
+	xTaskCreate(shell_task,
+		(signed portCHAR *) "Shell",
 		512, NULL,
 		tskIDLE_PRIORITY + 5, NULL);
 
