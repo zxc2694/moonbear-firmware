@@ -40,17 +40,17 @@ void System_Init(void)
 	PID_Init(&PID_Roll);
 	PID_Init(&PID_Pitch);
 
-	PID_Pitch.Kp = +2.5f;
+	PID_Pitch.Kp = +3.0f;
 	PID_Pitch.Ki = 0;//0.002f;
-	PID_Pitch.Kd = +0.8f;
+	PID_Pitch.Kd = +1.2f;
 
-	PID_Roll.Kp  = +2.5f;
+	PID_Roll.Kp  = +3.0f;
 	PID_Roll.Ki  = 0;//0.002f;
-	PID_Roll.Kd  = 0.8f;
+	PID_Roll.Kd  = 1.2f;
 
 	PID_Yaw.Kp   = +5.0f;
 	PID_Yaw.Ki   = +0.0f;
-	PID_Yaw.Kd   = +5.0f;
+	PID_Yaw.Kd   = +15.0f;
 
 	Delay_10ms(200);
 }
