@@ -48,10 +48,10 @@ void SysTick_Handler(void)
 {
 	u8 IMU_Buf[20] = {0};
 
-	u16 Final_M1 = 0;
-	u16 Final_M2 = 0;
-	u16 Final_M3 = 0;
-	u16 Final_M4 = 0;
+	int16_t Final_M1 = 0;
+	int16_t Final_M2 = 0;
+	int16_t Final_M3 = 0;
+	int16_t Final_M4 = 0;
 
 	s16 Thr = 0, Pitch = 0, Roll = 0, Yaw = 0;
 	s16 Exp_Thr = 0, Exp_Pitch = 0, Exp_Roll = 0, Exp_Yaw = 0;
