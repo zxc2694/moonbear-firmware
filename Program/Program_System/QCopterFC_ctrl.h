@@ -27,11 +27,11 @@
 #define MAX_PWM5_INPUT 4145.0
 #define MIN_PWM5_INPUT 1931.0
 
-#define MAX_CTRL_ROLL 80
-#define MIN_CTRL_ROLL -80
+#define MAX_CTRL_ROLL 45
+#define MIN_CTRL_ROLL -45
 
-#define MAX_CTRL_PITCH 80
-#define MIN_CTRL_PITCH -80
+#define MAX_CTRL_PITCH 45
+#define MIN_CTRL_PITCH -45
 
 #define MAX_CTRL_YAW 180
 #define MIN_CTRL_YAW -180
