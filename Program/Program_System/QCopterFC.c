@@ -33,7 +33,8 @@ xSemaphoreHandle TIM4_Semaphore = NULL;
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
 
-
+#define nrf_not_exist
+#define sensor_not_exist
 
 enum SYSTEM_STATUS {
 	SYSTEM_UNINITIALIZED,
@@ -103,13 +104,18 @@ void system_init(void)
 	LED_B = 1;
 	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
+
+#ifndef nrf_not_exist
 	/* nRF Check */
 	while (Sta == ERROR)
 		Sta = nRF_Check();
+#endif
 
+#ifndef sensor_not_exist
 	/* Sensor Init */
 	if (Sensor_Init() == SUCCESS)
 		LED_G = 0;
+#endif
 
 	Delay_10ms(10);
 
