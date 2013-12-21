@@ -16,7 +16,7 @@ _PROJECTFC_ = ./ProjectFC
 TOOLCHAIN_PATH ?= /usr/local/csl/arm-2012.03/arm-none-eabi
 C_LIB= $(TOOLCHAIN_PATH)/lib/thumb2
 
-CFLAGS=-g -mlittle-endian -mthumb
+CFLAGS=-g -O1 -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
 CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
 CFLAGS+=-ffreestanding -nostdlib -Wall
