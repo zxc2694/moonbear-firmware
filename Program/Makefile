@@ -105,6 +105,9 @@ SRC+=$(FREERTOS_SRC)/croutine.c\
 	$(FREERTOS_SRC)/portable/MemMang/heap_2.c\
 	$(FREERTOS_SRC)/portable/GCC/ARM_$(ARCH)/port.c\
 
+#Self-defined MemMang
+SRC+=./memory.c
+
 #Linenoise source code
 SRC+=./linenoise.c
 
