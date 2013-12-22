@@ -135,7 +135,7 @@ void system_init(void)
 	printf("\x1b[H\x1b[2J");
 
 	/* Show the Initialization message */
-	printf("[System status]Initialized successfully!\n\r");
+	printf("[System status]Initialized successfully!\n\r");	
 	
 	vTaskDelete(NULL);
 }
@@ -336,7 +336,7 @@ void flightControl_task()
 		Mag.Y = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], 64);
 		Mag.Z = (s16)MoveAve_WMA(Mag.Z, MAG_FIFO[2], 64);
 
-		/* To Physical */
+	/* To Physical */
 		Acc.TrueX = Acc.X * MPU9150A_4g;      // g/LSB
 		Acc.TrueY = Acc.Y * MPU9150A_4g;      // g/LSB
 		Acc.TrueZ = Acc.Z * MPU9150A_4g;      // g/LSB
@@ -403,7 +403,6 @@ void statusReport_task()
 	//Waiting for system finish initialize
 	while(System_Status == SYSTEM_UNINITIALIZED);
 
-
 	while (1) {
 		printf("Roll = %f,Pitch = %f,Yaw = %f \r\n",
 		       AngE.Roll, AngE.Pitch, AngE.Yaw);
@@ -436,7 +435,12 @@ void shell_task()
 {
 	while(System_Status == SYSTEM_UNINITIALIZED);
 
-	while(1);
+	char *shell_str;
+
+	putstr("Please type \"help\" to get more informations\n\r");
+	while(1) {
+		shell_str = linenoise("User > ");
+	}
 }
 
 int main(void)
