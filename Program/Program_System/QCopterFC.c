@@ -131,6 +131,10 @@ void system_init(void)
 
 	System_Status = SYSTEM_INITIALIZED;
 
+	/* Clear the screen */
+	printf("\x1b[H\x1b[2J");
+
+	/* Show the Initialization message */
 	printf("[System status]Initialized successfully!\n\r");
 	
 	vTaskDelete(NULL);

@@ -11,13 +11,14 @@ typedef struct {
     void (*putch) (char str); 	 //If declare as putc will cause naming conflict
 } serial_ops;
 
+extern serial_ops serial;
 
 void RS232_Config(void);
 void putch_base(char str);
 char getch_base(void);
 int printf(const char *format, ...);
-int puts(const char* msg);
-int gets(void);
+int putstr(const char* msg);  //If declare as puts will cause naming conflict
+int getstr(void);             //If declare as puts will cause naming conflict
 
 
 /*=====================================================================================================*/
