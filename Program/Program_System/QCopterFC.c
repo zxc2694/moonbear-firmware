@@ -33,8 +33,9 @@ xSemaphoreHandle TIM4_Semaphore = NULL;
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
 
-#define nrf_not_exist
-#define sensor_not_exist
+#define NRF_NOT_EXIST
+#define SENSOR_NOT_EXIST
+#define SHELL_IS_EXIST
 
 enum SYSTEM_STATUS {
 	SYSTEM_UNINITIALIZED,
@@ -105,13 +106,13 @@ void system_init(void)
 	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
 
-#ifndef nrf_not_exist
+#ifndef NRF_NOT_EXIST
 	/* nRF Check */
 	while (Sta == ERROR)
 		Sta = nRF_Check();
 #endif
 
-#ifndef sensor_not_exist
+#ifndef SENSOR_NOT_EXIST
 	/* Sensor Init */
 	if (Sensor_Init() == SUCCESS)
 		LED_G = 0;
@@ -455,11 +456,12 @@ int main(void)
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 5, &correction_task_handle);
 
-
+#ifndef SHELL_IS_EXIST
 	xTaskCreate(statusReport_task,
 		(signed portCHAR *) "Status report",
 		512, NULL,
 		tskIDLE_PRIORITY + 5, NULL);
+#endif
 
 	xTaskCreate(shell_task,
 		(signed portCHAR *) "Shell",
