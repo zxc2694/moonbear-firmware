@@ -33,7 +33,9 @@ xSemaphoreHandle TIM4_Semaphore = NULL;
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
 
-
+#define NRF_NOT_EXIST
+#define SENSOR_NOT_EXIST
+#define SHELL_IS_EXIST
 
 enum SYSTEM_STATUS {
 	SYSTEM_UNINITIALIZED,
@@ -60,8 +62,7 @@ void vApplicationIdleHook(void)
 }
 
 void system_init(void)
-{
-	SystemInit();
+{	
 	LED_Config();
 	KEY_Config();
 	RS232_Config();
@@ -69,6 +70,7 @@ void system_init(void)
 	PWM_Capture_Config();
 	Sensor_Config();
 	nRF24L01_Config();
+
 
 	PID_Init(&PID_Yaw);
 	PID_Init(&PID_Roll);
@@ -91,11 +93,6 @@ void system_init(void)
 	u8 Sta = ERROR;
 
 
-	test_printf();
-	PRINT_DEBUG(555);
-        test_puts();
-	test_gets();
-
 	//while (remote_signal_check() == NO_SIGNAL);
 
 	if (KEY == 1) {
@@ -108,13 +105,18 @@ void system_init(void)
 	LED_B = 1;
 	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
+
+#ifndef NRF_NOT_EXIST
 	/* nRF Check */
 	while (Sta == ERROR)
 		Sta = nRF_Check();
+#endif
 
+#ifndef SENSOR_NOT_EXIST
 	/* Sensor Init */
 	if (Sensor_Init() == SUCCESS)
 		LED_G = 0;
+#endif
 
 	Delay_10ms(10);
 
@@ -127,9 +129,14 @@ void system_init(void)
 	LED_G = 1;
 	LED_B = 1;
 
-	test_printf();
 	System_Status = SYSTEM_INITIALIZED;
 
+	/* Clear the screen */
+	printf("\x1b[H\x1b[2J");
+
+	/* Show the Initialization message */
+	printf("[System status]Initialized successfully!\n\r");	
+	
 	vTaskDelete(NULL);
 }
 
@@ -329,7 +336,7 @@ void flightControl_task()
 		Mag.Y = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], 64);
 		Mag.Z = (s16)MoveAve_WMA(Mag.Z, MAG_FIFO[2], 64);
 
-		/* To Physical */
+	/* To Physical */
 		Acc.TrueX = Acc.X * MPU9150A_4g;      // g/LSB
 		Acc.TrueY = Acc.Y * MPU9150A_4g;      // g/LSB
 		Acc.TrueZ = Acc.Z * MPU9150A_4g;      // g/LSB
@@ -396,7 +403,6 @@ void statusReport_task()
 	//Waiting for system finish initialize
 	while(System_Status == SYSTEM_UNINITIALIZED);
 
-
 	while (1) {
 		printf("Roll = %f,Pitch = %f,Yaw = %f \r\n",
 		       AngE.Roll, AngE.Pitch, AngE.Yaw);
@@ -418,11 +424,25 @@ void check_task()
 {
 	//Waiting for system finish initialize
 	while(System_Status == SYSTEM_UNINITIALIZED);
+
 	while (remote_signal_check() == NO_SIGNAL);
 	vTaskResume(correction_task_handle);
 	vTaskDelete(NULL);
 
 }
+
+void shell_task()
+{
+	while(System_Status == SYSTEM_UNINITIALIZED);
+
+	char *shell_str;
+
+	putstr("Please type \"help\" to get more informations\n\r");
+	while(1) {
+		shell_str = linenoise("User > ");
+	}
+}
+
 int main(void)
 {
 
@@ -444,9 +464,15 @@ int main(void)
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 5, &correction_task_handle);
 
-
+#ifndef SHELL_IS_EXIST
 	xTaskCreate(statusReport_task,
 		(signed portCHAR *) "Status report",
+		512, NULL,
+		tskIDLE_PRIORITY + 5, NULL);
+#endif
+
+	xTaskCreate(shell_task,
+		(signed portCHAR *) "Shell",
 		512, NULL,
 		tskIDLE_PRIORITY + 5, NULL);
 
