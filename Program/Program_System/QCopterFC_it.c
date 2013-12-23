@@ -249,3 +249,18 @@ void NMI_Handler(void)
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
+xSemaphoreHandle USART3_wait_sem = NULL;
+
+void USART3_IRQHandler()
+{
+	static signed portBASE_TYPE xHigherPriorityTaskWoken;
+
+	if(USART_GetITStatus(USART3, USART_IT_TXE) != RESET) {
+	} else if (USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) {
+	} else {
+		while(1);
+	}
+
+	if(xHigherPriorityTaskWoken)
+		taskYIELD();
+}
