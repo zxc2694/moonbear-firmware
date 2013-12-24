@@ -6,6 +6,13 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <string.h>
+
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
+
+#include "sys_manager.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*
 **函數 : RS232_Config
@@ -26,7 +33,7 @@ void RS232_Config(void)
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource10, GPIO_AF_USART3);
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource11, GPIO_AF_USART3);
 
-	/* USART1 Tx PB10 */	/* USART1 Rx PB11 */
+	/* USART3 Tx PB10 */	/* USART3 Rx PB11 */
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11;
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
 	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
@@ -56,16 +63,20 @@ void RS232_Config(void)
 **=====================================================================================================*/
 /*=====================================================================================================*/
 char getch_base(void)
-{  
-    while (USART_GetFlagStatus(USART3, USART_FLAG_RXNE) == RESET);
-    return (char)USART_ReceiveData(USART3);
+{
+	serial_msg msg;
+
+	while (!xQueueReceive(serial_rx_queue, &msg, portMAX_DELAY));
+
+	return msg.ch;
 }
 
 void putch_base(char str)
 {
-    while (USART_GetFlagStatus(USART3, USART_FLAG_TC) == RESET);
-    USART_SendData(USART3, (uint16_t)str);
-    while (USART_GetFlagStatus(USART3, USART_FLAG_TC) == RESET);
+	while(!xSemaphoreTake(serial_tx_wait_sem, portMAX_DELAY));
+
+	USART_SendData(USART3, (uint16_t)str);
+	USART_ITConfig(USART3, USART_IT_TXE, ENABLE);
 }
 
 /* Serial read/write callback functions */
@@ -84,7 +95,7 @@ serial_ops serial = {
 /*=====================================================================================================*/
 int getstr(void)
 {   
-        char str ;
+        char str;
 	str = serial.getch();
 	printf("%c",str);
 	return 1;
@@ -98,11 +109,11 @@ int getstr(void)
 **使用 :
 **=====================================================================================================*/
 /*=====================================================================================================*/
-int putstr(const char* msg)
+int putstr(const char *msg)
 {   
-    for(; *msg; msg++)
-    serial.putch(*msg);
-    return 1;
+	for(; *msg; msg++)
+		serial.putch(*msg);
+	return 1;
 }
 
 /*=====================================================================================================*/

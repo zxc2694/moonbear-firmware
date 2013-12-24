@@ -249,14 +249,20 @@ void NMI_Handler(void)
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-xSemaphoreHandle USART3_wait_sem = NULL;
-
 void USART3_IRQHandler()
 {
 	static signed portBASE_TYPE xHigherPriorityTaskWoken;
+	serial_msg rx_msg;
 
 	if(USART_GetITStatus(USART3, USART_IT_TXE) != RESET) {
+		xSemaphoreGiveFromISR(serial_tx_wait_sem, &xHigherPriorityTaskWoken);
+
+		USART_ITConfig(USART3, USART_IT_TXE, DISABLE);
 	} else if (USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) {
+		rx_msg.ch = USART_ReceiveData(USART3);
+
+		if(!xQueueSendToBackFromISR(serial_rx_queue, &rx_msg, &xHigherPriorityTaskWoken))
+			taskYIELD();
 	} else {
 		while(1);
 	}

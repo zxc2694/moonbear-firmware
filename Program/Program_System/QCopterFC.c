@@ -132,10 +132,10 @@ void system_init(void)
 	System_Status = SYSTEM_INITIALIZED;
 
 	/* Clear the screen */
-	printf("\x1b[H\x1b[2J");
+	//putstr("\x1b[H\x1b[2J");
 
 	/* Show the Initialization message */
-	printf("[System status]Initialized successfully!\n\r");	
+	putstr("[System status]Initialized successfully!\n\r");	
 	
 	vTaskDelete(NULL);
 }
@@ -256,8 +256,6 @@ void correction_task()
 	vTaskDelay(10);
 	vTaskResume(FlightControl_Handle);
 	vTaskDelete(NULL);
-
-
 }
 
 void flightControl_task()
@@ -445,24 +443,20 @@ void shell_task()
 
 int main(void)
 {
-
-	/* System Init */
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
-	//
-	//PRINT_DEBUG(555);
-
-
 
 	vSemaphoreCreateBinary(TIM2_Semaphore);
 	vSemaphoreCreateBinary(TIM4_Semaphore);
+	vSemaphoreCreateBinary(serial_tx_wait_sem);
+
 	xTaskCreate(check_task,
-		    (signed portCHAR *) "Initial checking",
-		    512, NULL,
-		    tskIDLE_PRIORITY + 5, NULL);
+		(signed portCHAR *) "Initial checking",
+		512, NULL,
+		tskIDLE_PRIORITY + 5, NULL);
 	xTaskCreate(correction_task,
-		    (signed portCHAR *) "Initial checking",
-		    4096, NULL,
-		    tskIDLE_PRIORITY + 5, &correction_task_handle);
+		(signed portCHAR *) "Initial checking",
+		4096, NULL,
+		tskIDLE_PRIORITY + 5, &correction_task_handle);
 
 #ifndef SHELL_IS_EXIST
 	xTaskCreate(statusReport_task,
@@ -477,9 +471,9 @@ int main(void)
 		tskIDLE_PRIORITY + 5, NULL);
 
 	xTaskCreate(flightControl_task,
-		    (signed portCHAR *) "Flight control",
-		    4096, NULL,
-		    tskIDLE_PRIORITY + 9, &FlightControl_Handle);
+		(signed portCHAR *) "Flight control",
+		4096, NULL,
+		tskIDLE_PRIORITY + 9, &FlightControl_Handle);
 	xTaskCreate(system_init,
 		(signed portCHAR *) "System Initialiation",
 		512, NULL,
