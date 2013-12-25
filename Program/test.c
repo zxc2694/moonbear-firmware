@@ -20,9 +20,6 @@ void test_printf(void)
 	printf("test printf!\n\r");
 	printf("float: 5.04=%f, 0xFFFF = %f, 0xFFFFFFF = %f\n\r", f1, f2, f3);
 	printf("int: -23 = %d, 56 = %d, 0xFFFF = %d\n\r", i1, i2, i3);
-
-	
-
 }
 
 /*=====================================================================================================*
@@ -36,7 +33,7 @@ void test_printf(void)
 void test_puts(void)
 {
 	char str[]="Hello puts.";
-	puts(str);
+	putstr(str);
 }
 
 /*=====================================================================================================*
@@ -49,7 +46,6 @@ void test_puts(void)
 
 void test_Xbee(void)
 {
-	char String[50] ;
 	char x;
 	printf("Test Xbee .....\n\r");
 
@@ -72,6 +68,6 @@ void test_gets(void)
 	printf("\n\n\r");
 	printf("Please, input the word....\n\r");
 	while(1){
-		gets();
+		getstr();
 	}
 }
