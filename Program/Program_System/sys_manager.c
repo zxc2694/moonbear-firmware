@@ -15,3 +15,6 @@ global_struct global_var[] = {
 	[TRUE_YAW] = {.param_name = "IMU YAW", .param = 0},
 	[NO_RC_SIGNAL_MSG] = {.param_name = "Show current RC control signal status", .param = 0}
 };
+
+xSemaphoreHandle serial_tx_wait_sem = NULL;
+xQueueHandle serial_rx_queue = NULL;

@@ -74,6 +74,8 @@ SRC+=./Libraries/CMSIS/system_stm32f4xx.c \
 	$(ST_LIB)/src/stm32f4xx_spi.c\
 	$(ST_LIB)/src/stm32f4xx_i2c.c
 
+#C Standard Lib
+SRC+=./string.c
 
 #Major programs source code
 SRC+=$(PROGRAM_ALG)/algorithm_*.c \
@@ -102,6 +104,12 @@ SRC+=$(FREERTOS_SRC)/croutine.c\
 	$(FREERTOS_SRC)/timers.c\
 	$(FREERTOS_SRC)/portable/MemMang/heap_2.c\
 	$(FREERTOS_SRC)/portable/GCC/ARM_$(ARCH)/port.c\
+
+#Self-defined MemMang
+SRC+=./memory.c
+
+#Linenoise source code
+SRC+=./linenoise.c
 
 #STM32 startup file
 STARTUP=./Libraries/CMSIS/startup_stm32f4xx.s

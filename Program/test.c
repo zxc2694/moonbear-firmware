@@ -1,5 +1,4 @@
 #include "stm32f4_system.h"
-#include "stm32f4_usart.h"
 #include "module_rs232.h"
 #include "module_nrf24l01.h"
 #include "algorithm_string.h"
@@ -21,44 +20,20 @@ void test_printf(void)
 	printf("test printf!\n\r");
 	printf("float: 5.04=%f, 0xFFFF = %f, 0xFFFFFFF = %f\n\r", f1, f2, f3);
 	printf("int: -23 = %d, 56 = %d, 0xFFFF = %d\n\r", i1, i2, i3);
-
-
-
 }
 
 /*=====================================================================================================*
-**函數 : test_txrx
-**功能 :
-**輸入 :
-**輸出 :
-**使用 :
+**函數 : test_puts
+**功能 : 
+**輸入 : 
+**輸出 : 
+**使用 : 
 **=====================================================================================================*/
 
-void test_TXRX(void)
+void test_puts(void)
 {
-
-	RS232_SendStr(USART3, "abcde");
-}
-
-/*=====================================================================================================*
-**函數 : test_txrx
-**功能 :
-**輸入 :
-**輸出 :
-**使用 :
-**=====================================================================================================*/
-
-void test_nRF(void)
-{
-	uint8_t TxBuff[] = "123";
-	printf("Tx mode test...\n\r");
-	nRF_TX_Mode();
-	uint8_t Sta = 0;
-
-	do {
-		printf("Transmit : 123 ");
-		Sta = nRF_Tx_Data("123");
-	} while (Sta == MAX_RT);
+	char str[]="Hello puts.";
+	putstr(str);
 }
 
 /*=====================================================================================================*
@@ -71,12 +46,28 @@ void test_nRF(void)
 
 void test_Xbee(void)
 {
-	char String[50] ;
 	char x;
 	printf("Test Xbee .....\n\r");
 
 	while (1) {
-		x = USART_RecvByte(USART3);
+		x = getch_base();
 		printf("%c\n\r", x);
+	}
+}
+
+/*=====================================================================================================*
+**函數 : test_gets
+**功能 :
+**輸入 :
+**輸出 :
+**使用 :
+**=====================================================================================================*/
+
+void test_gets(void)
+{
+	printf("\n\n\r");
+	printf("Please, input the word....\n\r");
+	while(1){
+		getstr();
 	}
 }

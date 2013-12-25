@@ -33,8 +33,10 @@ static __IO uint8_t pwm2_is_rising = 1;
 static __IO uint8_t pwm3_is_rising = 1;
 static __IO uint8_t pwm4_is_rising = 1;
 static __IO uint8_t pwm5_is_rising = 1;
+
 extern xSemaphoreHandle TIM2_Semaphore ;
 extern xSemaphoreHandle TIM4_Semaphore ;
+
 void TIM2_IRQHandler(void)
 {
 	uint32_t current[3];
@@ -135,8 +137,8 @@ void TIM2_IRQHandler(void)
 
 		TIM_ICInit(TIM2, &TIM_ICInitStructure);
 	}
-
 }
+
 void TIM4_IRQHandler(void)
 {
 	uint16_t current[2];
@@ -204,10 +206,7 @@ void TIM4_IRQHandler(void)
 		}
 
 		TIM_ICInit(TIM4, &TIM_ICInitStructure);
-
-
 	}
-
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
@@ -249,3 +248,24 @@ void NMI_Handler(void)
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
+void USART3_IRQHandler()
+{
+	static signed portBASE_TYPE xHigherPriorityTaskWoken;
+	serial_msg rx_msg;
+
+	if(USART_GetITStatus(USART3, USART_IT_TXE) != RESET) {
+		xSemaphoreGiveFromISR(serial_tx_wait_sem, &xHigherPriorityTaskWoken);
+
+		USART_ITConfig(USART3, USART_IT_TXE, DISABLE);
+	} else if (USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) {
+		rx_msg.ch = USART_ReceiveData(USART3);
+
+		if(!xQueueSendToBackFromISR(serial_rx_queue, &rx_msg, &xHigherPriorityTaskWoken))
+			taskYIELD();
+	} else {
+		while(1);
+	}
+
+	if(xHigherPriorityTaskWoken)
+		taskYIELD();
+}
