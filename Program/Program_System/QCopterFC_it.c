@@ -313,18 +313,11 @@ void SysTick_Handler(void)
 		Bound(Final_M4, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
 
 
-		/* Check Connection */
-#define NoSignal 1  // 1 sec
 		if ( safety == 1 ){
 			Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 		}else{
 			Motor_Control(Final_M1, Final_M2, Final_M3, Final_M4);
 		}
-		/* DeBug */
-		Tmp_PID_KP = PID_Yaw.Kp * 1000;
-		Tmp_PID_KI = PID_Yaw.Ki * 1000;
-		Tmp_PID_KD = PID_Yaw.Kd * 1000;
-		Tmp_PID_Pitch = Yaw;
 
 		break;
 	}
