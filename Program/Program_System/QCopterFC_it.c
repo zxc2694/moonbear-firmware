@@ -5,7 +5,6 @@
 #include "QCopterFC.h"
 #include "QCopterFC_ctrl.h"
 #include "QCopterFC_ahrs.h"
-#include "QCopterFC_transport.h"
 #include "module_board.h"
 #include "module_motor.h"
 #include "module_sensor.h"

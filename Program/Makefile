@@ -65,7 +65,9 @@ SRC+= ./Libraries/CMSIS/system_stm32f4xx.c \
 SRC += $(PROGRAM_ALG)/algorithm_*.c \
 		$(PROGRAM_DIR)/stm32f4_*.c \
 		$(PROGRAM_MOD)/module_*.c \
-		$(PROGRAM_SYS)/QCopterFC_*.c \
+		$(PROGRAM_SYS)/QCopterFC_it.c \
+		$(PROGRAM_SYS)/QCopterFC_ahrs.c \
+		$(PROGRAM_SYS)/QCopterFC_ctrl.c \
 		Program_System/QCopterFC.c \
 		Program_System/sys_manager.c \
 		Libraries/CMSIS/FastMathFunctions/arm_cos_f32.c \
