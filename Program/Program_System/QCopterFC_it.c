@@ -46,28 +46,28 @@ Sensor_Mode SensorMode = Mode_GyrCorrect;
 /*=====================================================================================================*/
 void SysTick_Handler(void)
 {
-	u8 IMU_Buf[20] = {0};
+	uint8_t IMU_Buf[20] = {0};
 
 	int16_t Final_M1 = 0;
 	int16_t Final_M2 = 0;
 	int16_t Final_M3 = 0;
 	int16_t Final_M4 = 0;
 
-	s16 Thr = 0, Pitch = 0, Roll = 0, Yaw = 0;
-	s16 Exp_Thr = 0, Exp_Pitch = 0, Exp_Roll = 0, Exp_Yaw = 0;
+	int16_t Thr = 0, Pitch = 0, Roll = 0, Yaw = 0;
+	int16_t Exp_Thr = 0, Exp_Pitch = 0, Exp_Roll = 0, Exp_Yaw = 0;
 	uint8_t safety = 0;
 	float Ellipse[5] = {0};
 
-	static u8 BaroCnt = 0;
+	static uint8_t BaroCnt = 0;
 
-	static s16 ACC_FIFO[3][256] = {{0}};
-	static s16 GYR_FIFO[3][256] = {{0}};
-	static s16 MAG_FIFO[3][256] = {{0}};
+	static int16_t ACC_FIFO[3][256] = {{0}};
+	static int16_t GYR_FIFO[3][256] = {{0}};
+	static int16_t MAG_FIFO[3][256] = {{0}};
 
-	static s16 MagDataX[8] = {0};
-	static s16 MagDataY[8] = {0};
+	static int16_t MagDataX[8] = {0};
+	static int16_t MagDataY[8] = {0};
 
-	static u32 Correction_Time = 0;
+	static uint32_t Correction_Time = 0;
 
 	/* Time Count */
 	SysTick_Cnt++;
