@@ -58,6 +58,7 @@ void RS232_Config(void)
 	USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
 
 	NVIC_InitStruct.NVIC_IRQChannel = USART3_IRQn;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1;
 	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStruct);
