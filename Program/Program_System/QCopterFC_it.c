@@ -33,8 +33,10 @@ static __IO uint8_t pwm2_is_rising = 1;
 static __IO uint8_t pwm3_is_rising = 1;
 static __IO uint8_t pwm4_is_rising = 1;
 static __IO uint8_t pwm5_is_rising = 1;
+
 extern xSemaphoreHandle TIM2_Semaphore ;
 extern xSemaphoreHandle TIM4_Semaphore ;
+
 void TIM2_IRQHandler(void)
 {
 	uint32_t current[3];

@@ -26,6 +26,7 @@ void RS232_Config(void)
 {
 	GPIO_InitTypeDef GPIO_InitStruct;
 	USART_InitTypeDef USART_InitStruct;
+	NVIC_InitTypeDef NVIC_InitStruct;
 
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,  ENABLE);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
@@ -51,6 +52,13 @@ void RS232_Config(void)
 	USART_Cmd(USART3, ENABLE);
 
 	USART_ClearFlag(USART3, USART_FLAG_TC);
+
+	/* NVIC Settings */
+	NVIC_InitStruct.NVIC_IRQChannel = USART3_IRQn;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0x03;
+	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0x03;
+	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStruct);
 }
 
 /*=====================================================================================================*/
