@@ -18,11 +18,6 @@
 #include "std.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-vu8 Time_Sec = 0;
-vu8 Time_Min = 0;
-vu8 RecvTime_Sec = 0;
-vu8 RecvTime_Min = 0;
-vu16 SysTick_Cnt = 0;
 
 vs16 Tmp_PID_KP;
 vs16 Tmp_PID_KI;
@@ -67,22 +62,6 @@ void SysTick_Handler(void)
 	static int16_t MagDataY[8] = {0};
 
 	static uint32_t Correction_Time = 0;
-
-	/* Time Count */
-	SysTick_Cnt++;
-
-	if (SysTick_Cnt == SampleRateFreg) {
-		SysTick_Cnt = 0;
-		Time_Sec++;
-
-		if (Time_Sec == 60) {	// 0~59
-			Time_Sec = 0;
-			Time_Min++;
-
-			if (Time_Sec == 60)
-				Time_Min = 0;
-		}
-	}
 
 	/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
 	MPU9150_Read(IMU_Buf);
