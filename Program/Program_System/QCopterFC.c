@@ -33,7 +33,6 @@ void System_Init(void)
 	Motor_Config();
 	PWM_Capture_Config();
 	Sensor_Config();
-	nRF24L01_Config();
 
 	PID_Init(&PID_Yaw);
 	PID_Init(&PID_Roll);
@@ -77,9 +76,6 @@ int main(void)
 	LED_B = 1;
 	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
-	/* nRF Check */
-	while (Sta == ERROR)
-		Sta = nRF_Check();
 
 	/* Sensor Init */
 	if (Sensor_Init() == SUCCESS)
@@ -131,40 +127,7 @@ int main(void)
 
 	LED_B = 1;
 
-	/* Final State Machine */
-	while (1) {
-		LED_G = ~LED_G;
 
-		switch (FSM_State) {
-
-		/************************** FSM Tx ****************************************/
-		case FSM_Tx:
-			// FSM_Tx
-			nRF_TX_Mode();
-
-			do {
-				Sta = nRF_Tx_Data(TxBuf[0]);
-			} while (Sta == MAX_RT);
-
-			// FSM_Tx End
-			FSM_State = FSM_Rx;
-			break;
-
-		/************************** FSM Rx ****************************************/
-		case FSM_Rx:
-			// FSM_Rx
-			nRF_RX_Mode();
-			Sta = nRF_Rx_Data(RxBuf[0]);
-
-			if (Sta == RX_DR) {
-				Transport_Recv(RxBuf[0]);
-			}
-
-			// FSM_Rx End
-			FSM_State = FSM_CTRL;
-			break;
-		}
-	}
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
