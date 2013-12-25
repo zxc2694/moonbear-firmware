@@ -137,8 +137,8 @@ void TIM2_IRQHandler(void)
 
 		TIM_ICInit(TIM2, &TIM_ICInitStructure);
 	}
-
 }
+
 void TIM4_IRQHandler(void)
 {
 	uint16_t current[2];
@@ -206,10 +206,7 @@ void TIM4_IRQHandler(void)
 		}
 
 		TIM_ICInit(TIM4, &TIM_ICInitStructure);
-
-
 	}
-
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
