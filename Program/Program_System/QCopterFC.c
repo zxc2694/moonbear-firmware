@@ -134,10 +134,7 @@ void system_init(void)
 	/* Clear the screen */
 	//putstr("\x1b[H\x1b[2J");
 
-	/* Show the Initialization message */
-	putstr("[System status]Initialized successfully!\n\r");	
-	
-	vTaskDelete(NULL);
+
 }
 
 vs16 Tmp_PID_KP;
@@ -400,7 +397,9 @@ void statusReport_task()
 {
 	//Waiting for system finish initialize
 	while(System_Status == SYSTEM_UNINITIALIZED);
-
+		/* Show the Initialization message */
+	printf("[System status]Initialized successfully!\n\r");	
+	
 	while (1) {
 		printf("Roll = %f,Pitch = %f,Yaw = %f \r\n",
 		       AngE.Roll, AngE.Pitch, AngE.Yaw);
@@ -432,7 +431,9 @@ void check_task()
 void shell_task()
 {
 	while(System_Status == SYSTEM_UNINITIALIZED);
-
+	//Waiting for system finish initialize
+	printf("[System status]Initialized successfully!\n\r");	
+	
 	char *shell_str;
 
 	putstr("Please type \"help\" to get more informations\n\r");
@@ -444,12 +445,14 @@ void shell_task()
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+	system_init();
 
 	vSemaphoreCreateBinary(TIM2_Semaphore);
 	vSemaphoreCreateBinary(TIM4_Semaphore);
 	vSemaphoreCreateBinary(serial_tx_wait_sem);
 
 	serial_rx_queue = xQueueCreate(1, sizeof(serial_msg));
+
 #ifndef SHELL_IS_EXIST
 	xTaskCreate(check_task,
 		(signed portCHAR *) "Initial checking",
@@ -477,11 +480,6 @@ int main(void)
 		4096, NULL,
 		tskIDLE_PRIORITY + 9, &FlightControl_Handle);
 #endif
-	xTaskCreate(system_init,
-		(signed portCHAR *) "System Initialiation",
-		512, NULL,
-		tskIDLE_PRIORITY + 9, NULL);
-
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
 	vTaskStartScheduler();
