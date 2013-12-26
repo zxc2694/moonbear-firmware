@@ -36,6 +36,14 @@ static __IO uint8_t pwm3_is_rising = 1;
 static __IO uint8_t pwm4_is_rising = 1;
 static __IO uint8_t pwm5_is_rising = 1;
 
+volatile int16_t ACC_FIFO[3][256] = {{0}};
+volatile int16_t GYR_FIFO[3][256] = {{0}};
+volatile int16_t MAG_FIFO[3][256] = {{0}};
+
+volatile int16_t MagDataX[8] = {0};
+volatile int16_t MagDataY[8] = {0};
+volatile uint32_t Correction_Time = 0;
+
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 /*=====================================================================================================*/
 /*=====================================================================================================*/
@@ -55,14 +63,7 @@ void SysTick_Handler(void)
 
 	static uint8_t BaroCnt = 0;
 
-	static int16_t ACC_FIFO[3][256] = {{0}};
-	static int16_t GYR_FIFO[3][256] = {{0}};
-	static int16_t MAG_FIFO[3][256] = {{0}};
 
-	static int16_t MagDataX[8] = {0};
-	static int16_t MagDataY[8] = {0};
-
-	static uint32_t Correction_Time = 0;
 
 	/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
 	MPU9150_Read(IMU_Buf);
@@ -97,8 +98,7 @@ void SysTick_Handler(void)
 	Mag.Y *= Mag.AdjustY;
 	Mag.Z *= Mag.AdjustZ;
 
-	correct_sensor( ACC_FIFO, GYR_FIFO, MAG_FIFO,
-	&MagDataX[0], &MagDataY[0], Correction_Time );
+	correct_sensor( );
 
 	if ( SensorMode == Mode_Algorithm ){
 

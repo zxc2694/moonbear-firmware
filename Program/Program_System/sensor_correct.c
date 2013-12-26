@@ -20,9 +20,16 @@ extern SensorAcc Acc;
 extern SensorGyr Gyr;
 extern SensorMag Mag;
 extern SensorTemp Temp;
-void correct_sensor(int16_t (*ACC_FIFO)[256], int16_t (*GYR_FIFO)[256], int16_t (*MAG_FIFO)[256],
-	int16_t* MagDataX, int16_t* MagDataY, uint32_t Correction_Time)
 
+extern volatile int16_t ACC_FIFO[3][256];
+extern volatile int16_t GYR_FIFO[3][256];
+extern volatile int16_t MAG_FIFO[3][256];
+
+extern volatile int16_t MagDataX[8];
+extern volatile int16_t MagDataY[8];
+extern volatile uint32_t Correction_Time;
+
+void correct_sensor()
 {
 	float Ellipse[5] = {0};
 	#define MovegAveFIFO_Size 250
