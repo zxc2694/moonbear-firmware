@@ -450,7 +450,7 @@ int main(void)
 	vSemaphoreCreateBinary(serial_tx_wait_sem);
 
 	serial_rx_queue = xQueueCreate(1, sizeof(serial_msg));
-
+#ifndef SHELL_IS_EXIST
 	xTaskCreate(check_task,
 		(signed portCHAR *) "Initial checking",
 		512, NULL,
@@ -460,7 +460,7 @@ int main(void)
 		4096, NULL,
 		tskIDLE_PRIORITY + 5, &correction_task_handle);
 
-#ifndef SHELL_IS_EXIST
+
 	xTaskCreate(statusReport_task,
 		(signed portCHAR *) "Status report",
 		512, NULL,
@@ -471,11 +471,12 @@ int main(void)
 		(signed portCHAR *) "Shell",
 		512, NULL,
 		tskIDLE_PRIORITY + 5, NULL);
-
+#ifndef SHELL_IS_EXIST
 	xTaskCreate(flightControl_task,
 		(signed portCHAR *) "Flight control",
 		4096, NULL,
 		tskIDLE_PRIORITY + 9, &FlightControl_Handle);
+#endif
 	xTaskCreate(system_init,
 		(signed portCHAR *) "System Initialiation",
 		512, NULL,
