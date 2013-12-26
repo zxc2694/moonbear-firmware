@@ -479,9 +479,10 @@ int main(void)
 		(signed portCHAR *) "Flight control",
 		4096, NULL,
 		tskIDLE_PRIORITY + 9, &FlightControl_Handle);
-#endif
+
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
+#endif
 	vTaskStartScheduler();
 
 	return 0;
