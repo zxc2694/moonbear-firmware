@@ -34,7 +34,7 @@ xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
 
 #define NRF_NOT_EXIST
-#define SENSOR_NOT_EXIST
+
 #define SHELL_IS_EXIST
 
 enum SYSTEM_STATUS {
