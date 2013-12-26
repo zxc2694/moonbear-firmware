@@ -449,6 +449,8 @@ int main(void)
 	vSemaphoreCreateBinary(TIM4_Semaphore);
 	vSemaphoreCreateBinary(serial_tx_wait_sem);
 
+	serial_rx_queue = xQueueCreate(1, sizeof(serial_msg));
+
 	xTaskCreate(check_task,
 		(signed portCHAR *) "Initial checking",
 		512, NULL,
