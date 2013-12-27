@@ -11,9 +11,9 @@
 #define CMD_DEF(name) [name ## _ID] = {.str = #name, .func = name}
 
 enum CMD_ID {
-	unknown_command_ID,
-	test_command_ID,
-	CMD_CNT
+        unknown_command_ID,
+        test_ID,
+        CMD_CNT
 };
 
 typedef struct {
@@ -31,12 +31,12 @@ struct command_data {
 
 /* Command correspondence functions */
 void unknown_command(char parameter[][MAX_CMD_LEN], int par_cnt);
-void test_command(char parameter[][MAX_CMD_LEN], int par_cnt);
+void test(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 //First string don't need to store anything for unknown commands
 instr_data id[CMD_CNT] = {
 	CMD_DEF(unknown_command),
-	CMD_DEF(test_command),
+	CMD_DEF(test),
 };
 
 
@@ -101,13 +101,35 @@ void linenoise_completion(const char *buf, linenoiseCompletions *lc) {
 	}
 }
 
+void shell_task()
+{
+        char *shell_str;
+
+        struct command_data cd = {
+                .cmd = id,
+                .par_cnt = 0
+        };
+
+        linenoiseSetCompletionCallback(linenoise_completion);
+
+        /* Clear the screen */
+        printf("\x1b[H\x1b[2J");
+	/* Show the prompt messages */
+        printf("[System status]Initialized successfully!\n\r");
+        printf("Please type \"help\" to get more informations\n\r");
+
+        while(1) {
+                shell_str = linenoise("User > ");
+                commandExec(shell_str, &cd);
+        }
+}
 /**** Customize command function ******************************************************/
 void unknown_command(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
-	putstr("Command not found\n\r");
+	printf("Command not found\n\r");
 }
 
-void test_command(char parameter[][MAX_CMD_LEN], int par_cnt)
+void test(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
-	putstr("Hello World");
+	printf("Hello World\n\r");
 }

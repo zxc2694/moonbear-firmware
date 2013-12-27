@@ -28,6 +28,9 @@
 
 #include "sys_manager.h"
 
+#include "linenoise.h"
+#include "shell.h"
+
 xSemaphoreHandle TIM2_Semaphore = NULL;
 xSemaphoreHandle TIM4_Semaphore = NULL;
 xTaskHandle FlightControl_Handle = NULL;
@@ -120,12 +123,7 @@ void system_init(void)
 	/* Lock */
 	LED_R = 1;
 	LED_G = 1;
-	LED_B = 1;
-	
-	/* Clear the screen */
-	//putstr("\x1b[H\x1b[2J");
-
-
+	LED_B = 1;	
 }
 
 vs16 Tmp_PID_KP;
@@ -406,18 +404,6 @@ void check_task()
 	vTaskResume(correction_task_handle);
 	vTaskDelete(NULL);
 
-}
-
-void shell_task()
-{
-	printf("[System status]Initialized successfully!\n\r");	
-	
-	char *shell_str;
-
-	putstr("Please type \"help\" to get more informations\n\r");
-	while(1) {
-		shell_str = linenoise("User > ");
-	}
 }
 
 int main(void)
