@@ -37,13 +37,6 @@ xTaskHandle correction_task_handle = NULL;
 #define SENSOR_NOT_EXIST
 #define SHELL_IS_EXIST
 
-enum SYSTEM_STATUS {
-	SYSTEM_UNINITIALIZED,
-	SYSTEM_INITIALIZED
-};
-
-int System_Status = SYSTEM_UNINITIALIZED;
-
 /*=====================================================================================================*/
 #define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
 /*=====================================================================================================*/
@@ -128,9 +121,7 @@ void system_init(void)
 	LED_R = 1;
 	LED_G = 1;
 	LED_B = 1;
-
-	System_Status = SYSTEM_INITIALIZED;
-
+	
 	/* Clear the screen */
 	//putstr("\x1b[H\x1b[2J");
 
@@ -257,9 +248,6 @@ void correction_task()
 
 void flightControl_task()
 {
-	//Waiting for system finish initialize
-	while(System_Status == SYSTEM_UNINITIALIZED);
-
 	while (1) {
 		LED_B = ~LED_B; //task indicator
 		u8 IMU_Buf[20] = {0};
@@ -395,11 +383,6 @@ void flightControl_task()
 
 void statusReport_task()
 {
-	//Waiting for system finish initialize
-	while(System_Status == SYSTEM_UNINITIALIZED);
-		/* Show the Initialization message */
-	printf("[System status]Initialized successfully!\n\r");	
-	
 	while (1) {
 		printf("Roll = %f,Pitch = %f,Yaw = %f \r\n",
 		       AngE.Roll, AngE.Pitch, AngE.Yaw);
@@ -419,9 +402,6 @@ void statusReport_task()
 
 void check_task()
 {
-	//Waiting for system finish initialize
-	while(System_Status == SYSTEM_UNINITIALIZED);
-
 	while (remote_signal_check() == NO_SIGNAL);
 	vTaskResume(correction_task_handle);
 	vTaskDelete(NULL);
@@ -430,8 +410,6 @@ void check_task()
 
 void shell_task()
 {
-	while(System_Status == SYSTEM_UNINITIALIZED);
-	//Waiting for system finish initialize
 	printf("[System status]Initialized successfully!\n\r");	
 	
 	char *shell_str;
