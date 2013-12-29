@@ -15,6 +15,7 @@
 
 enum CMD_ID {
         unknown_command_ID,
+	clear_ID,
         monitor_ID,
         CMD_CNT
 };
@@ -34,11 +35,14 @@ struct command_data {
 
 /* Command correspondence functions */
 void unknown_command(char parameter[][MAX_CMD_LEN], int par_cnt);
+void clear(char parameter[][MAX_CMD_LEN], int par_cnt);
 void monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
+
 
 //First string don't need to store anything for unknown commands
 instr_data id[CMD_CNT] = {
 	CMD_DEF(unknown_command),
+	CMD_DEF(clear),
 	CMD_DEF(monitor),
 };
 
@@ -132,6 +136,11 @@ void unknown_command(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("Command not found\n\r");
 }
 
+void clear(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	linenoiseClearScreen();
+}
+
 void monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	/* Clean the screen */
@@ -152,10 +161,11 @@ void monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 	printf("--------------------------------------------------------------\n\r");
 
+	#define MOTOR_STATUS "Off"
 	printf("Radio Control Messages\n\r");
 	printf("Pitch(expect)\t: %d\n\rRoll(expect)\t: %d\n\rYaw(expect)\t: %d\n\r",0 ,0, 0);
 	printf("Throttle\t: %d\n\r", 0);
-	printf("RC Signal\t: %d\n\r", 0);
+	printf("Motor\t: %s\n\r", MOTOR_STATUS);
 
 	printf("--------------------------------------------------------------\n\r");
 
