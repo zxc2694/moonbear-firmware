@@ -8,6 +8,7 @@
 #include "memory.h"
 #include "linenoise.h"  
 
+#include "FreeRTOS.h"
 
 #define LINENOISE_DEFAULT_HISTORY_MAX_LEN 100
 #define LINENOISE_MAX_LINE 256 //4096 is too much to this environment, it will crash!

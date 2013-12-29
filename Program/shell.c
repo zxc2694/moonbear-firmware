@@ -8,11 +8,13 @@
 
 #include "module_rs232.h"
 
+#include "FreeRTOS.h"
+
 #define CMD_DEF(name) [name ## _ID] = {.str = #name, .func = name}
 
 enum CMD_ID {
         unknown_command_ID,
-        test_ID,
+        monitor_ID,
         CMD_CNT
 };
 
@@ -31,12 +33,12 @@ struct command_data {
 
 /* Command correspondence functions */
 void unknown_command(char parameter[][MAX_CMD_LEN], int par_cnt);
-void test(char parameter[][MAX_CMD_LEN], int par_cnt);
+void monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 //First string don't need to store anything for unknown commands
 instr_data id[CMD_CNT] = {
 	CMD_DEF(unknown_command),
-	CMD_DEF(test),
+	CMD_DEF(monitor),
 };
 
 
@@ -129,7 +131,11 @@ void unknown_command(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("Command not found\n\r");
 }
 
-void test(char parameter[][MAX_CMD_LEN], int par_cnt)
+void monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
-	printf("Hello World\n\r");
+        printf("\x1b[H\x1b[2J");
+
+	
 }
+
+
