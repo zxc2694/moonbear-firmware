@@ -131,6 +131,7 @@ void shell_task()
         while(1) {
                 shell_str = linenoise("Quadcopter Shell > ");
                 commandExec(shell_str, &cd);
+		linenoiseHistoryAdd(shell_str);
         }
 }
 /**** Customize command function ******************************************************/
