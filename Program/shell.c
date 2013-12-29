@@ -51,7 +51,7 @@ int completion_disable = 0;
 int history_disable = 0;
 
 /**** Commands  identification ********************************************************/
-static void commandConfig(char *cmd_str, struct command_data *cd)
+static void commandIdentify(char *cmd_str, struct command_data *cd)
 {
 	int i = 0, str_cnt = 0;
 	while(cmd_str[i] != '\0') {
@@ -83,7 +83,7 @@ static void commandConfig(char *cmd_str, struct command_data *cd)
 
 void commandExec(char *cmd_str, struct command_data *cd)
 {
-	commandConfig(cmd_str, cd);
+	commandIdentify(cmd_str, cd);
 
 	int i;
 	for(i = 0; i < CMD_CNT; i++) {
@@ -102,7 +102,7 @@ void linenoise_completion(const char *buf, linenoiseCompletions *lc) {
 		return;
 
 	int i; //i = 1 to ignore the "UNKNOWN_COMMAND" string
-	for(i = 1;i < CMD_CNT; i++) {
+	for(i = 1;i < CMD_CNT;i++) {
 		if(buf[0] == id[i].str[0])
 			linenoiseAddCompletion(lc, id[i].str);
 	}
@@ -141,43 +141,90 @@ void clear(char parameter[][MAX_CMD_LEN], int par_cnt)
 	linenoiseClearScreen();
 }
 
+enum MONITOR_INTERNAL_CMD {
+	MONITOR_UNKNOWN,
+	MONITOR_QUIT,
+	MONITOR_CMD_CNT
+};
+
+char monitor_cmd[MONITOR_CMD_CNT - 1][MAX_CMD_LEN] = {"quit"};
+
+int monitorInternalCmdIndentify(char *command)
+{
+	int i;
+	for(i = 0; i < (MONITOR_CMD_CNT - 1); i++) {
+		if(strcmp(command ,monitor_cmd[i]) == 0) {
+			return i + 1;
+		}
+	}
+
+	return MONITOR_UNKNOWN;
+}
+
 void monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	/* Clean the screen */
-        printf("\x1b[H\x1b[2J");
-	
-	/* Welcome Messages */
-	printf("QuadCopter Status Monitor\n\r");
-	printf("Copyleft - NCKU Open Source Work of 2013 Embedded system class\n\r");
-	printf("**************************************************************\n\r");
+	printf("\x1b[H\x1b[2J");
 
-	printf("PID Parameters\n\r");
-	printf("Kp \t: %d\n\rKi\t: %d\n\rKd\t: %d\n\r", 0, 0, 0);
-
-	printf("--------------------------------------------------------------\n\r");
-
-	printf("Copter Attitudes <true value>\n\r");
-	printf("Pitch\t: %d\n\rRoll\t: %d\n\rYaw\t: %d\n\r",0 ,0, 0);
-
-	printf("--------------------------------------------------------------\n\r");
-
-	#define MOTOR_STATUS "Off"
-	printf("Radio Control Messages\n\r");
-	printf("Pitch(expect)\t: %d\n\rRoll(expect)\t: %d\n\rYaw(expect)\t: %d\n\r",0 ,0, 0);
-	printf("Throttle\t: %d\n\r", 0);
-	printf("Motor\t: %s\n\r", MOTOR_STATUS);
-
-	printf("--------------------------------------------------------------\n\r");
-
-	#define LED_STATUS "Disable"
-	printf("LED lights\n\r");
-	printf("LED1\t: %s\n\rLED4\t: %s\n\rLED3\t: %s\n\rLED4\t: %s\n\r", LED_STATUS, LED_STATUS, LED_STATUS, LED_STATUS);
-
-	printf("**************************************************************\n\r\n\r");
-
-	printf("[Please press <Enter> to enable the command line]");
 	while(1) {
-		/*linenoise("(monitor) ");*/
+		/* Welcome Messages */
+		printf("QuadCopter Status Monitor\n\r");
+		printf("Copyleft - NCKU Open Source Work of 2013 Embedded system class\n\r");
+		printf("**************************************************************\n\r");
+
+		printf("PID Parameters\n\r");
+		printf("Kp \t: %d\n\rKi\t: %d\n\rKd\t: %d\n\r", 0, 0, 0);
+
+		printf("--------------------------------------------------------------\n\r");
+
+		printf("Copter Attitudes <true value>\n\r");
+		printf("Pitch\t: %d\n\rRoll\t: %d\n\rYaw\t: %d\n\r",0 ,0, 0);
+
+		printf("--------------------------------------------------------------\n\r");
+
+		#define MOTOR_STATUS "Off"
+		printf("Radio Control Messages\n\r");
+		printf("Pitch(expect)\t: %d\n\rRoll(expect)\t: %d\n\rYaw(expect)\t: %d\n\r",0 ,0, 0);
+		printf("Throttle\t: %d\n\r", 0);
+		printf("Engine\t\t: %s\n\r", MOTOR_STATUS);
+
+		printf("--------------------------------------------------------------\n\r");
+
+		#define LED_STATUS "Disable"
+		printf("LED lights\n\r");
+		printf("LED1\t: %s\n\rLED4\t: %s\n\rLED3\t: %s\n\rLED4\t: %s\n\r", LED_STATUS, LED_STATUS, LED_STATUS, LED_STATUS);
+
+		printf("**************************************************************\n\r\n\r");
+
+		printf("[Please press <Enter> to enable the command line]");
+	
+		char key_pressed = serial.getch();
+
+		/* Delay for a while */
+		
+		if(key_pressed == ENTER) {
+			putstr("\x1b[0G");
+			printf("\x1b[0K");
+
+			while(1) {
+				char *command_str;
+				int monitor_cmd;
+
+				command_str = linenoise("(monitor) ");
+				
+				/* Check if it is internal command */
+				/* The Internal command means that need not call
+				   any functions but handle at here
+				 */
+				monitor_cmd = monitorInternalCmdIndentify(command_str);				
+				
+				printf("%d", monitor_cmd);				
+				if(monitor_cmd == MONITOR_QUIT)
+					break;
+			}
+
+			break;
+		}
 	}
 
 	/* Clean the screen */
