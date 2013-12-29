@@ -10,6 +10,7 @@
 #include "algorithm_quaternion.h"
 
 #include "FreeRTOS.h"
+#include "task.h"
 
 #define CMD_DEF(name) [name ## _ID] = {.str = #name, .func = name}
 
@@ -17,6 +18,7 @@ enum CMD_ID {
         unknown_command_ID,
 	clear_ID,
         monitor_ID,
+	ps_ID,
         CMD_CNT
 };
 
@@ -37,13 +39,14 @@ struct command_data {
 void unknown_command(char parameter[][MAX_CMD_LEN], int par_cnt);
 void clear(char parameter[][MAX_CMD_LEN], int par_cnt);
 void monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
-
+void ps(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 //First string don't need to store anything for unknown commands
 instr_data id[CMD_CNT] = {
 	CMD_DEF(unknown_command),
 	CMD_DEF(clear),
 	CMD_DEF(monitor),
+	CMD_DEF(ps)
 };
 
 
@@ -140,6 +143,19 @@ void clear(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	linenoiseClearScreen();
 }
+
+void ps(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	signed char buf[256] = {'\0'};
+
+	vTaskList(buf);
+
+	//TODO:replace the hardcode by using sprintf()
+	printf("Name          State   Priority  Stack Num\n\r");
+	printf("*****************************************\n\r");
+	printf("%s", buf);
+}
+
 
 enum MONITOR_INTERNAL_CMD {
 	MONITOR_UNKNOWN,
