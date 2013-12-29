@@ -7,6 +7,7 @@
 #include "linenoise.h"
 
 #include "module_rs232.h"
+#include "algorithm_quaternion.h"
 
 #include "FreeRTOS.h"
 
@@ -133,9 +134,44 @@ void unknown_command(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 void monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
+	/* Clean the screen */
         printf("\x1b[H\x1b[2J");
-
 	
+	/* Welcome Messages */
+	printf("QuadCopter Status Monitor\n\r");
+	printf("Copyleft - NCKU Open Source Work of 2013 Embedded system class\n\r");
+	printf("**************************************************************\n\r");
+
+	printf("PID Parameters\n\r");
+	printf("Kp \t: %d\n\rKi\t: %d\n\rKd\t: %d\n\r", 0, 0, 0);
+
+	printf("--------------------------------------------------------------\n\r");
+
+	printf("Copter Attitudes <true value>\n\r");
+	printf("Pitch\t: %d\n\rRoll\t: %d\n\rYaw\t: %d\n\r",0 ,0, 0);
+
+	printf("--------------------------------------------------------------\n\r");
+
+	printf("Radio Control Messages\n\r");
+	printf("Pitch(expect)\t: %d\n\rRoll(expect)\t: %d\n\rYaw(expect)\t: %d\n\r",0 ,0, 0);
+	printf("Throttle\t: %d\n\r", 0);
+	printf("RC Signal\t: %d\n\r", 0);
+
+	printf("--------------------------------------------------------------\n\r");
+
+	#define LED_STATUS "Disable"
+	printf("LED lights\n\r");
+	printf("LED1\t: %s\n\rLED4\t: %s\n\rLED3\t: %s\n\rLED4\t: %s\n\r", LED_STATUS, LED_STATUS, LED_STATUS, LED_STATUS);
+
+	printf("**************************************************************\n\r\n\r");
+
+	printf("[Please press <Enter> to enable the command line]");
+	while(1) {
+		/*linenoise("(monitor) ");*/
+	}
+
+	/* Clean the screen */
+        printf("\x1b[H\x1b[2J");
 }
 
 
