@@ -40,7 +40,8 @@ enum KEY_ACTION{
     CTRL_A = 1,         /* ctrl+a */
     CTRL_E = 5,         /* ctrl+e */
     CTRL_L = 12,        /* ctrl+l */
-    CTRL_W = 23         /* ctrl+w */
+    CTRL_W = 23,         /* ctrl+w */
+    SPACE = 32
 };
 
 #endif
