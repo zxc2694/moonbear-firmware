@@ -25,6 +25,7 @@
 #include "algorithm_quaternion.h"
 
 #include "sys_manager.h"
+#include "std.h"
 
 xSemaphoreHandle TIM2_Semaphore = NULL;
 xSemaphoreHandle TIM4_Semaphore = NULL;
@@ -70,76 +71,72 @@ void vApplicationIdleHook(void)
 void system_init(void)
 {	
 	LED_Config();
-	KEY_Config();
-	RS232_Config();
-	Motor_Config();
-	PWM_Capture_Config();
-	Sensor_Config();
+        KEY_Config();
+        RS232_Config();
+        Motor_Config();
+        PWM_Capture_Config();
+        Sensor_Config();
+        nRF24L01_Config();
 
 
-	PID_Init(&PID_Yaw);
-	PID_Init(&PID_Roll);
-	PID_Init(&PID_Pitch);
+        PID_Init(&PID_Yaw);
+        PID_Init(&PID_Roll);
+        PID_Init(&PID_Pitch);
 
-	PID_Pitch.Kp = +4.0f;
-	PID_Pitch.Ki = 0;//0.002f;
-	PID_Pitch.Kd = +1.5f;
+        PID_Pitch.Kp = +50.0f;
+        PID_Pitch.Ki = 0;//0.002f;
+        PID_Pitch.Kd = +11.5f;
 
-	PID_Roll.Kp  = +4.0f;
-	PID_Roll.Ki  = 0;//0.002f;
-	PID_Roll.Kd  = 1.5f;
+        PID_Roll.Kp = +50.0f;
+        PID_Roll.Ki = 0;//0.002f;
+        PID_Roll.Kd = 11.5f;
 
-	PID_Yaw.Kp   = +5.0f;
-	PID_Yaw.Ki   = +0.0f;
-	PID_Yaw.Kd   = +15.0f;
+        PID_Yaw.Kp = +10.0f;
+        PID_Yaw.Ki = +0.0f;
+        PID_Yaw.Kd = +0.0f;
 
-	Delay_10ms(200);
+        Delay_10ms(200);
 
-	/* System Init */
-	System_Init();
-	test_printf();
-	PRINT_DEBUG(555);
-	while( remote_signal_check() == NO_SIGNAL);
-	/* Throttle Config */
+        u8 Sta = ERROR;
 
-	if (KEY == 1) {
-		LED_B = 0;
-		Motor_Control(PWM_MOTOR_MAX, PWM_MOTOR_MAX, PWM_MOTOR_MAX, PWM_MOTOR_MAX);
-	}
 
-	while (KEY == 1);
+        //while (remote_signal_check() == NO_SIGNAL);
 
-	LED_B = 1;
-	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
+        if (KEY == 1) {
+                LED_B = 0;
+                Motor_Control(PWM_MOTOR_MAX, PWM_MOTOR_MAX, PWM_MOTOR_MAX, PWM_MOTOR_MAX);
+        }
+
+        while (KEY == 1);
+
+        LED_B = 1;
+        Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
 
 #ifndef NRF_NOT_EXIST
-	/* nRF Check */
-	while (Sta == ERROR)
-		Sta = nRF_Check();
+        /* nRF Check */
+        while (Sta == ERROR)
+                Sta = nRF_Check();
 #endif
-
 
 #ifndef SENSOR_NOT_EXIST
-	/* Sensor Init */
-	if (Sensor_Init() == SUCCESS)
-		LED_G = 0;
+        /* Sensor Init */
+        if (Sensor_Init() == SUCCESS)
+                LED_G = 0;
 #endif
 
-	Delay_10ms(10);
+        Delay_10ms(10);
 
 
-	/* Wait Correction */
-	//while (SensorMode != Mode_Algorithm);
+        /* Wait Correction */
+        //while (SensorMode != Mode_Algorithm);
 
-	/* Lock */
-	LED_R = 1;
-	LED_G = 1;
-	LED_B = 1;
+        /* Lock */
+        LED_R = 1;
+        LED_G = 1;
+        LED_B = 1;
 
-
-	System_Status = SYSTEM_INITIALIZED;
-
+        System_Status = SYSTEM_INITIALIZED;
 
 
 }
@@ -150,16 +147,6 @@ void correction_task()
 
 	LED_B = ~LED_B; //task indicator
 	uint8_t IMU_Buf[20] = {0};
-
-	int16_t Final_M1 = 0;
-	int16_t Final_M2 = 0;
-	int16_t Final_M3 = 0;
-	int16_t Final_M4 = 0;
-
-	int16_t Thr = 0, Pitch = 0, Roll = 0, Yaw = 0;
-	int16_t Exp_Thr = 0, Exp_Pitch = 0, Exp_Roll = 0, Exp_Yaw = 0;
-	uint8_t safety = 0;
-	
 
 	static uint8_t BaroCnt = 0;
 

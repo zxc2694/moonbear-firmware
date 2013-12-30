@@ -14,21 +14,12 @@
 #include "algorithm_moveAve.h"
 #include "algorithm_mathUnit.h"
 #include "algorithm_quaternion.h"
-#include "sys_manager.h"
-<<<<<<< HEAD
-
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
-/*=====================================================================================================*/
-/*=====================================================================================================*/
-=======
 #include "std.h"
-#include "sensor_correct.h"
-/*=====================================================================================================*/
-/*=====================================================================================================*/
-
+#include "sys_manager.h"
 vs16 Tmp_PID_KP;
 vs16 Tmp_PID_KI;
 vs16 Tmp_PID_KD;
