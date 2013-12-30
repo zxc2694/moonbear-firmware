@@ -18,10 +18,10 @@ int completion_disable = 0;
 int history_disable = 0;
 
 /* Shell Command handlers */
-void unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
-void clear(char parameter[][MAX_CMD_LEN], int par_cnt);
-void monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
-void ps(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -34,10 +34,10 @@ enum SHELL_CMD_ID {
 
 //First string don't need to store anything for unknown commands
 command_list shellCmd_list[SHELL_CMD_CNT] = {
-	CMD_DEF(unknown_cmd),
-	CMD_DEF(clear),
-	CMD_DEF(monitor),
-	CMD_DEF(ps)
+	CMD_DEF(unknown_cmd, shell),
+	CMD_DEF(clear, shell),
+	CMD_DEF(monitor, shell),
+	CMD_DEF(ps, shell)
 };
 
 /**** Shell task **********************************************************************/
@@ -72,17 +72,17 @@ void shell_task()
         }
 }
 /**** Customize command function ******************************************************/
-void unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt)
+void shell_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	printf("Command not found\n\r");
 }
 
-void clear(char parameter[][MAX_CMD_LEN], int par_cnt)
+void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	linenoiseClearScreen();
 }
 
-void ps(char parameter[][MAX_CMD_LEN], int par_cnt)
+void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	signed char buf[256] = {'\0'};
 
@@ -116,7 +116,7 @@ int monitorInternalCmdIndentify(char *command)
 	return MONITOR_UNKNOWN;
 }
 
-void monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
+void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	while(1) {
 		/* Clean the screen */

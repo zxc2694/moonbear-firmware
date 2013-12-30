@@ -4,7 +4,7 @@
 #define MAX_CMD_LEN 64 //256 is too big!
 #define MAX_PAR_CNT 10
 
-#define CMD_DEF(name) [name ## _ID] = {.str = #name, .func = name}
+#define CMD_DEF(name, group) [name ## _ID] = {.str = #name, .func = group ## _ ## name}
 
 typedef struct {
         char str[MAX_CMD_LEN];
