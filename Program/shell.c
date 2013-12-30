@@ -32,7 +32,6 @@ struct command_data {
         char instr[MAX_CMD_LEN];             /* The instruction part of the string */
         char par[MAX_PAR_CNT][MAX_CMD_LEN];  /* The parameter part of the string */
         int par_cnt;                         /* The count of the parameter */
-	instr_data *cmd;		     /* The structure which contain the instruction and its handler */
 };
 
 
@@ -117,7 +116,6 @@ void shell_task()
         char *shell_str;
 
         struct command_data cd = {
-                .cmd = id,
                 .par_cnt = 0
         };
 
