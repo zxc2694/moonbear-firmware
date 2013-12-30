@@ -5,6 +5,7 @@
 /* Linenoise and shell includes */
 #include "shell.h"
 #include "linenoise.h"
+#include "parser.h"
 
 #include "module_rs232.h"
 #include "algorithm_quaternion.h"
@@ -13,113 +14,47 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#define CMD_DEF(name) [name ## _ID] = {.str = #name, .func = name}
+int completion_disable = 0;
+int history_disable = 0;
 
-enum CMD_ID {
-        unknown_command_ID,
-	clear_ID,
-        monitor_ID,
-	ps_ID,
-        CMD_CNT
-};
-
-typedef struct {
-	char str[MAX_CMD_LEN];
-	void (*func)(char parameter[][MAX_CMD_LEN], int par_cnt);
-} instr_data;
-
-struct command_data {
-        char instr[MAX_CMD_LEN];             /* The instruction part of the string */
-        char par[MAX_PAR_CNT][MAX_CMD_LEN];  /* The parameter part of the string */
-        int par_cnt;                         /* The count of the parameter */
-};
-
-
-/* Command correspondence functions */
-void unknown_command(char parameter[][MAX_CMD_LEN], int par_cnt);
+/* Shell Command handlers */
+void unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
 void clear(char parameter[][MAX_CMD_LEN], int par_cnt);
 void monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
 void ps(char parameter[][MAX_CMD_LEN], int par_cnt);
 
+/* The identifier of the command */
+enum SHELL_CMD_ID {
+        unknown_cmd_ID,
+	clear_ID,
+        monitor_ID,
+	ps_ID,
+        SHELL_CMD_CNT
+};
+
 //First string don't need to store anything for unknown commands
-instr_data id[CMD_CNT] = {
-	CMD_DEF(unknown_command),
+command_list shellCmd_list[SHELL_CMD_CNT] = {
+	CMD_DEF(unknown_cmd),
 	CMD_DEF(clear),
 	CMD_DEF(monitor),
 	CMD_DEF(ps)
 };
 
-
-int completion_disable = 0;
-int history_disable = 0;
-
-/**** Commands  identification ********************************************************/
-static void commandIdentify(char *cmd_str, struct command_data *cd)
-{
-	int i = 0, str_cnt = 0;
-	while(cmd_str[i] != '\0') {
-		if(cmd_str[i] == ' ') {
-			//Put the '\0' at the end of the string
-			if(cd->par_cnt == 0)
-				cd->instr[str_cnt] = '\0';
-			else
-				cd->par[cd->par_cnt - 1][str_cnt] = '\0';
-
-			cd->par_cnt++;
-
-			i++;
-			str_cnt = 0; //Reset for next string
-			continue;
-		}
-
-		/* Handling the instruction while par_cnt is 0 */
-		if(cd->par_cnt == 0) 
-			cd->instr[str_cnt] = cmd_str[str_cnt];
-		/* Handling The parameter while par_cnt is bigger than 0 */
-		else
-			cd->par[cd->par_cnt -1][str_cnt] = cmd_str[i];
-
-		i++;
-		str_cnt++;	
-	}
-}
-
-void commandExec(char *cmd_str, struct command_data *cd)
-{
-	commandIdentify(cmd_str, cd);
-
-	int i;
-	for(i = 0; i < CMD_CNT; i++) {
-		if(strcmp(cd->instr, id[i].str) == 0) {
-			id[i].func(cd->par, cd->par_cnt);
-			return;
-		}
-	}
-	
-	id[0].func(cd->par, cd->par_cnt); //Unknown command's function
-}
- 
 /**** Shell task **********************************************************************/
-void linenoise_completion(const char *buf, linenoiseCompletions *lc) {
+void shell_linenoise_completion(const char *buf, linenoiseCompletions *lc) {
 	if(completion_disable)
 		return;
 
 	int i; //i = 1 to ignore the "UNKNOWN_COMMAND" string
-	for(i = 1;i < CMD_CNT;i++) {
-		if(buf[0] == id[i].str[0])
-			linenoiseAddCompletion(lc, id[i].str);
+	for(i = 1;i < SHELL_CMD_CNT;i++) {
+		if(buf[0] == shellCmd_list[i].str[0])
+			linenoiseAddCompletion(lc, shellCmd_list[i].str);
 	}
 }
 
 void shell_task()
 {
-        char *shell_str;
-
-        struct command_data cd = {
-                .par_cnt = 0
-        };
-
-        linenoiseSetCompletionCallback(linenoise_completion);
+        linenoiseSetCompletionCallback(shell_linenoise_completion);
 
         /* Clear the screen */
         printf("\x1b[H\x1b[2J");
@@ -128,13 +63,16 @@ void shell_task()
         printf("Please type \"help\" to get more informations\n\r");
 
         while(1) {
-                shell_str = linenoise("Quadcopter Shell > ");
-                commandExec(shell_str, &cd);
+		command_data shell_cd = {.par_cnt = 0};
+
+	        char *shell_str = linenoise("Quadcopter Shell > ");
+                commandExec(shell_str, &shell_cd, shellCmd_list, SHELL_CMD_CNT);
+
 		linenoiseHistoryAdd(shell_str);
         }
 }
 /**** Customize command function ******************************************************/
-void unknown_command(char parameter[][MAX_CMD_LEN], int par_cnt)
+void unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	printf("Command not found\n\r");
 }
