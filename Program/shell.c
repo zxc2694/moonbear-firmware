@@ -8,6 +8,7 @@
 
 #include "module_rs232.h"
 #include "algorithm_quaternion.h"
+#include "sys_manager.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -196,14 +197,17 @@ void monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 		printf("--------------------------------------------------------------\n\r");
 
 		printf("Copter Attitudes <true value>\n\r");
-		printf("Pitch\t: %d\n\rRoll\t: %d\n\rYaw\t: %d\n\r",0 ,0, 0);
+		printf("Pitch\t: %d\n\rRoll\t: %d\n\rYaw\t: %d\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
 
 		printf("--------------------------------------------------------------\n\r");
 
 		#define MOTOR_STATUS "Off"
 		printf("Radio Control Messages\n\r");
-		printf("Pitch(expect)\t: %d\n\rRoll(expect)\t: %d\n\rYaw(expect)\t: %d\n\r",0 ,0, 0);
-		printf("Throttle\t: %d\n\r", 0);
+		printf("Pitch(expect)\t: %d\n\rRoll(expect)\t: %d\n\rYaw(expect)\t: %d\n\r", 
+			global_var[RC_EXP_PITCH].param, global_var[RC_EXP_ROLL].param, 
+			global_var[RC_EXP_YAW].param);
+
+		printf("Throttle\t: %d\n\r", global_var[RC_EXP_THR].param);
 		printf("Engine\t\t: %s\n\r", MOTOR_STATUS);
 
 		printf("--------------------------------------------------------------\n\r");
