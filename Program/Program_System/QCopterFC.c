@@ -40,9 +40,8 @@ volatile int16_t MagDataY[8] = {0};
 volatile uint32_t Correction_Time = 0;
 
 Sensor_Mode SensorMode = Mode_GyrCorrect;
-#define NRF_NOT_EXIST
 
-#define SHELL_IS_EXIST
+//#define SHELL_IS_EXIST
 
 enum SYSTEM_STATUS {
 	SYSTEM_UNINITIALIZED,
@@ -83,17 +82,17 @@ void system_init(void)
         PID_Init(&PID_Roll);
         PID_Init(&PID_Pitch);
 
-        PID_Pitch.Kp = +50.0f;
+ 	PID_Pitch.Kp = +4.0f;
         PID_Pitch.Ki = 0;//0.002f;
-        PID_Pitch.Kd = +11.5f;
+        PID_Pitch.Kd = +1.5f;
 
-        PID_Roll.Kp = +50.0f;
+        PID_Roll.Kp = +4.0f;
         PID_Roll.Ki = 0;//0.002f;
-        PID_Roll.Kd = 11.5f;
+        PID_Roll.Kd = 1.5f;
 
-        PID_Yaw.Kp = +10.0f;
+        PID_Yaw.Kp = +5.0f;
         PID_Yaw.Ki = +0.0f;
-        PID_Yaw.Kd = +0.0f;
+        PID_Yaw.Kd = +15.0f;
 
         Delay_10ms(200);
 
@@ -144,7 +143,10 @@ void system_init(void)
 
 void correction_task()
 {
+	while(System_Status == SYSTEM_UNINITIALIZED);
 
+	while(SensorMode != Mode_Algorithm)
+	{
 	LED_B = ~LED_B; //task indicator
 	uint8_t IMU_Buf[20] = {0};
 
@@ -187,7 +189,8 @@ void correction_task()
 
 	correct_sensor( );
 
-	vTaskDelay(10);
+	vTaskDelay(2);
+	}
 	vTaskResume(FlightControl_Handle);
 	vTaskDelete(NULL);
 }
@@ -323,6 +326,7 @@ void flightControl_task()
 		}else{
 			Motor_Control(Final_M1, Final_M2, Final_M3, Final_M4);
 		}
+		vTaskDelay(2);
 
 	
 	}
@@ -405,10 +409,12 @@ int main(void)
 		tskIDLE_PRIORITY + 5, NULL);
 #endif
 
+#ifdef SHELL_IS_EXIST
 	xTaskCreate(shell_task,
 		(signed portCHAR *) "Shell",
 		512, NULL,
 		tskIDLE_PRIORITY + 5, NULL);
+#endif
 
 	xTaskCreate(flightControl_task,
 		(signed portCHAR *) "Flight control",
