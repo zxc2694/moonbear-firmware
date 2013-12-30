@@ -202,7 +202,7 @@ void flightControl_task()
 
 
 	while (1) {
-	
+	GPIO_ToggleBits(GPIOC, GPIO_Pin_7);
 	uint8_t IMU_Buf[20] = {0};
 
 	int16_t Final_M1 = 0;
