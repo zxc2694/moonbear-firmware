@@ -112,6 +112,7 @@ SRC+=./memory.c
 SRC+=./linenoise.c
 SRC+=./shell.c
 SRC+=./parser.c
+SRC+=./status_monitor.c
 
 #STM32 startup file
 STARTUP=./Libraries/CMSIS/startup_stm32f4xx.s
