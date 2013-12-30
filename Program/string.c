@@ -78,7 +78,7 @@ char *strdup(const char *str)
 
         /*make the end of string have null character*/
         ptr[strlen(str)+1] = '\0';
-        return memcpy(ptr, str, strlen(str));
+        return memcpy(ptr, str, strlen(str)+1);
 }
 
 void *memset(void *dest, int c, size_t n)
