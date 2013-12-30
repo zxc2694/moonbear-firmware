@@ -5,7 +5,6 @@
 #include "QCopterFC.h"
 #include "QCopterFC_ctrl.h"
 #include "QCopterFC_ahrs.h"
-#include "QCopterFC_transport.h"
 #include "module_board.h"
 #include "module_motor.h"
 #include "module_sensor.h"
@@ -16,6 +15,7 @@
 #include "algorithm_mathUnit.h"
 #include "algorithm_quaternion.h"
 #include "sys_manager.h"
+<<<<<<< HEAD
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -23,6 +23,17 @@
 #include "semphr.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
+=======
+#include "std.h"
+#include "sensor_correct.h"
+/*=====================================================================================================*/
+/*=====================================================================================================*/
+
+vs16 Tmp_PID_KP;
+vs16 Tmp_PID_KI;
+vs16 Tmp_PID_KD;
+vs16 Tmp_PID_Pitch;
+
 static __IO uint16_t pwm1_previous_value = 0;
 static __IO uint16_t pwm2_previous_value = 0;
 static __IO uint32_t pwm3_previous_value = 0;
@@ -34,8 +45,9 @@ static __IO uint8_t pwm3_is_rising = 1;
 static __IO uint8_t pwm4_is_rising = 1;
 static __IO uint8_t pwm5_is_rising = 1;
 
-extern xSemaphoreHandle TIM2_Semaphore ;
-extern xSemaphoreHandle TIM4_Semaphore ;
+
+/*=====================================================================================================*/
+/*=====================================================================================================*/
 
 void TIM2_IRQHandler(void)
 {
