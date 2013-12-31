@@ -52,7 +52,7 @@ int monitorInternalCmdIndentify(char *command)
 
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
-	while(1) {
+	while(1) {	
 		/* Clean the screen */
 		printf("\x1b[H\x1b[2J");
 
@@ -61,8 +61,10 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 		printf("Copyleft - NCKU Open Source Work of 2013 Embedded system class\n\r");
 		printf("**************************************************************\n\r");
 
-		printf("PID Parameters\n\r");
-		printf("Kp \t: %d\n\rKi\t: %d\n\rKd\t: %d\n\r", 0, 0, 0);
+		printf("PID\tPitch\tRoll\tYow\n\r");
+		printf("Kp\t%d\t%d\t%d\n\r", 0, 0, 0);
+		printf("Ki\t%d\t%d\t%d\n\r", 0, 0, 0);
+		printf("Kd\t%d\t%d\t%d\n\r", 0, 0, 0);
 
 		printf("--------------------------------------------------------------\n\r");
 
@@ -72,19 +74,19 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 		printf("--------------------------------------------------------------\n\r");
 
 		#define MOTOR_STATUS "Off"
-		printf("Radio Control Messages\n\r");
-		printf("Pitch(expect)\t: %d\n\rRoll(expect)\t: %d\n\rYaw(expect)\t: %d\n\r", 
-			global_var[RC_EXP_PITCH].param, global_var[RC_EXP_ROLL].param, 
-			global_var[RC_EXP_YAW].param);
+		printf("RC Messages\tCurrent\tLast\n\r");
+		printf("Pitch(expect)\t%d\t%d\n\r", global_var[RC_EXP_PITCH].param, 0);
+		printf("Roll(expect)\t%d\t%d\n\r", global_var[RC_EXP_ROLL].param, 0);
+		printf("Yaw(expect)\t%d\t%d\n\r", global_var[RC_EXP_YAW].param, 0);	
 
-		printf("Throttle\t: %d\n\r", global_var[RC_EXP_THR].param);
-		printf("Engine\t\t: %s\n\r", MOTOR_STATUS);
+		printf("Throttle\t%d\n\r", global_var[RC_EXP_THR].param);
+		printf("Engine\t\t%s\n\r", MOTOR_STATUS);
 
 		printf("--------------------------------------------------------------\n\r");
 
 		#define LED_STATUS "Off"
 		printf("LED lights\n\r");
-		printf("LED1\t: %s\n\rLED4\t: %s\n\rLED3\t: %s\n\rLED4\t: %s\n\r", LED_STATUS, LED_STATUS, LED_STATUS, LED_STATUS);
+		printf("LED1\t: %s\n\rLED2\t: %s\n\rLED3\t: %s\n\rLED4\t: %s\n\r", LED_STATUS, LED_STATUS, LED_STATUS, LED_STATUS);
 
 		printf("**************************************************************\n\r\n\r");
 
@@ -93,7 +95,7 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 	
 		int monitor_cmd = 0;		
 		char key_pressed = serial.getch();
-
+	
 		while(monitor_cmd != MONITOR_QUIT && monitor_cmd != MONITOR_RESUME) {
 			if(key_pressed == ENTER) {
 				/* Clean and move up two lines*/

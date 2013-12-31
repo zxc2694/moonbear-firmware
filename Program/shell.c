@@ -42,7 +42,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(clear, shell),
 	CMD_DEF(help, shell),
 	CMD_DEF(monitor, shell),
-	CMD_DEF(ps, shell)
+	CMD_DEF(ps, shell),
 };
 
 /**** Shell task **********************************************************************/
@@ -107,8 +107,7 @@ void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
 	vTaskList(buf);
 
 	//TODO:replace the hardcode by using sprintf()
-	printf("Name          State   Priority  Stack Num\n\r");
+	printf("\n\rName          State   Priority  Stack Num\n\r");
 	printf("*****************************************\n\r");
-	printf("%s", buf);
+	printf("%s\n\r", buf);
 }
-
