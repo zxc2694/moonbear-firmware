@@ -436,7 +436,7 @@ int main(void)
 
 	xTaskCreate(shell_task,
 		(signed portCHAR *) "Shell",
-		512, NULL,
+		2048, NULL,
 		tskIDLE_PRIORITY + 5, NULL);
 #ifndef SHELL_IS_EXIST
 	xTaskCreate(flightControl_task,
