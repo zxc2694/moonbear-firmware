@@ -5,7 +5,6 @@
 #include "QCopterFC.h"
 #include "QCopterFC_ctrl.h"
 #include "QCopterFC_ahrs.h"
-#include "QCopterFC_transport.h"
 #include "module_board.h"
 #include "module_motor.h"
 #include "module_sensor.h"
@@ -15,14 +14,17 @@
 #include "algorithm_moveAve.h"
 #include "algorithm_mathUnit.h"
 #include "algorithm_quaternion.h"
-#include "sys_manager.h"
-
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
-/*=====================================================================================================*/
-/*=====================================================================================================*/
+#include "std.h"
+#include "sys_manager.h"
+vs16 Tmp_PID_KP;
+vs16 Tmp_PID_KI;
+vs16 Tmp_PID_KD;
+vs16 Tmp_PID_Pitch;
+
 static __IO uint16_t pwm1_previous_value = 0;
 static __IO uint16_t pwm2_previous_value = 0;
 static __IO uint32_t pwm3_previous_value = 0;
@@ -33,8 +35,11 @@ static __IO uint8_t pwm2_is_rising = 1;
 static __IO uint8_t pwm3_is_rising = 1;
 static __IO uint8_t pwm4_is_rising = 1;
 static __IO uint8_t pwm5_is_rising = 1;
-extern xSemaphoreHandle TIM2_Semaphore ;
-extern xSemaphoreHandle TIM4_Semaphore ;
+
+
+/*=====================================================================================================*/
+/*=====================================================================================================*/
+
 void TIM2_IRQHandler(void)
 {
 	uint32_t current[3];
@@ -135,8 +140,8 @@ void TIM2_IRQHandler(void)
 
 		TIM_ICInit(TIM2, &TIM_ICInitStructure);
 	}
-
 }
+
 void TIM4_IRQHandler(void)
 {
 	uint16_t current[2];
@@ -204,10 +209,7 @@ void TIM4_IRQHandler(void)
 		}
 
 		TIM_ICInit(TIM4, &TIM_ICInitStructure);
-
-
 	}
-
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
@@ -249,3 +251,24 @@ void NMI_Handler(void)
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
+void USART3_IRQHandler()
+{
+	long lHigherPriorityTaskWoken = pdFALSE;
+
+	serial_msg rx_msg;
+
+	if(USART_GetITStatus(USART3, USART_IT_TXE) != RESET) {
+		xSemaphoreGiveFromISR(serial_tx_wait_sem, &lHigherPriorityTaskWoken);
+
+		USART_ITConfig(USART3, USART_IT_TXE, DISABLE);
+	} else if (USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) {
+		rx_msg.ch = USART_ReceiveData(USART3);
+
+		if(!xQueueSendToBackFromISR(serial_rx_queue, &rx_msg, &lHigherPriorityTaskWoken))
+			portEND_SWITCHING_ISR( lHigherPriorityTaskWoken );
+	} else {
+		while(1);
+	}
+
+	portEND_SWITCHING_ISR( lHigherPriorityTaskWoken );
+}

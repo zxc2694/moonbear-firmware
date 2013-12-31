@@ -1,8 +1,13 @@
-
 #ifndef __SYS_MANAGER_H
 #define __SYS_MANAGER_H
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
+
 #include "stm32f4xx.h"
+
 enum {
 	PWM1_CCR = 0,
 	PWM2_CCR,
@@ -17,6 +22,13 @@ enum {
 	TRUE_PITCH,
 	TRUE_YAW,
 	NO_RC_SIGNAL_MSG,
+	PID_ROLL,
+	PID_PITCH,
+	PID_YAW,
+	MOTOR1,
+	MOTOR2,
+	MOTOR3,
+	MOTOR4,
 	GLOABAL_PARAM_COUNT
 };
 
@@ -28,6 +40,13 @@ typedef struct global_struct {
 
 } global_struct;
 
+typedef struct {
+	char ch;
+} serial_msg;
+
 global_struct global_var[GLOABAL_PARAM_COUNT];
+
+extern xSemaphoreHandle serial_tx_wait_sem;
+extern xQueueHandle serial_rx_queue;
 
 #endif
