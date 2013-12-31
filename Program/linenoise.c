@@ -1,53 +1,4 @@
 #include <unistd.h>
-<<<<<<< HEAD
-#include <stdlib.h>
-//#include <stdio.h>
-//#include <errno.h>
-#include <string.h>
-//#include <stdlib.h>
-//#include <unistd.h>
-#include "linenoise.h"
-/*FreeRTOS relative */
-#include "FreeRTOS.h"
-#include "module_rs232.h"
-
-#define LINENOISE_DEFAULT_HISTORY_MAX_LEN 100
-#define LINENOISE_MAX_LINE 1024 //4096 is too much to this environment, it will crash!
-
-extern serial_ops serial;
-enum key_action{
-    TAB = 9,            /*tab*/
-    ENTER = 13,         /* enter */
-    CTRL_C = 3,         /* ctrl-c*/
-    BACKSPACE =  127,   /* backspace */ 
-    CTRL_H = 8,         /* ctrl-h */
-    CTRL_D = 4,         /* ctrl-d, remove char at right of cursor, or of the*/
-    CTRL_T = 20,        /* ctrl-t*/
-    CTRL_B = 2,         /* ctrl-b*/
-    CTRL_F = 6,         /* ctrl-f*/
-    CTRL_P = 16,        /* ctrl-p */
-    CTRL_N = 14,        /* ctrl-n */     
-    ESC = 27,           /* escape sequence */
-    ARROW_PREFIX = 91,  /*any ARROW = ESC + [ + (65~68) */
-    LEFT_ARROW = 68,    /*last character of left arrow*/
-    RIGHT_ARROW = 67,   /*last character of right arrow*/
-    UP_ARROW = 65,      /*last character of up arrow*/
-    DOWN_ARROW = 66,    /*last character of down arrow*/
-    NULL_CH = 0,    /*NULL character*/
-    CTRL_U = 21,    /*Ctrl+U*/
-    CTRL_K = 11,    /*Ctrl+k*/
-    CTRL_A = 1,     /*Ctrl+a*/
-    CTRL_E = 5,     /*Ctrl+e*/
-    CTRL_L = 12,    /*Ctrl+l*/
-    CTRL_W = 23     /*Ctrl+w*/
-
-};
-static linenoiseCompletionCallback *completionCallback = NULL;
-static int mlmode = 0;  /* Multi line mode. Default is single line. */
-static int history_max_len = LINENOISE_DEFAULT_HISTORY_MAX_LEN;
-static int history_len = 0;
-char **history = NULL;
-=======
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -60,7 +11,6 @@ char **history = NULL;
 
 #define LINENOISE_DEFAULT_HISTORY_MAX_LEN 100
 #define LINENOISE_MAX_LINE 256 //4096 is too much to this environment, it will crash!
->>>>>>> 75a4793e0c8584e9416085ca6eb247a83ef9e8f4
 
 struct linenoiseState {
     char *buf;          /* Edited line buffer. */
@@ -75,16 +25,6 @@ struct linenoiseState {
     int history_index;  /* The history index we are currently editing. */
 };
 
-<<<<<<< HEAD
-static void refreshLine(struct linenoiseState *l);
-
-
-
-void linenoiseClearScreen(void) {
-
-    puts("\x1b[H\x1b[2J");
-
-=======
 enum KEY_ACTION{
     TAB = 9,            /* tab */
     ENTER = 13,         /* enter */
@@ -123,7 +63,6 @@ char **history = NULL;
 
 void linenoiseClearScreen(void) {
     putstr("\x1b[H\x1b[2J");
->>>>>>> 75a4793e0c8584e9416085ca6eb247a83ef9e8f4
 }
 
 static void freeCompletions(linenoiseCompletions *lc) {
@@ -131,20 +70,11 @@ static void freeCompletions(linenoiseCompletions *lc) {
     for (i = 0; i < lc->len; i++)  
         vPortFree(lc->cvec[i]);    
     if (lc->cvec != NULL)
-<<<<<<< HEAD
-       vPortFree(lc->cvec);
-}
-
-
-static void linenoiseBeep(void) {
-    puts("\x7");
-=======
         vPortFree(lc->cvec);
 }
 
 static void linenoiseBeep(void) {
     putstr("\x7");
->>>>>>> 75a4793e0c8584e9416085ca6eb247a83ef9e8f4
 }
 
 static int completeLine(struct linenoiseState *ls) {
@@ -214,13 +144,8 @@ void linenoiseAddCompletion(linenoiseCompletions *lc, char *str) {
     size_t len = strlen(str);
     char *copy = (char *)pvPortMalloc(len+1);
     memcpy(copy,str,len+1);
-<<<<<<< HEAD
-    lc->cvec = (char**)pvPortRealloc(lc->cvec,sizeof(char*)*(lc->len+1));
-    lc->cvec[lc->len++] = copy;                                        
-=======
     lc->cvec = (char**)realloc(lc->cvec,sizeof(char*)*(lc->len+1));
     lc->cvec[lc->len++] = copy;                                    
->>>>>>> 75a4793e0c8584e9416085ca6eb247a83ef9e8f4
 }
 
 static void refreshSingleLine(struct linenoiseState *l) {
@@ -238,23 +163,6 @@ static void refreshSingleLine(struct linenoiseState *l) {
         len--;
     }
 
-<<<<<<< HEAD
-    /* Cursor to left edge ->ESC [ 0 G*/ 
-    puts("\x1b[0G");
-    /* Write the prompt and the current buffer content */
-    puts(l->prompt);
-    puts(buf);
-    /* Erase to right -> ESC [ 0 K*/ 
-    puts("\x1b[0K");
-    /* \x1b[0G->Move cursor to original position(col=0). */
-    /* \x1b[00c->Set the count of moving cursor(col=pos+plen) */
-    char sq1[] = "\x1b[0G";
-    char sq2[] = "\x1b[00C";
-    sq2[2] = (pos+plen) / 10 + 0x30; 
-    sq2[3] = (pos+plen) % 10 + 0x30;
-    puts(sq1);
-    puts(sq2);
-=======
     /* Cursor to left edge */ 
     putstr("\x1b[0G");
     /* Write the prompt and the current buffer content */
@@ -268,7 +176,6 @@ static void refreshSingleLine(struct linenoiseState *l) {
     sq[6] = (pos+plen) / 10 + 0x30;  
     sq[7] = (pos+plen) % 10 + 0x30;
     putstr(sq);
->>>>>>> 75a4793e0c8584e9416085ca6eb247a83ef9e8f4
 }
 
 static void refreshLine(struct linenoiseState *l) {
@@ -287,27 +194,6 @@ int linenoiseEditInsert(struct linenoiseState *l, int c) {
             l->len++;
             l->buf[l->len] = '\0';
             if ((!mlmode && l->plen+l->len < l->cols) /* || mlmode */) {
-<<<<<<< HEAD
-                    /* Avoid a full update of the line in the
-                     * trivial case. */
-        		serial.putch(c);
-
-        	} else {
-
-        		refreshLine(l);
-
-    	    }
-    	}
-    } else {
-        memmove(l->buf+l->pos+1,l->buf+l->pos,l->len-l->pos);
-        l->buf[l->pos] = c;
-        l->len++;
-        l->pos++;
-        l->buf[l->len] = '\0';
-	    refreshLine(l);
-    }
-    return 0;
-=======
                 /* Avoid a full update of the line in the
                  * trivial case. */
                 serial.putch(c);
@@ -323,7 +209,6 @@ int linenoiseEditInsert(struct linenoiseState *l, int c) {
             refreshLine(l);
         }
     }
->>>>>>> 75a4793e0c8584e9416085ca6eb247a83ef9e8f4
 }
 
 void linenoiseEditMoveLeft(struct linenoiseState *l) {
@@ -415,12 +300,6 @@ static int linenoiseEdit(char *buf, size_t buflen, const char *prompt)
     /* The latest history entry is always our current buffer, that
      * initially is just an empty string. */
     linenoiseHistoryAdd("");
-<<<<<<< HEAD
-    puts(prompt);
-    while(1) {
-    	char c;
-    	char seq[2] = {0};	
-=======
     history_len++;
 
     putstr(prompt);
@@ -428,7 +307,6 @@ static int linenoiseEdit(char *buf, size_t buflen, const char *prompt)
     	char c;
     	char seq[2] = {0};	
 
->>>>>>> 75a4793e0c8584e9416085ca6eb247a83ef9e8f4
     	c = serial.getch();	
 
     	/* Only autocomplete when the callback is set. */
@@ -440,91 +318,6 @@ static int linenoiseEdit(char *buf, size_t buflen, const char *prompt)
             if (c == 0) continue;      
         }
 
-<<<<<<< HEAD
-    	switch(c) {
-
-        	case ENTER:    /* enter */
-        	    history_len--;
-				vPortFree(history[history_len]);
-        	    return (int)l.len;	    
-        	case BACKSPACE:   /* backspace */	
-        	case CTRL_H:     /* ctrl-h */
-        	    linenoiseEditBackspace(&l);
-        	    break;
-            case CTRL_D:     /* ctrl-d, remove char at right of cursor, or of the
-                               line is empty, act as end-of-file. */
-                if (l.len > 0) {
-                    linenoiseEditDelete(&l);
-                } else {
-                    history_len--;
-                    vPortFree(history[history_len]);
-                    return -1;
-                }
-                break;
-            case CTRL_T:    /* ctrl-t, swaps current character with previous. */
-        	    //...
-        	    break;
-            case CTRL_B:     /* ctrl-b */
-                linenoiseEditMoveLeft(&l);
-                break;
-            case CTRL_F:     /* ctrl-f */
-                linenoiseEditMoveRight(&l);
-                break;
-            case CTRL_P:    /* ctrl-p */
-                linenoiseEditHistoryNext(&l, LINENOISE_HISTORY_PREV);
-                break;
-            case CTRL_N:    /* ctrl-n */
-                linenoiseEditHistoryNext(&l, LINENOISE_HISTORY_NEXT);
-                break;
-            case ESC:    /* escape sequence */
-        	   seq[0] = serial.getch(); 
-        	   seq[1] = serial.getch();
-        	   /* Need to implement reading 2 bytes from USART at here */
-                if (seq[0] == ARROW_PREFIX && seq[1] == LEFT_ARROW) {
-                    /* Left arrow */
-                    linenoiseEditMoveLeft(&l);
-                } else if (seq[0] == ARROW_PREFIX && seq[1] == RIGHT_ARROW) {
-                    /* Right arrow */
-                    linenoiseEditMoveRight(&l);
-    	        } else if (seq[0] == ARROW_PREFIX && (seq[1] == UP_ARROW || seq[1] == DOWN_ARROW)) {
-                    /* Up and Down arrows */
-                    linenoiseEditHistoryNext(&l,
-                    (seq[1] == UP_ARROW) ? LINENOISE_HISTORY_PREV :
-                                     LINENOISE_HISTORY_NEXT);
-                } 
-                break;
-            default:
-            	if(c == '\0') //avoid the NULL byte which received from the USART
-            		break;
-                if (linenoiseEditInsert(&l,c)) return -1;
-            	    break;
-            case CTRL_U: /* Ctrl+u, delete the whole line. */
-                buf[0] = '\0';
-                l.pos = l.len = 0;
-                refreshLine(&l);
-            	break;
-            case CTRL_K: /* Ctrl+k, delete from current to end of line. */
-                buf[l.pos] = '\0';
-                l.len = l.pos;
-                refreshLine(&l);
-            	break;
-            case CTRL_A: /* Ctrl+a, go to the start of the line */
-                l.pos = 0;
-                refreshLine(&l);
-            	break;
-            case CTRL_E: /* ctrl+e, go to the end of the line */
-                l.pos = l.len;
-                refreshLine(&l);
-            	break;
-            case CTRL_L: /* ctrl+l, clear screen */	
-                linenoiseClearScreen();        
-                refreshLine(&l);
-                break;
-            case CTRL_W: /* ctrl+w, delete previous word */
-            	linenoiseEditDeletePrevWord(&l);
-            	break;
-    	}
-=======
 	switch(c) {
 	case ENTER:    /* enter */
 	    history_len--;
@@ -613,7 +406,6 @@ static int linenoiseEdit(char *buf, size_t buflen, const char *prompt)
 	    linenoiseEditDeletePrevWord(&l);
 	    break;
 	}
->>>>>>> 75a4793e0c8584e9416085ca6eb247a83ef9e8f4
     }
     return l.len;
 }
@@ -622,11 +414,7 @@ static int linenoiseRaw(char *buf, size_t buflen, const char *prompt) {
     int count;
 
     count = linenoiseEdit(buf, buflen, prompt);
-<<<<<<< HEAD
-    puts("\n\r");
-=======
     putstr("\n\r");
->>>>>>> 75a4793e0c8584e9416085ca6eb247a83ef9e8f4
     
     return count;
 }
@@ -670,21 +458,3 @@ int linenoiseHistoryAdd(const char *line) {
     history_len++;
     return 1;
 }
-<<<<<<< HEAD
-int linenoiseGetHistory(){
-
-    if ( (history == NULL) || (history_len <=0) ) return 0;
-
-    int i;
-    puts("list previous 10 commands");
-    for (i = 0 ; i < 10 ; i++){
-        printf("%d : %s\r\n",i,history[history_len - i]);
-    }
-
-    
-    return 1;
-
-
-}
-=======
->>>>>>> 75a4793e0c8584e9416085ca6eb247a83ef9e8f4
