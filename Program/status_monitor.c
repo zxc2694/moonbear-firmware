@@ -9,6 +9,7 @@
 
 #include "module_rs232.h"
 #include "algorithm_quaternion.h"
+#include "algorithm_pid.h"
 #include "sys_manager.h"
 
 #include "FreeRTOS.h"
@@ -52,6 +53,10 @@ int monitorInternalCmdIndentify(char *command)
 
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
+	int last_rc_exp_pitch = global_var[RC_EXP_PITCH].param;
+	int last_rc_exp_roll = global_var[RC_EXP_ROLL].param;
+	int last_rc_exp_yaw = global_var[RC_EXP_YAW].param;
+
 	while(1) {	
 		/* Clean the screen */
 		printf("\x1b[H\x1b[2J");
@@ -62,9 +67,9 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 		printf("**************************************************************\n\r");
 
 		printf("PID\tPitch\tRoll\tYow\n\r");
-		printf("Kp\t%d\t%d\t%d\n\r", 0, 0, 0);
-		printf("Ki\t%d\t%d\t%d\n\r", 0, 0, 0);
-		printf("Kd\t%d\t%d\t%d\n\r", 0, 0, 0);
+		printf("Kp\t%f\t%f\t%f\n\r", PID_Pitch.Kp, PID_Roll.Kp, PID_Yaw.Kp);
+		printf("Ki\t%f\t%f\t%f\n\r", PID_Pitch.Ki, PID_Roll.Ki, PID_Yaw.Ki);
+		printf("Kd\t%f\t%f\t%f\n\r", PID_Pitch.Kd, PID_Roll.Kd, PID_Yaw.Kd);
 
 		printf("--------------------------------------------------------------\n\r");
 
@@ -75,9 +80,9 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 		#define MOTOR_STATUS "Off"
 		printf("RC Messages\tCurrent\tLast\n\r");
-		printf("Pitch(expect)\t%d\t%d\n\r", global_var[RC_EXP_PITCH].param, 0);
-		printf("Roll(expect)\t%d\t%d\n\r", global_var[RC_EXP_ROLL].param, 0);
-		printf("Yaw(expect)\t%d\t%d\n\r", global_var[RC_EXP_YAW].param, 0);	
+		printf("Pitch(expect)\t%d\t%d\n\r", global_var[RC_EXP_PITCH].param, last_rc_exp_pitch);
+		printf("Roll(expect)\t%d\t%d\n\r", global_var[RC_EXP_ROLL].param, last_rc_exp_roll);
+		printf("Yaw(expect)\t%d\t%d\n\r", global_var[RC_EXP_YAW].param, last_rc_exp_yaw);	
 
 		printf("Throttle\t%d\n\r", global_var[RC_EXP_THR].param);
 		printf("Engine\t\t%s\n\r", MOTOR_STATUS);
@@ -128,8 +133,15 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 			}			
 		}
 
+		/* Exit the moniter if user type command "quit" */
 		if(monitor_cmd == MONITOR_QUIT)
 			break;
+
+		/* Update the record of RC expect attitudes */
+		last_rc_exp_pitch = global_var[RC_EXP_PITCH].param;
+		last_rc_exp_roll = global_var[RC_EXP_ROLL].param;
+		last_rc_exp_yaw = global_var[RC_EXP_YAW].param;
+
 	}
 
 	/* Clean the screen */
