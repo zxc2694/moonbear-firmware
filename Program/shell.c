@@ -22,6 +22,7 @@ int history_disable = 0;
 /* Shell Command handlers */
 void shell_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
 
@@ -29,6 +30,7 @@ void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
 enum SHELL_CMD_ID {
         unknown_cmd_ID,
 	clear_ID,
+	help_ID,
         monitor_ID,
 	ps_ID,
         SHELL_CMD_CNT
@@ -38,6 +40,7 @@ enum SHELL_CMD_ID {
 command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(unknown_cmd, shell),
 	CMD_DEF(clear, shell),
+	CMD_DEF(help, shell),
 	CMD_DEF(monitor, shell),
 	CMD_DEF(ps, shell)
 };
@@ -82,6 +85,19 @@ void shell_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt)
 void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	linenoiseClearScreen();
+}
+
+void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	printf("\n\rLinenoise shell environment <QuadCopter Shell>\n\r");
+	printf("The lineoise is auorized under BSD License and released by antirez\n\r");
+	printf("The QCopterFlightControl is based on Hom19910422's version\n\r");
+
+	printf("\n\rSupport commands:\n\r");
+	printf("clear  \tClear the screan\n\r");
+	printf("help \tShow the list of all commands\n\r");
+	printf("monitor The QuadCopter Status monitor\n\r");
+	printf("ps \tShow the list of all tasks\n\r\n\r");
 }
 
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
