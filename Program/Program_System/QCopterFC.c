@@ -54,11 +54,6 @@ int System_Status = SYSTEM_UNINITIALIZED;
 /*=====================================================================================================*/
 #define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
 /*=====================================================================================================*/
-void vApplicationTickHook(void)
-{
-}
-
-
 void vApplicationStackOverflowHook(xTaskHandle pxTask, signed char *pcTaskName)
 {
 }
