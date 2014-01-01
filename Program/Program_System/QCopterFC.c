@@ -29,8 +29,6 @@
 #include "linenoise.h"
 #include "shell.h"
 
-xSemaphoreHandle TIM2_Semaphore = NULL;
-xSemaphoreHandle TIM4_Semaphore = NULL;
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
 xTaskHandle statusReport_handle = NULL;
@@ -393,10 +391,10 @@ int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 	system_init();
-	vSemaphoreCreateBinary(TIM2_Semaphore);
-	vSemaphoreCreateBinary(TIM4_Semaphore);
+
 	vSemaphoreCreateBinary(serial_tx_wait_sem);
 	serial_rx_queue = xQueueCreate(1, sizeof(serial_msg));
+
 	xTaskCreate(check_task,
 		(signed portCHAR *) "Initial checking",
 		512, NULL,
