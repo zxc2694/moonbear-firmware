@@ -281,7 +281,9 @@ void flightControl_task()
 
 		/* Get Attitude Angle */
 		AHRS_Update();
-
+		global_var[TRUE_ROLL].param = AngE.Roll;
+		global_var[TRUE_PITCH].param = AngE.Pitch;
+		global_var[TRUE_YAW].param = AngE.Yaw;
 
 		/*Get RC Control*/
 		Update_RC_Control(&Exp_Roll, &Exp_Pitch, &Exp_Yaw, &Exp_Thr, &safety);
@@ -345,17 +347,30 @@ void statusReport_task()
 	printf("[System status]Initialized successfully!\n\r");	
 	
 	while (1) {
-		printf("Roll = %f,Pitch = %f,Yaw = %f \r\n",
-		       AngE.Roll, AngE.Pitch, AngE.Yaw);
-		printf("CH1 %f(%f),CH2 %f(%f),CH3 %f(%f),CH4 %f(%f),CH5 %f()\r\n",
-		       global_var[PWM1_CCR].param, global_var[RC_EXP_ROLL].param,
-		       global_var[PWM2_CCR].param, global_var[RC_EXP_PITCH].param,
-		       global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
-		       global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
-		       global_var[PWM5_CCR].param);
-		printf("\r\n");
+        LED_B = ~LED_B;
+        printf("\x1b[H\x1b[2J");
 
-		vTaskDelay(500);
+
+        printf("Roll = %f,Pitch = %f,Yaw = %f \r\n",
+                global_var[TRUE_ROLL].param, global_var[TRUE_PITCH].param, 
+                global_var[TRUE_YAW].param);
+        printf("CH1 %f(%f),CH2 %f(%f),CH3 %f(%f),CH4 %f(%f),CH5 %f()\r\n",
+                global_var[PWM1_CCR].param, global_var[RC_EXP_ROLL].param,
+                global_var[PWM2_CCR].param, global_var[RC_EXP_PITCH].param,
+                global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
+                global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
+                global_var[PWM5_CCR].param);
+        printf("PID Roll,%f,PID PITCH,%f,PID YAW,%f\r\n",
+                global_var[PID_ROLL].param,
+                global_var[PID_PITCH].param,
+                global_var[PID_YAW].param);
+        printf("MOTOR 1,%f,MOTOR 2,%f,MOTOR 3,%f,MOTOR 4,%f",
+                global_var[MOTOR1].param,
+                global_var[MOTOR2].param,
+                global_var[MOTOR3].param,
+                global_var[MOTOR4].param);
+
+		vTaskDelay(1000);
 	}
 }
 
@@ -392,7 +407,7 @@ int main(void)
 #ifndef SHELL_IS_EXIST
 	xTaskCreate(statusReport_task,
 		(signed portCHAR *) "Status report",
-		512, NULL,
+		1000, NULL,
 		tskIDLE_PRIORITY + 5, NULL);
 #endif
 
