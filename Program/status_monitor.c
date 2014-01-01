@@ -17,16 +17,22 @@
 
 /* Shell Command handlers */
 void monitor_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
+void monitor_help(char parameter[][MAX_CMD_LEN], int par_cnt);
+void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum MONITOR_CMD_ID {
 	unknown_cmd_ID,
+	help_ID,
+	set_ID,
 	MONITOR_CMD_CNT
 };
 
 //First string don't need to store anything for unknown commands
 command_list monitorCmd_list[MONITOR_CMD_CNT] = {
-	CMD_DEF(unknown_cmd, monitor)
+	CMD_DEF(unknown_cmd, monitor),
+	CMD_DEF(help, monitor),
+	CMD_DEF(set, monitor)
 };
 
 /* Internal commands */
@@ -38,6 +44,8 @@ enum MONITOR_INTERNAL_CMD {
 };
 
 char monitor_cmd[MONITOR_IT_CMD_CNT - 1][MAX_CMD_LEN] = {"quit", "resume"};
+int monitor_it_cmd;
+
 
 int monitorInternalCmdIndentify(char *command)
 {
@@ -64,6 +72,7 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 		/* Welcome Messages */
 		printf("QuadCopter Status Monitor\n\r");
 		printf("Copyleft - NCKU Open Source Work of 2013 Embedded system class\n\r");
+		printf("Please type \"help\" to get more informations\n\r");
 		printf("**************************************************************\n\r");
 
 		printf("PID\tPitch\tRoll\tYow\n\r");
@@ -98,15 +107,15 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 		printf("[Please press <Space> to refresh the status]\n\r");
 		printf("[Please press <Enter> to enable the command line]");
 	
-		int monitor_cmd = 0;		
 		char key_pressed = serial.getch();
+		monitor_it_cmd = 0;		
 	
-		while(monitor_cmd != MONITOR_QUIT && monitor_cmd != MONITOR_RESUME) {
+		while(monitor_it_cmd != MONITOR_QUIT && monitor_it_cmd != MONITOR_RESUME) {
 			if(key_pressed == ENTER) {
 				/* Clean and move up two lines*/
 				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
 	
-				while(monitor_cmd != MONITOR_QUIT && monitor_cmd != MONITOR_RESUME) {
+				while(monitor_it_cmd != MONITOR_QUIT && monitor_it_cmd != MONITOR_RESUME) {
 					char *command_str;
 
 					command_str = linenoise("(monitor) ");
@@ -115,10 +124,10 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 					/* The Internal command means that need not call
 					   any functions but handle at here
 					 */
-					monitor_cmd = monitorInternalCmdIndentify(command_str);
+					monitor_it_cmd = monitorInternalCmdIndentify(command_str);
 
 					/* Check if it is not an Internal command */
-					if(monitor_cmd == MONITOR_UNKNOWN) {
+					if(monitor_it_cmd == MONITOR_UNKNOWN) {
 						/* FIXME:External Commands, need to call other functions */
 						command_data monitor_cd = {.par_cnt = 0};			
 						commandExec(command_str, &monitor_cd, monitorCmd_list, MONITOR_CMD_CNT);
@@ -134,7 +143,7 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 		}
 
 		/* Exit the moniter if user type command "quit" */
-		if(monitor_cmd == MONITOR_QUIT)
+		if(monitor_it_cmd == MONITOR_QUIT)
 			break;
 
 		/* Update the record of RC expect attitudes */
@@ -156,4 +165,54 @@ void monitor_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 	serial.getch();
 	printf("\x1b[0G\x1b[0K");
+}
+
+void monitor_help(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	printf("\x1b[H\x1b[2J");
+	printf("QuadCopter Status Monitor Manual\n\r");
+	printf("****************************************************************************************\n\r");	
+
+	printf("\n\rDiscription:\n\r");
+	printf("The monitor support reporting and setting the information of the QuadCopter in real time\n\r");
+	printf("\n\r----------------------------------------------------------------------------------------\n\r");
+
+	printf("*To refresh the status, please press [Space]\n\r");
+	printf("*To modify the settings, please press [Enter] to enable the commandline\n\r");
+	printf("----------------------------------------------------------------------------------------\n\r");
+
+	printf("\n\rAll Commands:\n\r");
+
+	printf("\n\rset [parameter] [value] / set update\n\r");
+	printf("-Set the parameters of the QuadCopter(*The settings will change after type \"set update\")\n\r");
+
+	printf("\n\r----------------------------------------------------------------------------------------\n\r");
+	printf("Modifiable parameter list:\n\r\n\r");
+	printf("pitch.kp  pitch.ki  pitch.kd\n\r");
+	printf("roll.kp   roll.ki   roll.kd\n\r");
+	printf("yaw.kp    yaw.ki    yaw.kd\n\r");
+	printf("LED1  LED2\n\r");
+	printf("LED3  LED4\n\r");
+	printf("----------------------------------------------------------------------------------------\n\r");
+
+	printf("\n\rresume\n\r");
+	printf("-Disable the commandline and resume to status report mode\n\r");
+
+	printf("\n\rquit\n\r");
+	printf("-Quit the QuadCopter Status Monitor\n\r");
+
+	printf("\n\r****************************************************************************************\n\r");	
+
+	printf("\n\r[Please press q to quit the manual]");
+
+	/* Exit */
+	char ch = serial.getch();
+	while(ch != 'q' && ch != 'Q')
+		ch = serial.getch();
+	
+	monitor_it_cmd = MONITOR_RESUME;
+}
+
+void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
 }
