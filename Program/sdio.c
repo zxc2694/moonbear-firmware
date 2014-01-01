@@ -23,7 +23,16 @@ FILINFO finfo;
 DIR dirs;
 FIL file;
 
-int sdio_task( void )
+void SDIO_Config(void)
+{
+  while(SD_Init() != SD_OK) {
+    while(1) {
+      LED_R = ~LED_R;
+      Delay_10ms(20);
+    }
+  }
+}
+int SD_demo( void )
 {
   uint32_t i = 0;
   uint8_t ReadBuf[128] = {0};
@@ -41,13 +50,7 @@ int sdio_task( void )
   printf("----------------------\r\n");
   printf("----------------------\r\n\r\n");
   printf(" SD Init ... ");
-  while(SD_Init() != SD_OK) {
-    printf("Failed!!\r\n");
-    while(1) {
-      LED_R = ~LED_R;
-      vTaskDelay(200);
-    }
-  }
+ 
   printf("OK!!\r\n\r\n");
 
   printf("-----SD Init Info-----\r\n");

@@ -78,6 +78,7 @@ void system_init(void)
 	PWM_Capture_Config();
 	Sensor_Config();
 	nRF24L01_Config();
+	SDIO_Config();
 
 
 	PID_Init(&PID_Yaw);
@@ -96,7 +97,7 @@ void system_init(void)
         PID_Yaw.Ki = +0.0f;
         PID_Yaw.Kd = +15.0f;
 
-        Delay_10ms(200);
+        Delay_10ms(10);
 
 	u8 Sta = ERROR;
 
@@ -387,6 +388,14 @@ void check_task()
 
 }
 
+void sdio_task()
+{
+	vTaskDelay(200);
+	printf("[System status]Initialized successfully!\n\r");	
+	SD_demo();
+
+}
+
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
@@ -403,6 +412,10 @@ int main(void)
 		(signed portCHAR *) "Initial checking",
 		4096, NULL,
 		tskIDLE_PRIORITY + 5, &correction_task_handle);
+	xTaskCreate(sdio_task,
+		(signed portCHAR *) "Using SD card",
+		512, NULL,
+		tskIDLE_PRIORITY + 5, NULL);
 
 #ifndef SHELL_IS_EXIST
 	xTaskCreate(statusReport_task,
