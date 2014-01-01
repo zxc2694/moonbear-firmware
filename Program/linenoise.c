@@ -160,7 +160,7 @@ static void refreshLine(struct linenoiseState *l) {
     }
 }
 
-int linenoiseEditInsert(struct linenoiseState *l, int c) {
+void linenoiseEditInsert(struct linenoiseState *l, int c) {
     if (l->len < l->buflen) {
         if (l->len == l->pos) {
             l->buf[l->pos] = c;
