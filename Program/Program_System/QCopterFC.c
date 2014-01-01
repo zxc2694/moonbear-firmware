@@ -145,12 +145,6 @@ void system_init(void)
 
 }
 
-vs16 Tmp_PID_KP;
-vs16 Tmp_PID_KI;
-vs16 Tmp_PID_KD;
-vs16 Tmp_PID_Pitch;
-
-Sensor_Mode SensorMode = Mode_GyrCorrect;
 void correction_task()
 {
 	while(System_Status == SYSTEM_UNINITIALIZED);
@@ -162,12 +156,6 @@ void correction_task()
 
 	static uint8_t BaroCnt = 0;
 
-	static u8 BaroCnt = 0;
-
-	static s16 ACC_FIFO[3][256] = {{0}};
-	static s16 GYR_FIFO[3][256] = {{0}};
-
-	static u32 Correction_Time = 0;
 
 	/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
 	MPU9150_Read(IMU_Buf);
@@ -344,8 +332,6 @@ void flightControl_task()
 
 	
 	}
-
-		vTaskDelay(2);
 
 	}
 }
