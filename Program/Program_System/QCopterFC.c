@@ -33,6 +33,7 @@ xSemaphoreHandle TIM2_Semaphore = NULL;
 xSemaphoreHandle TIM4_Semaphore = NULL;
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
+xTaskHandle statusReport_handle = NULL;
 volatile int16_t ACC_FIFO[3][256] = {{0}};
 volatile int16_t GYR_FIFO[3][256] = {{0}};
 volatile int16_t MAG_FIFO[3][256] = {{0}};
@@ -195,6 +196,7 @@ void correction_task()
 	vTaskDelay(2);
 	}
 	vTaskResume(FlightControl_Handle);
+	vTaskResume(statusReport_handle);
 	vTaskDelete(NULL);
 }
 
@@ -370,7 +372,7 @@ void statusReport_task()
                 global_var[MOTOR3].param,
                 global_var[MOTOR4].param);
 
-		vTaskDelay(1000);
+		vTaskDelay(200);
 	}
 }
 
@@ -408,7 +410,7 @@ int main(void)
 	xTaskCreate(statusReport_task,
 		(signed portCHAR *) "Status report",
 		1000, NULL,
-		tskIDLE_PRIORITY + 5, NULL);
+		tskIDLE_PRIORITY + 5, &statusReport_handle);
 #endif
 
 #ifdef SHELL_IS_EXIST
@@ -425,6 +427,7 @@ int main(void)
 
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
+	vTaskSuspend(statusReport_handle);
 	vTaskStartScheduler();
 
 	return 0;
