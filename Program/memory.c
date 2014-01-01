@@ -1,3 +1,6 @@
+#include "FreeRTOS.h"
+
+#include "string.h"
 #include "memory.h"
 
 void *realloc(void *ptr, size_t len)

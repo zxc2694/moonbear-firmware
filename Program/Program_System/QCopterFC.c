@@ -26,6 +26,8 @@
 
 #include "sys_manager.h"
 #include "std.h"
+#include "linenoise.h"
+#include "shell.h"
 
 xSemaphoreHandle TIM2_Semaphore = NULL;
 xSemaphoreHandle TIM4_Semaphore = NULL;
@@ -70,17 +72,17 @@ void vApplicationIdleHook(void)
 void system_init(void)
 {	
 	LED_Config();
-        KEY_Config();
-        RS232_Config();
-        Motor_Config();
-        PWM_Capture_Config();
-        Sensor_Config();
-        nRF24L01_Config();
+	KEY_Config();
+	RS232_Config();
+	Motor_Config();
+	PWM_Capture_Config();
+	Sensor_Config();
+	nRF24L01_Config();
 
 
-        PID_Init(&PID_Yaw);
-        PID_Init(&PID_Roll);
-        PID_Init(&PID_Pitch);
+	PID_Init(&PID_Yaw);
+	PID_Init(&PID_Roll);
+	PID_Init(&PID_Pitch);
 
  	PID_Pitch.Kp = +4.0f;
         PID_Pitch.Ki = 0;//0.002f;
@@ -96,50 +98,52 @@ void system_init(void)
 
         Delay_10ms(200);
 
-        u8 Sta = ERROR;
+	u8 Sta = ERROR;
 
 
-        //while (remote_signal_check() == NO_SIGNAL);
+	//while (remote_signal_check() == NO_SIGNAL);
 
-        if (KEY == 1) {
-                LED_B = 0;
-                Motor_Control(PWM_MOTOR_MAX, PWM_MOTOR_MAX, PWM_MOTOR_MAX, PWM_MOTOR_MAX);
-        }
+	if (KEY == 1) {
+		LED_B = 0;
+		Motor_Control(PWM_MOTOR_MAX, PWM_MOTOR_MAX, PWM_MOTOR_MAX, PWM_MOTOR_MAX);
+	}
 
-        while (KEY == 1);
+	while (KEY == 1);
 
-        LED_B = 1;
-        Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
+	LED_B = 1;
+	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
 
 #ifndef NRF_NOT_EXIST
-        /* nRF Check */
-        while (Sta == ERROR)
-                Sta = nRF_Check();
+	/* nRF Check */
+	while (Sta == ERROR)
+		Sta = nRF_Check();
 #endif
 
 #ifndef SENSOR_NOT_EXIST
-        /* Sensor Init */
-        if (Sensor_Init() == SUCCESS)
-                LED_G = 0;
+	/* Sensor Init */
+	if (Sensor_Init() == SUCCESS)
+		LED_G = 0;
 #endif
 
-        Delay_10ms(10);
+	Delay_10ms(10);
 
 
-        /* Wait Correction */
-        //while (SensorMode != Mode_Algorithm);
+	/* Wait Correction */
+	//while (SensorMode != Mode_Algorithm);
 
-        /* Lock */
-        LED_R = 1;
-        LED_G = 1;
-        LED_B = 1;
+	/* Lock */
+	LED_R = 1;
+	LED_G = 1;
+	LED_B = 1;
 
-        System_Status = SYSTEM_INITIALIZED;
+	System_Status = SYSTEM_INITIALIZED;
+
+	/* Clear the screen */
+	//putstr("\x1b[H\x1b[2J");
 
 
 }
-
 
 void correction_task()
 {
@@ -151,7 +155,6 @@ void correction_task()
 	uint8_t IMU_Buf[20] = {0};
 
 	static uint8_t BaroCnt = 0;
-
 
 
 	/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
@@ -199,7 +202,6 @@ void flightControl_task()
 {
 	//Waiting for system finish initialize
 	while(System_Status == SYSTEM_UNINITIALIZED);
-
 
 	while (1) {
 	GPIO_ToggleBits(GPIOC, GPIO_Pin_7);
@@ -265,7 +267,7 @@ void flightControl_task()
 		Mag.Y = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], 64);
 		Mag.Z = (s16)MoveAve_WMA(Mag.Z, MAG_FIFO[2], 64);
 
-		/* To Physical */
+	/* To Physical */
 		Acc.TrueX = Acc.X * MPU9150A_4g;      // g/LSB
 		Acc.TrueY = Acc.Y * MPU9150A_4g;      // g/LSB
 		Acc.TrueZ = Acc.Z * MPU9150A_4g;      // g/LSB
@@ -279,7 +281,9 @@ void flightControl_task()
 
 		/* Get Attitude Angle */
 		AHRS_Update();
-
+		global_var[TRUE_ROLL].param = AngE.Roll;
+		global_var[TRUE_PITCH].param = AngE.Pitch;
+		global_var[TRUE_YAW].param = AngE.Yaw;
 
 		/*Get RC Control*/
 		Update_RC_Control(&Exp_Roll, &Exp_Pitch, &Exp_Yaw, &Exp_Thr, &safety);
@@ -289,14 +293,14 @@ void flightControl_task()
 		global_var[RC_EXP_YAW].param = Exp_Yaw;
 		/* Get ZeroErr */
 		PID_Pitch.ZeroErr = (float)((s16)Exp_Pitch);
-		PID_Roll.ZeroErr  = (float)((s16)Exp_Roll );
+		PID_Roll.ZeroErr  = (float)((s16)Exp_Roll);
 		PID_Yaw.ZeroErr   = (float)((s16)Exp_Yaw) + 180.0f;
 
 		/* PID */
 		Roll  = (s16)PID_AHRS_Cal(&PID_Roll,   AngE.Roll,  Gyr.TrueX);
 		Pitch = (s16)PID_AHRS_Cal(&PID_Pitch,  AngE.Pitch, Gyr.TrueY);
 //      Yaw   = (s16)PID_AHRS_CalYaw(&PID_Yaw, AngE.Yaw,   Gyr.TrueZ);
-		Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ) + 3*(s16)Exp_Yaw;
+		Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ) + 3 * (s16)Exp_Yaw;
 		Thr   = (s16)Exp_Thr;
 
 		global_var[PID_ROLL].param = Roll;
@@ -332,7 +336,6 @@ void flightControl_task()
 	}
 
 	}
-
 }
 
 
@@ -344,17 +347,30 @@ void statusReport_task()
 	printf("[System status]Initialized successfully!\n\r");	
 	
 	while (1) {
-		printf("Roll = %f,Pitch = %f,Yaw = %f \r\n",
-		       AngE.Roll, AngE.Pitch, AngE.Yaw);
-		printf("CH1 %f(%f),CH2 %f(%f),CH3 %f(%f),CH4 %f(%f),CH5 %f()\r\n",
-		       global_var[PWM1_CCR].param, global_var[RC_EXP_ROLL].param,
-		       global_var[PWM2_CCR].param, global_var[RC_EXP_PITCH].param,
-		       global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
-		       global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
-		       global_var[PWM5_CCR].param);
-		printf("\r\n");
+        LED_B = ~LED_B;
+        printf("\x1b[H\x1b[2J");
 
-		vTaskDelay(500);
+
+        printf("Roll = %f,Pitch = %f,Yaw = %f \r\n",
+                global_var[TRUE_ROLL].param, global_var[TRUE_PITCH].param, 
+                global_var[TRUE_YAW].param);
+        printf("CH1 %f(%f),CH2 %f(%f),CH3 %f(%f),CH4 %f(%f),CH5 %f()\r\n",
+                global_var[PWM1_CCR].param, global_var[RC_EXP_ROLL].param,
+                global_var[PWM2_CCR].param, global_var[RC_EXP_PITCH].param,
+                global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
+                global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
+                global_var[PWM5_CCR].param);
+        printf("PID Roll,%f,PID PITCH,%f,PID YAW,%f\r\n",
+                global_var[PID_ROLL].param,
+                global_var[PID_PITCH].param,
+                global_var[PID_YAW].param);
+        printf("MOTOR 1,%f,MOTOR 2,%f,MOTOR 3,%f,MOTOR 4,%f",
+                global_var[MOTOR1].param,
+                global_var[MOTOR2].param,
+                global_var[MOTOR3].param,
+                global_var[MOTOR4].param);
+
+		vTaskDelay(1000);
 	}
 }
 
@@ -369,20 +385,6 @@ void check_task()
 	vTaskResume(correction_task_handle);
 	vTaskDelete(NULL);
 
-}
-
-void shell_task()
-{
-	while(System_Status == SYSTEM_UNINITIALIZED);
-	//Waiting for system finish initialize
-	printf("[System status]Initialized successfully!\n\r");	
-	
-	char *shell_str;
-
-	putstr("Please type \"help\" to get more informations\n\r");
-	while(1) {
-		shell_str = linenoise("User > ");
-	}
 }
 
 int main(void)
@@ -405,14 +407,14 @@ int main(void)
 #ifndef SHELL_IS_EXIST
 	xTaskCreate(statusReport_task,
 		(signed portCHAR *) "Status report",
-		512, NULL,
+		1000, NULL,
 		tskIDLE_PRIORITY + 5, NULL);
 #endif
 
 #ifdef SHELL_IS_EXIST
 	xTaskCreate(shell_task,
 		(signed portCHAR *) "Shell",
-		512, NULL,
+		2048, NULL,
 		tskIDLE_PRIORITY + 5, NULL);
 #endif
 
