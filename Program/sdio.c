@@ -68,11 +68,11 @@ int SD_demo( void )
   printf("%d\r\n",SDCardInfo.RCA);
   printf("----------------------\r\n\r\n");
 
-  // Wait
+/*  // Wait
   while(KEY != 1){
     LED_G = ~LED_G;
     vTaskDelay(200);
-  }
+  }*/
 
   // Read Directory File
   printf("----------------------\r\n");
@@ -99,11 +99,11 @@ int SD_demo( void )
     printf("%s\r\n",finfo.fname);
   }
 
-  // Wait
+/*  // Wait
   while(KEY != 1){
     LED_G = ~LED_G;
     vTaskDelay(200);
-  }
+  }*/
 
   // Write File
   printf(" f_open ... ");
