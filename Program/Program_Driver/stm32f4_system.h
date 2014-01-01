@@ -56,7 +56,7 @@
 #define Byte8H(ByteH)        ((u8)((ByteH)>>8))
 #define Byte8L(ByteL)        ((u8)(ByteL))
 
-#define NULL 0
+//#define NULL 0
 
 typedef float  fp32;
 typedef double fp64;
