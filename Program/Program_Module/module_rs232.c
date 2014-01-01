@@ -1,11 +1,13 @@
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-#include "stm32f4_system.h"
-#include "module_rs232.h"
-#include "algorithm_string.h"
 #include <unistd.h>
 #include <stdarg.h>
 #include <string.h>
+#include <ctype.h>
+
+#include "stm32f4_system.h"
+#include "module_rs232.h"
+#include "algorithm_string.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -286,7 +288,31 @@ char *ftoa(float f) //, int *status)
 	return outbuf;
 }
 
-
+double atof(const char *s)
+{
+	int sign = 1;
+	int i = 0;
+	for( i=0; isspace(s[i]); i++ );
+	
+	sign = (s[i] == '-')? -1:1;
+	
+	if( s[i] == '+' || s[i] == '-' )
+		i++;
+		
+	double num = 0.0;
+	double pow = 1.0;
+	//整數 
+	for( ;isdigit(s[i]); i++ )
+		num = num*10 + (s[i]-'0');
+		
+	for( i++; isdigit(s[i]); i++ )
+	{
+		num = num*10 + (s[i]-'0');
+		pow *= 10;
+	}
+	
+	return sign * (num/pow);
+}
 /*=====================================================================================================*/
 /*=====================================================================================================*
 **函數 : sprintf
