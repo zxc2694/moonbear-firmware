@@ -292,7 +292,7 @@ double atof(const char *s)
 {
 	int sign = 1;
 	int i = 0;
-	for( i=0; isspace(s[i]); i++ );
+	for( i=0; isspace((unsigned char)s[i]); i++ );
 	
 	sign = (s[i] == '-')? -1:1;
 	
@@ -302,10 +302,10 @@ double atof(const char *s)
 	double num = 0.0;
 	double pow = 1.0;
 	//整數 
-	for( ;isdigit(s[i]); i++ )
+	for( ;isdigit((unsigned char)s[i]); i++ )
 		num = num*10 + (s[i]-'0');
 		
-	for( i++; isdigit(s[i]); i++ )
+	for( i++; isdigit((unsigned char)s[i]); i++ )
 	{
 		num = num*10 + (s[i]-'0');
 		pow *= 10;
