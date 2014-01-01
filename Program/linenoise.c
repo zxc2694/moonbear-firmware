@@ -402,16 +402,6 @@ char *linenoise(const char *prompt) {
     return strdup(buf);
 }
 
-static void freeHistory(void) {
-    if (history) {
-        int j;
-
-        for (j = 0; j < history_len; j++)
-	    vPortFree(history[j]); 
-        vPortFree(history);
-    }  
-}
-
 int linenoiseHistoryAdd(const char *line) {
     char *linecopy;
 
