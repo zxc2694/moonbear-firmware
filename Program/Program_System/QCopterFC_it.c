@@ -272,3 +272,18 @@ void USART3_IRQHandler()
 
 	portEND_SWITCHING_ISR( lHigherPriorityTaskWoken );
 }
+
+/*=====================================================================================================*/
+/*=====================================================================================================*/
+
+void SDIO_IRQHandler( void )
+{
+  long lHigherPriorityTaskWoken = pdFALSE;
+  SD_ProcessIRQSrc();
+  portEND_SWITCHING_ISR( lHigherPriorityTaskWoken );
+}
+
+void DMA2_Stream3_IRQHandler( void )
+{
+  SD_ProcessDMAIRQ();
+}

@@ -1,5 +1,6 @@
 /*=====================================================================================================*/
 /*=====================================================================================================*/
+#include "FreeRTOSConfig.h"
 #include "stm32f4_system.h"
 #include "stm32f4xx_sdio.h"
 #include "stm32f4_sdio.h"
@@ -193,11 +194,8 @@ SD_Error SD_Init( void )
   __IO SD_Error errorstatus = SD_OK;
 
   /* NVIC */
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-
   NVIC_InitStruct.NVIC_IRQChannel = SDIO_IRQn;
-  NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 2;
   NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStruct);
 
