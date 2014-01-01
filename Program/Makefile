@@ -18,6 +18,7 @@ PROGRAM_ALG = ./Program_Algorithm
 PROGRAM_DIR = ./Program_Driver
 PROGRAM_MOD = ./Program_Module
 PROGRAM_SYS = ./Program_System
+PROGRAM_FAT = ./Program_Fatfs
 _PROJECTFC_ = ./ProjectFC
 
 TOOLCHAIN_PATH ?= /usr/local/csl/arm-2012.03/arm-none-eabi
@@ -55,6 +56,7 @@ CFLAGS+=-I./Program_System
 CFLAGS+=-I./Program_Algorithm
 CFLAGS+=-I./Program_Driver
 CFLAGS+=-I./Program_Module
+CFLAGS+=-I./Program_Fatfs
 
 LDFLAGS+=-lm -lc -lgcc
 
@@ -72,7 +74,8 @@ SRC+=./Libraries/CMSIS/system_stm32f4xx.c \
 	$(ST_LIB)/src/stm32f4xx_usart.c \
 	$(ST_LIB)/src/stm32f4xx_tim.c\
 	$(ST_LIB)/src/stm32f4xx_spi.c\
-	$(ST_LIB)/src/stm32f4xx_i2c.c
+	$(ST_LIB)/src/stm32f4xx_i2c.c\
+	$(ST_LIB)/src/stm32f4xx_sdio.c
 
 #C Standard Lib
 SRC+=./string.c
@@ -81,6 +84,7 @@ SRC+=./string.c
 SRC+=$(PROGRAM_ALG)/algorithm_*.c \
 		$(PROGRAM_DIR)/stm32f4_*.c \
 		$(PROGRAM_MOD)/module_*.c \
+		$(PROGRAM_MOD)/stm32f4_sdio.c \
 		$(PROGRAM_SYS)/QCopterFC_it.c \
 		$(PROGRAM_SYS)/QCopterFC_ahrs.c \
 		$(PROGRAM_SYS)/QCopterFC_ctrl.c \
@@ -89,12 +93,19 @@ SRC+=$(PROGRAM_ALG)/algorithm_*.c \
 		Program_System/sys_manager.c \
 		Libraries/CMSIS/FastMathFunctions/arm_cos_f32.c \
 		Libraries/CMSIS/FastMathFunctions/arm_sin_f32.c \
-		test.c
+		test.c \
+		linenoise.c
+#Fatfs
+SRC+=$(PROGRAM_FAT)/diskio.c\
+	$(PROGRAM_FAT)/ff.c\
+	$(PROGRAM_FAT)/syscall.c\
+	$(PROGRAM_FAT)/unicode.c
 
 INC_HEADERS =$(PROGRAM_ALG)/*.h \
 		$(PROGRAM_DIR)/*.h \
 		$(PROGRAM_MOD)/*.h \
 		$(PROGRAM_SYS)/*.h \
+		$(PROGRAM_FAT)/*.h \
 		*.h
 
 
