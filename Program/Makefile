@@ -122,8 +122,11 @@ SRC+=$(FREERTOS_SRC)/croutine.c\
 #Self-defined MemMang
 SRC+=./memory.c
 
-#Linenoise source code
+#Shell and linenoise
 SRC+=./linenoise.c
+SRC+=./shell.c
+SRC+=./parser.c
+SRC+=./status_monitor.c
 
 #STM32 startup file
 STARTUP=./Libraries/CMSIS/startup_stm32f4xx.s
