@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include "FreeRTOS.h"
 
 #include "string.h"
@@ -13,5 +14,7 @@ void *realloc(void *ptr, size_t len)
                 vPortFree(ptr);
                 return new_ptr;
         }
+
+	return NULL;
 }
 
