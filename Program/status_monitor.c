@@ -1,5 +1,7 @@
 /* Standard C lib includes */
+#include <stdlib.h>
 #include <stddef.h>
+#include <ctype.h>
 #include <string.h>
 
 /* Linenoise and shell includes */
@@ -14,6 +16,9 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
+
+#define PAR_DEF(PAR, PAR_STR, INT_ORG, FLT_ORG) \
+	[PAR] = {.par_str = #PAR_STR, .int_origin = INT_ORG, .flt_origin = FLT_ORG, .par_is_changed = 0}
 
 /* Shell Command handlers */
 void monitor_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
@@ -43,9 +48,46 @@ enum MONITOR_INTERNAL_CMD {
 	MONITOR_IT_CMD_CNT
 };
 
+/* The buffer of the settings */
+enum PAR_SETTING {
+	PITCH_KP,
+	PITCH_KI,
+	PITCH_KD,
+	ROLL_KP,
+	ROLL_KI,
+	ROLL_KD,
+	YAW_KP,
+	YAW_KI,
+	YAW_KD,
+	PARAMETER_CNT
+};
+
+typedef struct {
+	char par_str[MAX_PAR_CNT];
+	int *int_origin;
+	float *flt_origin;
+	int int_buf;
+	float flt_buf;
+	int par_is_changed; //The flag shows that the settings is changed or not
+} parameter_data;
+
+parameter_data par_data[PARAMETER_CNT] = {
+	PAR_DEF(PITCH_KP, pitch.kp, 0, &(PID_Pitch.Kp)),
+	PAR_DEF(PITCH_KI, pitch.ki, 0, &(PID_Pitch.Ki)),
+	PAR_DEF(PITCH_KD, pitch.kd, 0, &(PID_Pitch.Kd)),
+	PAR_DEF(ROLL_KP, roll.kp, 0, &(PID_Roll.Kp)),
+	PAR_DEF(ROLL_KI, roll.ki, 0, &(PID_Roll.Ki)),
+	PAR_DEF(ROLL_KD, roll.kd, 0, &(PID_Roll.Kd)),
+	PAR_DEF(YAW_KP, yaw.kp, 0, &(PID_Yaw.Kp)),	
+	PAR_DEF(YAW_KI, yaw.ki, 0, &(PID_Yaw.Ki)),
+	PAR_DEF(YAW_KD, ywa.kd, 0, &(PID_Yaw.Kd))
+};
+
+int par_is_changed = 0; //The flag shows that the settings is changed or not
+
+/* Monitor Internal Command */
 char monitor_cmd[MONITOR_IT_CMD_CNT - 1][MAX_CMD_LEN] = {"quit", "resume"};
 int monitor_it_cmd;
-
 
 int monitorInternalCmdIndentify(char *command)
 {
@@ -83,15 +125,15 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 		printf("--------------------------------------------------------------\n\r");
 
 		printf("Copter Attitudes <true value>\n\r");
-		printf("Pitch\t: %d\n\rRoll\t: %d\n\rYaw\t: %d\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
+		printf("Pitch\t: %f\n\rRoll\t: %f\n\rYaw\t: %f\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
 
 		printf("--------------------------------------------------------------\n\r");
 
 		#define MOTOR_STATUS "Off"
 		printf("RC Messages\tCurrent\tLast\n\r");
-		printf("Pitch(expect)\t%d\t%d\n\r", global_var[RC_EXP_PITCH].param, last_rc_exp_pitch);
-		printf("Roll(expect)\t%d\t%d\n\r", global_var[RC_EXP_ROLL].param, last_rc_exp_roll);
-		printf("Yaw(expect)\t%d\t%d\n\r", global_var[RC_EXP_YAW].param, last_rc_exp_yaw);	
+		printf("Pitch(expect)\t%f\t%f\n\r", global_var[RC_EXP_PITCH].param, last_rc_exp_pitch);
+		printf("Roll(expect)\t%f\t%f\n\r", global_var[RC_EXP_ROLL].param, last_rc_exp_roll);
+		printf("Yaw(expect)\t%f\t%f\n\r", global_var[RC_EXP_YAW].param, last_rc_exp_yaw);	
 
 		printf("Throttle\t%d\n\r", global_var[RC_EXP_THR].param);
 		printf("Engine\t\t%s\n\r", MOTOR_STATUS);
@@ -171,29 +213,29 @@ void monitor_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	printf("\x1b[H\x1b[2J");
 	printf("QuadCopter Status Monitor Manual\n\r");
-	printf("****************************************************************************************\n\r");	
+	printf("******************************************************************************************\n\r");	
 
 	printf("\n\rDiscription:\n\r");
 	printf("The monitor support reporting and setting the information of the QuadCopter in real time\n\r");
-	printf("\n\r----------------------------------------------------------------------------------------\n\r");
+	printf("\n\r------------------------------------------------------------------------------------------\n\r");
 
 	printf("*To refresh the status, please press [Space]\n\r");
 	printf("*To modify the settings, please press [Enter] to enable the commandline\n\r");
-	printf("----------------------------------------------------------------------------------------\n\r");
+	printf("------------------------------------------------------------------------------------------\n\r");
 
 	printf("\n\rAll Commands:\n\r");
 
 	printf("\n\rset [parameter] [value] / set update\n\r");
-	printf("-Set the parameters of the QuadCopter(*The settings will change after type \"set update\")\n\r");
+	printf("-Set the parameters of the QuadCopter(*The settings will change after typing \"set update\")\n\r");
 
-	printf("\n\r----------------------------------------------------------------------------------------\n\r");
+	printf("\n\r------------------------------------------------------------------------------------------\n\r");
 	printf("Modifiable parameter list:\n\r\n\r");
 	printf("pitch.kp  pitch.ki  pitch.kd\n\r");
 	printf("roll.kp   roll.ki   roll.kd\n\r");
 	printf("yaw.kp    yaw.ki    yaw.kd\n\r");
 	printf("LED1  LED2\n\r");
 	printf("LED3  LED4\n\r");
-	printf("----------------------------------------------------------------------------------------\n\r");
+	printf("------------------------------------------------------------------------------------------\n\r");
 
 	printf("\n\rresume\n\r");
 	printf("-Disable the commandline and resume to status report mode\n\r");
@@ -201,7 +243,7 @@ void monitor_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("\n\rquit\n\r");
 	printf("-Quit the QuadCopter Status Monitor\n\r");
 
-	printf("\n\r****************************************************************************************\n\r");	
+	printf("\n\r******************************************************************************************\n\r");	
 
 	printf("\n\r[Please press q to quit the manual]");
 
@@ -213,6 +255,151 @@ void monitor_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	monitor_it_cmd = MONITOR_RESUME;
 }
 
+int is_num(char *str) 
+{
+	/* If the char is not between 0-9, '.' or the first char is '.',
+	   then this is not a number
+	 */ 
+	int i;
+	for(i = 0;i < strlen(str); i++) {
+		if(!isdigit((unsigned char)str[i]) && ((str[i] != '.') || (str[0] == '.')))
+			return 0;
+	}
+	return 1;
+}
+
+void set_parameter()
+{
+	
+}
+
 void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
+	switch(par_cnt) {
+	    case 0:
+		printf("\x1b[0A\x1b[0G\x1b[0K");
+		printf("[Error:Command \"set\" required at least 1 parameter]\n\r");
+		printf("[Please press any key to resume...]");
+		
+		serial.getch();
+		printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+		break;
+	    case 1:
+		if(strcmp(parameter[0], "update") == 0) {
+			if(par_is_changed == 1) {
+				printf("\x1b[0A\x1b[0G\x1b[0K");
+				printf("[Warning:Are you sure you want to enable the new settings? (y/n)]\n\r");
+				
+				char *confirm_ch = linenoise("> ");
+
+				while(1) {
+					if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0)
+						break;
+					else if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0)
+						break;
+					else {	
+						printf("[Error:Please type y(yes) or n(no)]\n\r");
+						confirm_ch = linenoise("> ");
+						printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+					}
+				}
+
+				if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y")) {
+					/* Enable the new settings */
+					int i;
+					for(i = 0; i < PARAMETER_CNT; i++) {
+						if(par_data[i].int_origin == 0) {
+							/* Data is a float */
+							if(par_data[i].par_is_changed == 1)
+								*(par_data[i].flt_origin) = par_data[i].flt_buf;
+						} else {
+							/* Data is a int */
+							if(par_data[i].par_is_changed == 1)
+								*(par_data[i].int_origin) = par_data[i].int_buf;
+						}
+					}
+				}
+
+				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+			} else {
+				printf("\x1b[0A\x1b[0G\x1b[0K");
+				printf("[None of the settings have been changed]\n\r");
+				printf("[Please press any key to resume...]");
+
+				serial.getch();
+				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+			}
+		} else {
+			printf("[Error:Unknown parameter or miss to pass an argument]\n\r");
+			printf("[Please press any key to resume...]");
+			
+			serial.getch();
+			printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+		}
+		break;	
+	    case 2:
+	    {
+		int i;
+		for(i = 0; i < PARAMETER_CNT; i++) {
+			if(strcmp(parameter[0], par_data[i].par_str) == 0) {
+				if(is_num(parameter[1]) == 1) {
+
+					printf("[Warning:Are you sure you want to change the setting? (y/n)]\n\r");
+					char *confirm_ch = linenoise("> ");
+
+					while(1) {
+						if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0)
+							break;
+						else if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0)
+							break;
+						else {
+							printf("[Error:Please type y(yes) or n(no)]\n\r");
+							confirm_ch = linenoise("> ");
+							printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+						}
+					}
+
+					if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0) {
+						break;
+					} else if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
+
+						/* If the pointer of int_orginial is set to 0,then this is a float */
+						if(par_data[i].int_origin == 0) {
+							/* Data is a float */
+							par_data[i].flt_buf = atof(parameter[1]);
+						} else {
+							/* Data is a int */
+							par_data[i].flt_buf = atof(parameter[1]);
+						}
+						par_is_changed = 1;						
+						par_data[i].par_is_changed = 1;
+
+						printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+					}
+
+					break;
+				} else {
+					/* Parameter 2 send a valid value */
+					printf("[Error:%s is not a valid value]\n\r", parameter[1]);
+					printf("[Please press any key to resume...]");
+
+					serial.getch();
+					printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+					break;
+				}
+			}
+
+			/* Last time of comparasion and still can't find the parameter of the copter */
+			if(i == PARAMETER_CNT - 1) {
+				printf("[Error:Unknown QuadCopter parameter]\n\r");
+				printf("[Please press any key to resume...]");
+
+				serial.getch();
+				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+			}
+		}
+	    }
+		break;
+	}
+
 }
