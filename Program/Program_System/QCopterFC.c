@@ -121,50 +121,67 @@ void system_init(void)
 
 void correction_task()
 {
+	ErrorStatus sensor_correct = ERROR;
+
 	while (System_Status == SYSTEM_UNINITIALIZED);
 
-	while (SensorMode != Mode_Algorithm) {
-		uint8_t IMU_Buf[20] = {0};
+	while ( sensor_correct == ERROR ) {
 
-		static uint8_t BaroCnt = 0;
+		while (SensorMode != Mode_Algorithm) {
+			uint8_t IMU_Buf[20] = {0};
+
+			static uint8_t BaroCnt = 0;
 
 
-		/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
-		MPU9150_Read(IMU_Buf);
+			/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
+			MPU9150_Read(IMU_Buf);
 
-		/* 100Hz, Read Barometer */
-		BaroCnt++;
+			/* 100Hz, Read Barometer */
+			BaroCnt++;
 
-		if (BaroCnt == SampleRateFreg / 100) {
-			MS5611_Read(&Baro, MS5611_D1_OSR_4096);
-			BaroCnt = 0;
+			if (BaroCnt == SampleRateFreg / 100) {
+				MS5611_Read(&Baro, MS5611_D1_OSR_4096);
+				BaroCnt = 0;
+			}
+
+			Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
+			Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
+			Acc.Z  = (s16)((IMU_Buf[4]  << 8) | IMU_Buf[5]);
+			Temp.T = (s16)((IMU_Buf[6]  << 8) | IMU_Buf[7]);
+			Gyr.X  = (s16)((IMU_Buf[8]  << 8) | IMU_Buf[9]);
+			Gyr.Y  = (s16)((IMU_Buf[10] << 8) | IMU_Buf[11]);
+			Gyr.Z  = (s16)((IMU_Buf[12] << 8) | IMU_Buf[13]);
+			Mag.X  = (s16)((IMU_Buf[15] << 8) | IMU_Buf[14]);
+			Mag.Y  = (s16)((IMU_Buf[17] << 8) | IMU_Buf[16]);
+			Mag.Z  = (s16)((IMU_Buf[19] << 8) | IMU_Buf[18]);
+
+			/* Offset */
+			Acc.X -= Acc.OffsetX;
+			Acc.Y -= Acc.OffsetY;
+			Acc.Z -= Acc.OffsetZ;
+			Gyr.X -= Gyr.OffsetX;
+			Gyr.Y -= Gyr.OffsetY;
+			Gyr.Z -= Gyr.OffsetZ;
+			Mag.X *= Mag.AdjustX;
+			Mag.Y *= Mag.AdjustY;
+			Mag.Z *= Mag.AdjustZ;
+
+			correct_sensor();
+
+			vTaskDelay(2);
 		}
 
-		Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
-		Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
-		Acc.Z  = (s16)((IMU_Buf[4]  << 8) | IMU_Buf[5]);
-		Temp.T = (s16)((IMU_Buf[6]  << 8) | IMU_Buf[7]);
-		Gyr.X  = (s16)((IMU_Buf[8]  << 8) | IMU_Buf[9]);
-		Gyr.Y  = (s16)((IMU_Buf[10] << 8) | IMU_Buf[11]);
-		Gyr.Z  = (s16)((IMU_Buf[12] << 8) | IMU_Buf[13]);
-		Mag.X  = (s16)((IMU_Buf[15] << 8) | IMU_Buf[14]);
-		Mag.Y  = (s16)((IMU_Buf[17] << 8) | IMU_Buf[16]);
-		Mag.Z  = (s16)((IMU_Buf[19] << 8) | IMU_Buf[18]);
+		if( (AngE.Roll < 0.1) && (AngE.Pitch < 0.1) && (NumQ.q0<1)
+		     && (NumQ.q1<1) && (NumQ.q2<1) && (NumQ.q3<1) ) {
+			sensor_correct = SUCCESS ; 
+		}
+		else {
+			SensorMode = Mode_GyrCorrect;
+			sensor_correct = ERROR ;
+		}
 
-		/* Offset */
-		Acc.X -= Acc.OffsetX;
-		Acc.Y -= Acc.OffsetY;
-		Acc.Z -= Acc.OffsetZ;
-		Gyr.X -= Gyr.OffsetX;
-		Gyr.Y -= Gyr.OffsetY;
-		Gyr.Z -= Gyr.OffsetZ;
-		Mag.X *= Mag.AdjustX;
-		Mag.Y *= Mag.AdjustY;
-		Mag.Z *= Mag.AdjustZ;
-
-		correct_sensor();
-
-		vTaskDelay(2);
+		LED_G = ~LED_G ;
+		vTaskDelay(200);
 	}
 	LED_G = 0;
 	vTaskResume(FlightControl_Handle);
@@ -396,7 +413,7 @@ int main(void)
 	xTaskCreate(correction_task,
 		    (signed portCHAR *) "Initial checking",
 		    4096, NULL,
-		    tskIDLE_PRIORITY + 5, &correction_task_handle);
+		    tskIDLE_PRIORITY + 9, &correction_task_handle);
 	// xTaskCreate(sdio_task,
 	// 	    (signed portCHAR *) "Using SD card",
 	// 	    512, NULL,
