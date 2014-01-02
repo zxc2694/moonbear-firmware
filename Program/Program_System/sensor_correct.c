@@ -32,7 +32,7 @@ extern volatile uint32_t Correction_Time;
 void correct_sensor()
 {
 	float Ellipse[5] = {0};
-	#define MovegAveFIFO_Size 250
+#define MovegAveFIFO_Size 250
 
 	switch (SensorMode) {
 
@@ -79,8 +79,8 @@ void correct_sensor()
 		break;
 
 		/************************** Mode_CorrectMag **************************************/
-	#define MagCorrect_Ave    100
-	#define MagCorrect_Delay  600   // DelayTime : SampleRate * 600
+#define MagCorrect_Ave    100
+#define MagCorrect_Delay  600   // DelayTime : SampleRate * 600
 
 	case Mode_MagCorrect:
 		LED_R = !LED_R;

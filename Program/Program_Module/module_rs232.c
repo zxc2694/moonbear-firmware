@@ -83,7 +83,7 @@ char getch_base(void)
 
 void putch_base(char str)
 {
-	while(!xSemaphoreTake(serial_tx_wait_sem, portMAX_DELAY));
+	while (!xSemaphoreTake(serial_tx_wait_sem, portMAX_DELAY));
 
 	USART_SendData(USART3, (uint16_t)str);
 	USART_ITConfig(USART3, USART_IT_TXE, ENABLE);
@@ -91,23 +91,23 @@ void putch_base(char str)
 
 /* Serial read/write callback functions */
 serial_ops serial = {
-    .getch = getch_base,
-    .putch = putch_base,
+	.getch = getch_base,
+	.putch = putch_base,
 };
 
 /*=====================================================================================================*
 **函數 : getstr()
 **功能 :It can show on the USART when I input the word.
 **輸入 :
-**輸出 : 
+**輸出 :
 **使用 :
 **=====================================================================================================*/
 /*=====================================================================================================*/
 int getstr(void)
-{   
-        char str;
+{
+	char str;
 	str = serial.getch();
-	printf("%c",str);
+	printf("%c", str);
 	return 1;
 }
 
@@ -115,14 +115,15 @@ int getstr(void)
 **函數 : putstr
 **功能 :
 **輸入 :
-**輸出 : 
+**輸出 :
 **使用 :
 **=====================================================================================================*/
 /*=====================================================================================================*/
 int putstr(const char *msg)
-{   
-	for(; *msg; msg++)
+{
+	for (; *msg; msg++)
 		serial.putch(*msg);
+
 	return 1;
 }
 

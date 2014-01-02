@@ -28,12 +28,12 @@ void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
-        unknown_cmd_ID,
+	unknown_cmd_ID,
 	clear_ID,
 	help_ID,
-        monitor_ID,
+	monitor_ID,
 	ps_ID,
-        SHELL_CMD_CNT
+	SHELL_CMD_CNT
 };
 
 //First string don't need to store anything for unknown commands
@@ -46,35 +46,37 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 };
 
 /**** Shell task **********************************************************************/
-void shell_linenoise_completion(const char *buf, linenoiseCompletions *lc) {
-	if(completion_disable)
+void shell_linenoise_completion(const char *buf, linenoiseCompletions *lc)
+{
+	if (completion_disable)
 		return;
 
 	int i; //i = 1 to ignore the "UNKNOWN_COMMAND" string
-	for(i = 1;i < SHELL_CMD_CNT;i++) {
-		if(buf[0] == shellCmd_list[i].str[0])
+
+	for (i = 1; i < SHELL_CMD_CNT; i++) {
+		if (buf[0] == shellCmd_list[i].str[0])
 			linenoiseAddCompletion(lc, shellCmd_list[i].str);
 	}
 }
 
 void shell_task()
 {
-        linenoiseSetCompletionCallback(shell_linenoise_completion);
+	linenoiseSetCompletionCallback(shell_linenoise_completion);
 
-        /* Clear the screen */
-        printf("\x1b[H\x1b[2J");
+	/* Clear the screen */
+	printf("\x1b[H\x1b[2J");
 	/* Show the prompt messages */
-        printf("[System status]Initialized successfully!\n\r");
-        printf("Please type \"help\" to get more informations\n\r");
+	printf("[System status]Initialized successfully!\n\r");
+	printf("Please type \"help\" to get more informations\n\r");
 
-        while(1) {
+	while (1) {
 		command_data shell_cd = {.par_cnt = 0};
 
-	        char *shell_str = linenoise("Quadcopter Shell > ");
-                commandExec(shell_str, &shell_cd, shellCmd_list, SHELL_CMD_CNT);
+		char *shell_str = linenoise("Quadcopter Shell > ");
+		commandExec(shell_str, &shell_cd, shellCmd_list, SHELL_CMD_CNT);
 
 		linenoiseHistoryAdd(shell_str);
-        }
+	}
 }
 /**** Customize command function ******************************************************/
 void shell_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt)

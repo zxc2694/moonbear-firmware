@@ -50,8 +50,9 @@ int monitor_it_cmd;
 int monitorInternalCmdIndentify(char *command)
 {
 	int i;
-	for(i = 0; i < (MONITOR_IT_CMD_CNT - 1); i++) {
-		if(strcmp(command ,monitor_cmd[i]) == 0) {
+
+	for (i = 0; i < (MONITOR_IT_CMD_CNT - 1); i++) {
+		if (strcmp(command , monitor_cmd[i]) == 0) {
 			return i + 1;
 		}
 	}
@@ -65,7 +66,7 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 	int last_rc_exp_roll = global_var[RC_EXP_ROLL].param;
 	int last_rc_exp_yaw = global_var[RC_EXP_YAW].param;
 
-	while(1) {	
+	while (1) {
 		/* Clean the screen */
 		printf("\x1b[H\x1b[2J");
 
@@ -87,18 +88,18 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 		printf("--------------------------------------------------------------\n\r");
 
-		#define MOTOR_STATUS "Off"
+#define MOTOR_STATUS "Off"
 		printf("RC Messages\tCurrent\tLast\n\r");
 		printf("Pitch(expect)\t%d\t%d\n\r", global_var[RC_EXP_PITCH].param, last_rc_exp_pitch);
 		printf("Roll(expect)\t%d\t%d\n\r", global_var[RC_EXP_ROLL].param, last_rc_exp_roll);
-		printf("Yaw(expect)\t%d\t%d\n\r", global_var[RC_EXP_YAW].param, last_rc_exp_yaw);	
+		printf("Yaw(expect)\t%d\t%d\n\r", global_var[RC_EXP_YAW].param, last_rc_exp_yaw);
 
 		printf("Throttle\t%d\n\r", global_var[RC_EXP_THR].param);
 		printf("Engine\t\t%s\n\r", MOTOR_STATUS);
 
 		printf("--------------------------------------------------------------\n\r");
 
-		#define LED_STATUS "Off"
+#define LED_STATUS "Off"
 		printf("LED lights\n\r");
 		printf("LED1\t: %s\n\rLED2\t: %s\n\rLED3\t: %s\n\rLED4\t: %s\n\r", LED_STATUS, LED_STATUS, LED_STATUS, LED_STATUS);
 
@@ -106,20 +107,20 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 		printf("[Please press <Space> to refresh the status]\n\r");
 		printf("[Please press <Enter> to enable the command line]");
-	
+
 		char key_pressed = serial.getch();
-		monitor_it_cmd = 0;		
-	
-		while(monitor_it_cmd != MONITOR_QUIT && monitor_it_cmd != MONITOR_RESUME) {
-			if(key_pressed == ENTER) {
+		monitor_it_cmd = 0;
+
+		while (monitor_it_cmd != MONITOR_QUIT && monitor_it_cmd != MONITOR_RESUME) {
+			if (key_pressed == ENTER) {
 				/* Clean and move up two lines*/
 				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
-	
-				while(monitor_it_cmd != MONITOR_QUIT && monitor_it_cmd != MONITOR_RESUME) {
+
+				while (monitor_it_cmd != MONITOR_QUIT && monitor_it_cmd != MONITOR_RESUME) {
 					char *command_str;
 
 					command_str = linenoise("(monitor) ");
-				
+
 					/* Check if it is internal command */
 					/* The Internal command means that need not call
 					   any functions but handle at here
@@ -127,23 +128,26 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 					monitor_it_cmd = monitorInternalCmdIndentify(command_str);
 
 					/* Check if it is not an Internal command */
-					if(monitor_it_cmd == MONITOR_UNKNOWN) {
+					if (monitor_it_cmd == MONITOR_UNKNOWN) {
 						/* FIXME:External Commands, need to call other functions */
-						command_data monitor_cd = {.par_cnt = 0};			
+						command_data monitor_cd = {.par_cnt = 0};
 						commandExec(command_str, &monitor_cd, monitorCmd_list, MONITOR_CMD_CNT);
+
 					} else {
 						printf("\x1b[0A");
 					}
 				}
-			} else if(key_pressed == SPACE) {
+
+			} else if (key_pressed == SPACE) {
 				break;
+
 			} else {
 				key_pressed = serial.getch();
-			}			
+			}
 		}
 
 		/* Exit the moniter if user type command "quit" */
-		if(monitor_it_cmd == MONITOR_QUIT)
+		if (monitor_it_cmd == MONITOR_QUIT)
 			break;
 
 		/* Update the record of RC expect attitudes */
@@ -154,13 +158,13 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 	}
 
 	/* Clean the screen */
-        printf("\x1b[H\x1b[2J");
+	printf("\x1b[H\x1b[2J");
 }
 
 /**** Customize command function ******************************************************/
 void monitor_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
- 	printf("\x1b[0A\x1b[0G\x1b[0K"); 
+	printf("\x1b[0A\x1b[0G\x1b[0K");
 	printf("[Unknown command:Please press any key to resume...]");
 
 	serial.getch();
@@ -171,7 +175,7 @@ void monitor_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	printf("\x1b[H\x1b[2J");
 	printf("QuadCopter Status Monitor Manual\n\r");
-	printf("****************************************************************************************\n\r");	
+	printf("****************************************************************************************\n\r");
 
 	printf("\n\rDiscription:\n\r");
 	printf("The monitor support reporting and setting the information of the QuadCopter in real time\n\r");
@@ -201,15 +205,16 @@ void monitor_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("\n\rquit\n\r");
 	printf("-Quit the QuadCopter Status Monitor\n\r");
 
-	printf("\n\r****************************************************************************************\n\r");	
+	printf("\n\r****************************************************************************************\n\r");
 
 	printf("\n\r[Please press q to quit the manual]");
 
 	/* Exit */
 	char ch = serial.getch();
-	while(ch != 'q' && ch != 'Q')
+
+	while (ch != 'q' && ch != 'Q')
 		ch = serial.getch();
-	
+
 	monitor_it_cmd = MONITOR_RESUME;
 }
 
