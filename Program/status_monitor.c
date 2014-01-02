@@ -401,6 +401,12 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 		}
 	    }
 		break;
+	    default:
+		printf("[Error:Too many arguments pass through the \"set\" command]\n\r");
+		printf("[Please press any key to resume...]");
+
+		serial.getch();
+		printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
 	}
 
 }
