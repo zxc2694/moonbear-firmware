@@ -25,12 +25,9 @@ FIL file;
 
 void SDIO_Config(void)
 {
-	while (SD_Init() != SD_OK) {
-		while (1) {
-			LED_R = ~LED_R;
-			Delay_10ms(20);
-		}
-	}
+	while (SD_Init() != SD_OK)
+		Delay_10ms(20);
+
 }
 int SD_demo(void)
 {
@@ -39,8 +36,6 @@ int SD_demo(void)
 	uint8_t TrData[8][32] = {0};
 	uint8_t WriteData[50] = "ABCDEFG";
 
-	LED_R = 1;
-	LED_G = 1;
 
 	// SD Card Init Info
 	printf(" \r\n");
@@ -87,7 +82,6 @@ int SD_demo(void)
 		printf(" FatFs failed!!\r\n");
 
 		while (1) {
-			LED_R = ~LED_R;
 			vTaskDelay(200);
 		}
 	}
@@ -142,7 +136,6 @@ int SD_demo(void)
 	printf("%s", ReadBuf);
 
 	while (1) {
-		LED_G = ~LED_G;
 		vTaskDelay(200);
 	}
 }

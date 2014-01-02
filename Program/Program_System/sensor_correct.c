@@ -38,7 +38,6 @@ void correct_sensor()
 
 	/************************** Mode_CorrectGyr **************************************/
 	case Mode_GyrCorrect:
-		LED_R = !LED_R;
 		/* Simple Moving Average */
 		Gyr.X = (s16)MoveAve_SMA(Gyr.X, GYR_FIFO[0], MovegAveFIFO_Size);
 		Gyr.Y = (s16)MoveAve_SMA(Gyr.Y, GYR_FIFO[1], MovegAveFIFO_Size);
@@ -59,7 +58,6 @@ void correct_sensor()
 
 	/************************** Mode_CorrectAcc **************************************/
 	case Mode_AccCorrect:
-		LED_R = ~LED_R;
 		/* Simple Moving Average */
 		Acc.X = (s16)MoveAve_SMA(Acc.X, ACC_FIFO[0], MovegAveFIFO_Size);
 		Acc.Y = (s16)MoveAve_SMA(Acc.Y, ACC_FIFO[1], MovegAveFIFO_Size);
@@ -83,60 +81,59 @@ void correct_sensor()
 #define MagCorrect_Delay  600   // DelayTime : SampleRate * 600
 
 	case Mode_MagCorrect:
-		LED_R = !LED_R;
 		Correction_Time++;
 
 		switch ((u16)(Correction_Time / MagCorrect_Delay)) {
 		case 0:
-			LED_B = 0;
+
 			MagDataX[0] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
 			MagDataY[0] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
 			break;
 
 		case 1:
-			LED_B = 1;
+
 			MagDataX[1] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
 			MagDataY[1] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
 			break;
 
 		case 2:
-			LED_B = 0;
+
 			MagDataX[2] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
 			MagDataY[2] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
 			break;
 
 		case 3:
-			LED_B = 1;
+
 			MagDataX[3] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
 			MagDataY[3] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
 			break;
 
 		case 4:
-			LED_B = 0;
+
 			MagDataX[4] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
 			MagDataY[4] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
 			break;
 
 		case 5:
-			LED_B = 1;
+
 			MagDataX[5] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
 			MagDataY[5] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
 			break;
 
 		case 6:
-			LED_B = 0;
+
 			MagDataX[6] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
 			MagDataY[6] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
 			break;
 
 		case 7:
-			LED_B = 1;
+
 			MagDataX[7] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
 			MagDataY[7] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
 			break;
 
 		default:
-			LED_B = 1;
+
 			EllipseFitting(Ellipse, MagDataX, MagDataY, 8);
 			Mag.EllipseSita = Ellipse[0];
 			Mag.EllipseX0   = Ellipse[1];
@@ -153,8 +150,6 @@ void correct_sensor()
 
 	/************************** Algorithm Mode **************************************/
 	case Mode_Quaternion:
-		LED_R = !LED_R;
-
 		/* To Physical */
 		Acc.TrueX = Acc.X * MPU9150A_4g;      // g/LSB
 		Acc.TrueY = Acc.Y * MPU9150A_4g;      // g/LSB

@@ -43,7 +43,9 @@ volatile uint32_t Correction_Time = 0;
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 enum SYSTEM_STATUS {
 	SYSTEM_UNINITIALIZED,
-	SYSTEM_INITIALIZED
+	SYSTEM_INITIALIZED,
+	SYSTEM_CORRECTION_SENSOR,
+	SYSTEM_FLIGHT_CONTROL
 } SYSTEM_STATUS;
 int System_Status = SYSTEM_UNINITIALIZED;
 //#define SHELL_IS_EXIST
@@ -102,15 +104,14 @@ void system_init(void)
 #ifndef SENSOR_NOT_EXIST
 
 	/* Sensor Init */
-	if (Sensor_Init() == SUCCESS)
-		LED_G = 0;
+	while(Sensor_Init() == ERROR);
 
 #endif
 
 	Delay_10ms(10);
 
 	/* Lock */
-	LED_R = 1;
+	LED_R = 0;
 	LED_G = 1;
 	LED_B = 1;
 
@@ -123,7 +124,6 @@ void correction_task()
 	while (System_Status == SYSTEM_UNINITIALIZED);
 
 	while (SensorMode != Mode_Algorithm) {
-		LED_B = ~LED_B; //task indicator
 		uint8_t IMU_Buf[20] = {0};
 
 		static uint8_t BaroCnt = 0;
@@ -166,7 +166,7 @@ void correction_task()
 
 		vTaskDelay(2);
 	}
-
+	LED_G = 0;
 	vTaskResume(FlightControl_Handle);
 #ifndef SHELL_IS_EXIST
 	vTaskResume(statusReport_handle);
@@ -178,7 +178,7 @@ void flightControl_task()
 {
 	//Waiting for system finish initialize
 	while (System_Status == SYSTEM_UNINITIALIZED);
-
+	System_Status = SYSTEM_FLIGHT_CONTROL;
 	while (1) {
 		GPIO_ToggleBits(GPIOC, GPIO_Pin_7);
 		uint8_t IMU_Buf[20] = {0};
@@ -326,7 +326,6 @@ void statusReport_task()
 	printf("[System status]Initialized successfully!\n\r");
 
 	while (1) {
-		LED_B = ~LED_B;
 		printf("\x1b[H\x1b[2J");
 
 
@@ -361,8 +360,13 @@ void check_task()
 	while (System_Status == SYSTEM_UNINITIALIZED);
 
 	while (remote_signal_check() == NO_SIGNAL);
-
+	LED_B = 0;
 	vTaskResume(correction_task_handle);
+	while(System_Status != SYSTEM_FLIGHT_CONTROL);
+	vTaskDelay(2000);
+	LED_R = 1;
+	LED_G = 1;
+	LED_B = 1;
 	vTaskDelete(NULL);
 
 }
@@ -393,10 +397,10 @@ int main(void)
 		    (signed portCHAR *) "Initial checking",
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 5, &correction_task_handle);
-	xTaskCreate(sdio_task,
-		    (signed portCHAR *) "Using SD card",
-		    512, NULL,
-		    tskIDLE_PRIORITY + 5, NULL);
+	// xTaskCreate(sdio_task,
+	// 	    (signed portCHAR *) "Using SD card",
+	// 	    512, NULL,
+	// 	    tskIDLE_PRIORITY + 5, NULL);
 
 #ifndef SHELL_IS_EXIST
 	xTaskCreate(statusReport_task,
