@@ -318,6 +318,7 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 								*(par_data[i].int_origin) = par_data[i].int_buf;
 						}
 					}
+					monitor_it_cmd = MONITOR_RESUME;
 				}
 
 				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
