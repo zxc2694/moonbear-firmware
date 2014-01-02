@@ -55,8 +55,18 @@ int System_Status = SYSTEM_UNINITIALIZED;
 /*=====================================================================================================*/
 void vApplicationStackOverflowHook(xTaskHandle pxTask, signed char *pcTaskName)
 {
+	while(1) {
+		LED_R = ~LED_R;
+		vTaskDelay(200);
+	}
 }
-
+void vApplicationMallocFailedHook( void )
+{
+	while(1) {
+		LED_R = ~LED_R;
+		vTaskDelay(200);
+	}
+}
 void vApplicationIdleHook(void)
 {
 
