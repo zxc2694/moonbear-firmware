@@ -274,7 +274,6 @@ static int linenoiseEdit(char *buf, size_t buflen, const char *prompt)
     /* The latest history entry is always our current buffer, that
      * initially is just an empty string. */
     linenoiseHistoryAdd("");
-    history_len++;
 
     putstr(prompt);
     while(1) {
