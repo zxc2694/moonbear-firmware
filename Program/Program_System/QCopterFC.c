@@ -41,15 +41,12 @@ volatile int16_t MagDataY[8] = {0};
 volatile uint32_t Correction_Time = 0;
 
 Sensor_Mode SensorMode = Mode_GyrCorrect;
-
-//#define SHELL_IS_EXIST
-
 enum SYSTEM_STATUS {
 	SYSTEM_UNINITIALIZED,
 	SYSTEM_INITIALIZED
-};
-
+} SYSTEM_STATUS;
 int System_Status = SYSTEM_UNINITIALIZED;
+//#define SHELL_IS_EXIST
 
 /*=====================================================================================================*/
 #define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
@@ -190,7 +187,9 @@ void correction_task()
 	vTaskDelay(2);
 	}
 	vTaskResume(FlightControl_Handle);
+#ifndef SHELL_IS_EXIST	
 	vTaskResume(statusReport_handle);
+#endif
 	vTaskDelete(NULL);
 }
 
@@ -334,7 +333,7 @@ void flightControl_task()
 	}
 }
 
-
+#ifndef SHELL_IS_EXIST	
 void statusReport_task()
 {
 	//Waiting for system finish initialize
@@ -369,7 +368,7 @@ void statusReport_task()
 		vTaskDelay(200);
 	}
 }
-
+#endif
 /*=====================================================================================================*/
 
 void check_task()
@@ -385,6 +384,7 @@ void check_task()
 
 void sdio_task()
 {
+	while(System_Status == SYSTEM_UNINITIALIZED);
 	vTaskDelay(200);
 	printf("[System status]Initialized successfully!\n\r");	
 	SD_demo();
@@ -433,7 +433,9 @@ int main(void)
 
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
+#ifndef SHELL_IS_EXIST	
 	vTaskSuspend(statusReport_handle);
+#endif
 	vTaskStartScheduler();
 
 	return 0;
