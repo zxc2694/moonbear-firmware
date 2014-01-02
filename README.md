@@ -44,4 +44,4 @@ Linenoise hotkeys
 TODO
 ======================
 * Online tuning PID parameter
-* Report its status
+* Save information in SD Card
