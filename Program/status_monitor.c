@@ -331,7 +331,16 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
 			}
 		} else {
-			printf("[Error:Unknown parameter or miss to pass an argument]\n\r");
+			int i;
+			for(i = 0; i < PARAMETER_CNT; i++) {
+				if(strcmp(parameter[0], par_data[i].par_str) == 0) {
+					printf("[Error:Missing to pass a value while setting the parameter]\n\r");
+					break;
+				} else if(i == (PARAMETER_CNT - 1)) {
+					printf("[Error:Unknown argument pass through with the \"set\" command]\n\r");
+				}
+			}			
+
 			printf("[Please press any key to resume...]");
 			
 			serial.getch();
@@ -402,7 +411,7 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 	    }
 		break;
 	    default:
-		printf("[Error:Too many arguments pass through the \"set\" command]\n\r");
+		printf("[Error:Too many arguments pass through with the \"set\" command]\n\r");
 		printf("[Please press any key to resume...]");
 
 		serial.getch();
