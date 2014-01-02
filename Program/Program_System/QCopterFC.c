@@ -71,7 +71,6 @@ void system_init(void)
 	nRF24L01_Config();
 	SDIO_Config();
 
-
 	PID_Init(&PID_Yaw);
 	PID_Init(&PID_Roll);
 	PID_Init(&PID_Pitch);
@@ -90,27 +89,13 @@ void system_init(void)
 
 	Delay_10ms(10);
 
-	u8 Sta = ERROR;
-
-
-	//while (remote_signal_check() == NO_SIGNAL);
-
-	if (KEY == 1) {
-		LED_B = 0;
-		Motor_Control(PWM_MOTOR_MAX, PWM_MOTOR_MAX, PWM_MOTOR_MAX, PWM_MOTOR_MAX);
-	}
-
-	while (KEY == 1);
-
-	LED_B = 1;
 	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
 
 #ifndef NRF_NOT_EXIST
 
 	/* nRF Check */
-	while (Sta == ERROR)
-		Sta = nRF_Check();
+	while ( nRF_Check()== ERROR );
 
 #endif
 
@@ -124,20 +109,12 @@ void system_init(void)
 
 	Delay_10ms(10);
 
-
-	/* Wait Correction */
-	//while (SensorMode != Mode_Algorithm);
-
 	/* Lock */
 	LED_R = 1;
 	LED_G = 1;
 	LED_B = 1;
 
 	System_Status = SYSTEM_INITIALIZED;
-
-	/* Clear the screen */
-	//putstr("\x1b[H\x1b[2J");
-
 
 }
 
