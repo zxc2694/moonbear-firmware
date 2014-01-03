@@ -117,7 +117,7 @@ SRC+=$(FREERTOS_SRC)/croutine.c\
 	$(FREERTOS_SRC)/queue.c\
 	$(FREERTOS_SRC)/tasks.c\
 	$(FREERTOS_SRC)/timers.c\
-	$(FREERTOS_SRC)/portable/MemMang/heap_2.c\
+	$(FREERTOS_SRC)/portable/MemMang/heap_4.c\
 	$(FREERTOS_SRC)/portable/GCC/ARM_$(ARCH)/port.c\
 
 #Self-defined MemMang
