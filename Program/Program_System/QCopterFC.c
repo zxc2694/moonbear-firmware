@@ -353,33 +353,22 @@ void statusReport_task()
 	printf("[System status]Initialized successfully!\n\r");
 
 	while (1) {
-		printf("\x1b[H\x1b[2J");
 
+		printf("{'Roll':'%f','Pitch':'%f','Yaw':'%f',",
+			global_var[TRUE_ROLL].param, 
+			global_var[TRUE_PITCH].param,
+			global_var[TRUE_YAW].param);
 
-		printf("Roll = %f,Pitch = %f,Yaw = %f \r\n",
-		       global_var[TRUE_ROLL].param, global_var[TRUE_PITCH].param,
-		       global_var[TRUE_YAW].param);
-		printf("CH1 %f(%f),CH2 %f(%f),CH3 %f(%f),CH4 %f(%f),CH5 %f()\r\n",
-		       global_var[PWM1_CCR].param, global_var[RC_EXP_ROLL].param,
-		       global_var[PWM2_CCR].param, global_var[RC_EXP_PITCH].param,
-		       global_var[PWM3_CCR].param, global_var[RC_EXP_THR].param,
-		       global_var[PWM4_CCR].param, global_var[RC_EXP_YAW].param,
-		       global_var[PWM5_CCR].param);
-		printf("PID Roll,%f,PID PITCH,%f,PID YAW,%f\r\n",
-		       global_var[PID_ROLL].param,
-		       global_var[PID_PITCH].param,
-		       global_var[PID_YAW].param);
-		printf("MOTOR 1,%f,MOTOR 2,%f,MOTOR 3,%f,MOTOR 4,%f",
-		       global_var[MOTOR1].param,
-		       global_var[MOTOR2].param,
-		       global_var[MOTOR3].param,
-		       global_var[MOTOR4].param);
+		printf("'Acc_x':'%d','Acc_y':'%d','Acc_z':'%d',",
+			Acc.X, Acc.Y, Acc.Z);
 
-		vTaskDelay(200);
+		printf("'Gyro_x':'%d','Gyro_y':'%d','Gyro_z':'%d'}\r\n",
+			Gyr.X, Gyr.Y, Gyr.Z);
+
+		vTaskDelay(100);
 	}
 }
 #endif
-/*=====================================================================================================*/
 
 void check_task()
 {
@@ -432,7 +421,7 @@ int main(void)
 #ifndef SHELL_IS_EXIST
 	xTaskCreate(statusReport_task,
 		    (signed portCHAR *) "Status report",
-		    1000, NULL,
+		    2000, NULL,
 		    tskIDLE_PRIORITY + 5, &statusReport_handle);
 #endif
 
