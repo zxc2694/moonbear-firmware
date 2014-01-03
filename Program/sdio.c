@@ -11,6 +11,7 @@
 #include "sys_manager.h"
 #include "ff.h"
 #include "diskio.h"
+#include "sys_manager.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 
@@ -19,6 +20,7 @@ FRESULT res;
 FILINFO finfo;
 DIR dirs;
 FIL file;
+extern SYSTEM_STATUS sys_status;
 
 void SDIO_Config(void)
 {
@@ -29,6 +31,8 @@ void SDIO_Config(void)
 
 void sdio_task()
 {
+	while (sys_status == SYSTEM_UNINITIALIZED);
+
 	uint32_t i = 0;
 	uint8_t ReadBuf[128] = {0};
 	char WriteData[50];

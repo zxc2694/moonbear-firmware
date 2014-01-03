@@ -11,7 +11,7 @@
 **使用 : MoveAve_SMA(NewData, MoveAve_FIFO, SampleNum)
 **=====================================================================================================*/
 /*=====================================================================================================*/
-s16 MoveAve_SMA(s16 NewData, s16 *MoveAve_FIFO, u8 SampleNum)
+s16 MoveAve_SMA(volatile int16_t NewData, volatile int16_t *MoveAve_FIFO, u8 SampleNum)
 {
 	u8 i = 0;
 	s16 AveData = 0;
@@ -38,7 +38,7 @@ s16 MoveAve_SMA(s16 NewData, s16 *MoveAve_FIFO, u8 SampleNum)
 **使用 : MoveAve_WMA(NewData, MoveAve_FIFO, SampleNum)
 **=====================================================================================================*/
 /*=====================================================================================================*/
-s16 MoveAve_WMA(s16 NewData, s16 *MoveAve_FIFO, u8 SampleNum)
+s16 MoveAve_WMA(volatile int16_t NewData, volatile int16_t *MoveAve_FIFO, u8 SampleNum)
 {
 	u8 i = 0;
 	s16 AveData = 0;
