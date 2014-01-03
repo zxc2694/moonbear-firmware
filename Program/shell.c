@@ -10,6 +10,7 @@
 #include "module_rs232.h"
 #include "algorithm_quaternion.h"
 #include "sys_manager.h"
+#include "stm32f4_sdio.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -25,6 +26,7 @@ void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_sdio(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -33,6 +35,7 @@ enum SHELL_CMD_ID {
 	help_ID,
 	monitor_ID,
 	ps_ID,
+	sdio_ID,
 	SHELL_CMD_CNT
 };
 
@@ -43,6 +46,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(help, shell),
 	CMD_DEF(monitor, shell),
 	CMD_DEF(ps, shell),
+	CMD_DEF(sdio, shell),
 };
 
 /**** Shell task **********************************************************************/
@@ -112,4 +116,18 @@ void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("\n\rName          State   Priority  Stack Num\n\r");
 	printf("*****************************************\n\r");
 	printf("%s\n\r", buf);
+}
+
+void shell_sdio(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	printf("-----SD Init Info-----\r\n");
+	printf(" Capacity : ");
+	printf("%d MB\r\n", SDCardInfo.CardCapacity >> 20);
+	printf(" CardBlockSize : ");
+	printf("%d\r\n", SDCardInfo.CardBlockSize);
+	printf(" CardType : ");
+	printf("%d\r\n", SDCardInfo.CardType);
+	printf(" RCA : ");
+	printf("%d\r\n", SDCardInfo.RCA);
+	printf("----------------------\r\n\r\n");	
 }
