@@ -350,6 +350,10 @@ int sprintf(char *str, const char *format, ...)
 				break;
 
 			case 'i':
+			case 'f':
+				strcat(str, ftoa(va_arg(para, double)));
+				break;
+
 			case 'd':
 				strcat(str, itoa(va_arg(para, int), integer));
 				break;
