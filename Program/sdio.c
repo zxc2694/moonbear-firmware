@@ -8,14 +8,11 @@
 #include "stm32f4_system.h"
 #include "stm32f4_sdio.h"
 #include "module_rs232.h"
+#include "sys_manager.h"
 #include "ff.h"
 #include "diskio.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-#define KEY   PBI(2)
-#define LED_R PCO(15)
-#define LED_G PCO(14)
-#define LED_B PCO(13)
 
 FATFS FatFs;
 FRESULT res;
@@ -29,14 +26,15 @@ void SDIO_Config(void)
 		Delay_10ms(20);
 
 }
-int SD_demo(void)
+
+void sdio_task()
 {
 	uint32_t i = 0;
 	uint8_t ReadBuf[128] = {0};
 	char WriteData[50];
-
 	float Kp = 12.123;
 	float Kd = 50.966;
+
 	sprintf(WriteData,"Kp : %f , Kd : %f  ",Kp,Kd);
 	printf("%s\n", WriteData);
 	res = f_mount(&FatFs, "", 1);

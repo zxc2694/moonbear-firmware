@@ -28,6 +28,7 @@
 #include "std.h"
 #include "linenoise.h"
 #include "shell.h"
+#include "sdio.h"
 
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
@@ -387,15 +388,6 @@ void check_task()
 
 }
 
-void sdio_task()
-{
-	while (System_Status == SYSTEM_UNINITIALIZED);
-
-	vTaskDelay(200);
-	printf("[System status]Initialized successfully!\n\r");
-	SD_demo();
-
-}
 
 int main(void)
 {
@@ -413,10 +405,10 @@ int main(void)
 		    (signed portCHAR *) "Initial checking",
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, &correction_task_handle);
-	// xTaskCreate(sdio_task,
-	// 	    (signed portCHAR *) "Using SD card",
-	// 	    512, NULL,
-	// 	    tskIDLE_PRIORITY + 5, NULL);
+	 xTaskCreate(sdio_task,
+	 	    (signed portCHAR *) "Using SD card",
+	 	    512, NULL,
+	 	    tskIDLE_PRIORITY + 5, NULL);
 
 #ifndef SHELL_IS_EXIST
 	xTaskCreate(statusReport_task,
