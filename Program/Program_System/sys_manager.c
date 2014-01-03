@@ -23,6 +23,6 @@ global_struct global_var[] = {
 	[MOTOR4] = {.param_name = "Show current Motor 4 CCR", .param = 0}
 
 };
-
+SYSTEM_STATUS sys_status = SYSTEM_UNINITIALIZED;
 xSemaphoreHandle serial_tx_wait_sem = NULL;
 xQueueHandle serial_rx_queue = NULL;

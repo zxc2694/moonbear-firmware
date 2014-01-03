@@ -41,13 +41,7 @@ volatile int16_t MagDataY[8] = {0};
 volatile uint32_t Correction_Time = 0;
 
 Sensor_Mode SensorMode = Mode_GyrCorrect;
-enum SYSTEM_STATUS {
-	SYSTEM_UNINITIALIZED,
-	SYSTEM_INITIALIZED,
-	SYSTEM_CORRECTION_SENSOR,
-	SYSTEM_FLIGHT_CONTROL
-} SYSTEM_STATUS;
-int System_Status = SYSTEM_UNINITIALIZED;
+extern SYSTEM_STATUS sys_status;
 //#define SHELL_IS_EXIST
 
 /*=====================================================================================================*/
@@ -125,7 +119,7 @@ void system_init(void)
 	LED_G = 1;
 	LED_B = 1;
 
-	System_Status = SYSTEM_INITIALIZED;
+	sys_status = SYSTEM_INITIALIZED;
 
 }
 
@@ -133,7 +127,7 @@ void correction_task()
 {
 	ErrorStatus sensor_correct = ERROR;
 
-	while (System_Status == SYSTEM_UNINITIALIZED);
+	while (sys_status == SYSTEM_UNINITIALIZED);
 
 	while ( sensor_correct == ERROR ) {
 
@@ -204,8 +198,8 @@ void correction_task()
 void flightControl_task()
 {
 	//Waiting for system finish initialize
-	while (System_Status == SYSTEM_UNINITIALIZED);
-	System_Status = SYSTEM_FLIGHT_CONTROL;
+	while (sys_status == SYSTEM_UNINITIALIZED);
+	sys_status = SYSTEM_FLIGHT_CONTROL;
 	while (1) {
 		GPIO_ToggleBits(GPIOC, GPIO_Pin_7);
 		uint8_t IMU_Buf[20] = {0};
@@ -347,7 +341,7 @@ void flightControl_task()
 void statusReport_task()
 {
 	//Waiting for system finish initialize
-	while (System_Status == SYSTEM_UNINITIALIZED);
+	while (sys_status == SYSTEM_UNINITIALIZED);
 
 	/* Show the Initialization message */
 	printf("[System status]Initialized successfully!\n\r");
@@ -373,12 +367,12 @@ void statusReport_task()
 void check_task()
 {
 	//Waiting for system finish initialize
-	while (System_Status == SYSTEM_UNINITIALIZED);
+	while (sys_status == SYSTEM_UNINITIALIZED);
 
 	while (remote_signal_check() == NO_SIGNAL);
 	LED_B = 0;
 	vTaskResume(correction_task_handle);
-	while(System_Status != SYSTEM_FLIGHT_CONTROL);
+	while(sys_status != SYSTEM_FLIGHT_CONTROL);
 	vTaskDelay(2000);
 	LED_R = 1;
 	LED_G = 1;
@@ -389,7 +383,7 @@ void check_task()
 
 void sdio_task()
 {
-	while (System_Status == SYSTEM_UNINITIALIZED);
+	while (sys_status == SYSTEM_UNINITIALIZED);
 
 	vTaskDelay(200);
 	printf("[System status]Initialized successfully!\n\r");
