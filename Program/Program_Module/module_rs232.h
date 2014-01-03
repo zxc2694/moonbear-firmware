@@ -20,7 +20,7 @@ int printf(const char *format, ...);
 int putstr(const char *msg);  //If declare as puts will cause naming conflict
 int getstr(void);             //If declare as puts will cause naming conflict
 
-
+double atof(const char *s);
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 #endif
