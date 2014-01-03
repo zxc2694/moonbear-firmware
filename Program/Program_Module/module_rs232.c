@@ -2,7 +2,6 @@
 /*=====================================================================================================*/
 #include "stm32f4_system.h"
 #include "module_rs232.h"
-#include "algorithm_string.h"
 #include <unistd.h>
 #include <stdarg.h>
 #include <string.h>
@@ -10,7 +9,6 @@
 
 #include "stm32f4_system.h"
 #include "module_rs232.h"
-#include "algorithm_string.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
