@@ -165,6 +165,7 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 		printf("**************************************************************\n\r\n\r");
 
+		vTaskDelay(250);
 		printf("[Please press <Space> to refresh the status]\n\r");
 		printf("[Please press <Enter> to enable the command line]");
 	

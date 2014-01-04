@@ -19,6 +19,8 @@ PROGRAM_DIR = ./Program_Driver
 PROGRAM_MOD = ./Program_Module
 PROGRAM_SYS = ./Program_System
 PROGRAM_FAT = ./Program_Fatfs
+PROGRAM_SHELL = ./shell
+PROGRAM_STD_LIB = ./stdlib
 _PROJECTFC_ = ./ProjectFC
 
 TOOLCHAIN_PATH ?= /usr/local/csl/arm-2012.03/arm-none-eabi
@@ -57,6 +59,8 @@ CFLAGS+=-I./Program_Algorithm
 CFLAGS+=-I./Program_Driver
 CFLAGS+=-I./Program_Module
 CFLAGS+=-I./Program_Fatfs
+CFLAGS+=-I./shell
+CFLAGS+=-I./stdlib
 
 LDFLAGS+=-lm -lc -lgcc
 
@@ -78,7 +82,8 @@ SRC+=./Libraries/CMSIS/system_stm32f4xx.c \
 	$(ST_LIB)/src/stm32f4xx_sdio.c
 
 #C Standard Lib
-SRC+=./string.c
+SRC+=$(PROGRAM_STD_LIB)/string.c\
+	$(PROGRAM_STD_LIB)/memory.c
 
 #Major programs source code
 SRC+=$(PROGRAM_ALG)/algorithm_*.c \
@@ -95,7 +100,6 @@ SRC+=$(PROGRAM_ALG)/algorithm_*.c \
 		Libraries/CMSIS/FastMathFunctions/arm_sin_f32.c \
 		test.c \
 		sdio.c \
-		linenoise.c
 #Fatfs
 SRC+=$(PROGRAM_FAT)/diskio.c\
 	$(PROGRAM_FAT)/ff.c\
@@ -107,6 +111,8 @@ INC_HEADERS =$(PROGRAM_ALG)/*.h \
 		$(PROGRAM_MOD)/*.h \
 		$(PROGRAM_SYS)/*.h \
 		$(PROGRAM_FAT)/*.h \
+		$(PROGRAM_SHELL)/*.h\
+		$(PROGRAM_STD_LIB)/*.h\
 		*.h
 
 
@@ -120,14 +126,11 @@ SRC+=$(FREERTOS_SRC)/croutine.c\
 	$(FREERTOS_SRC)/portable/MemMang/heap_4.c\
 	$(FREERTOS_SRC)/portable/GCC/ARM_$(ARCH)/port.c\
 
-#Self-defined MemMang
-SRC+=./memory.c
-
 #Shell and linenoise
-SRC+=./linenoise.c
-SRC+=./shell.c
-SRC+=./parser.c
-SRC+=./status_monitor.c
+SRC+=$(PROGRAM_SHELL)/linenoise.c\
+	$(PROGRAM_SHELL)/shell.c\
+	$(PROGRAM_SHELL)/parser.c\
+	$(PROGRAM_SHELL)/status_monitor.c\
 
 #STM32 startup file
 STARTUP=./Libraries/CMSIS/startup_stm32f4xx.s
