@@ -28,6 +28,7 @@
 #include "std.h"
 #include "linenoise.h"
 #include "shell.h"
+#include "sdio.h"
 
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
@@ -43,6 +44,8 @@ volatile uint32_t Correction_Time = 0;
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 extern SYSTEM_STATUS sys_status;
 //#define SHELL_IS_EXIST
+#define SENSOR_NOT_EXIST
+#define NRF_NOT_EXIST
 
 /*=====================================================================================================*/
 #define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
@@ -398,10 +401,10 @@ int main(void)
 		    (signed portCHAR *) "Initial checking",
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, &correction_task_handle);
-	// xTaskCreate(sdio_task,
-	// 	    (signed portCHAR *) "Using SD card",
-	// 	    512, NULL,
-	// 	    tskIDLE_PRIORITY + 5, NULL);
+	 xTaskCreate(sdio_task,
+	 	    (signed portCHAR *) "Using SD card",
+	 	    512, NULL,
+	 	    tskIDLE_PRIORITY + 5, NULL);
 
 #ifndef SHELL_IS_EXIST
 	xTaskCreate(statusReport_task,
