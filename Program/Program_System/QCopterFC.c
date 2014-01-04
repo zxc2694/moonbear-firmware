@@ -381,15 +381,6 @@ void check_task()
 
 }
 
-void sdio_task()
-{
-	while (sys_status == SYSTEM_UNINITIALIZED);
-
-	vTaskDelay(200);
-	printf("[System status]Initialized successfully!\n\r");
-	SD_demo();
-
-}
 
 int main(void)
 {
