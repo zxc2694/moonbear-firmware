@@ -102,6 +102,22 @@ int monitorInternalCmdIndentify(char *command)
 	return MONITOR_UNKNOWN;
 }
 
+void monitor_linenoise_completion(const char *buf, linenoiseCompletions *lc)
+{
+        int i,j ; //i = 1 to ignore the "UNKNOWN_COMMAND" string
+
+        for (i = 1; i < MONITOR_CMD_CNT; i++) {
+                if (buf[0] == monitorCmd_list[i].str[0])
+                        linenoiseAddCompletion(lc, monitorCmd_list[i].str);
+        }
+
+	
+	for(j = 0; j < MONITOR_IT_CMD_CNT; j++) {
+		if (buf[0] == monitor_cmd[j][0])
+			linenoiseAddCompletion(lc, monitor_cmd[j]);
+	}
+}
+
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	int last_rc_exp_pitch = global_var[RC_EXP_PITCH].param;
@@ -109,6 +125,8 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 	int last_rc_exp_yaw = global_var[RC_EXP_YAW].param;
 
 	while(1) {	
+		linenoiseSetCompletionCallback(monitor_linenoise_completion);
+
 		/* Clean the screen */
 		printf("\x1b[H\x1b[2J");
 
@@ -273,11 +291,6 @@ int is_num(char *str)
 			return 0;
 	}
 	return 1;
-}
-
-void set_parameter()
-{
-	
 }
 
 void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)

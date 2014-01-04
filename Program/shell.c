@@ -16,9 +16,6 @@
 
 #include "status_monitor.h"
 
-int completion_disable = 0;
-int history_disable = 0;
-
 /* Shell Command handlers */
 void shell_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
@@ -48,9 +45,6 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 /**** Shell task **********************************************************************/
 void shell_linenoise_completion(const char *buf, linenoiseCompletions *lc)
 {
-	if (completion_disable)
-		return;
-
 	int i; //i = 1 to ignore the "UNKNOWN_COMMAND" string
 
 	for (i = 1; i < SHELL_CMD_CNT; i++) {
@@ -61,8 +55,6 @@ void shell_linenoise_completion(const char *buf, linenoiseCompletions *lc)
 
 void shell_task()
 {
-	linenoiseSetCompletionCallback(shell_linenoise_completion);
-
 	/* Clear the screen */
 	printf("\x1b[H\x1b[2J");
 	/* Show the prompt messages */
@@ -70,6 +62,8 @@ void shell_task()
 	printf("Please type \"help\" to get more informations\n\r");
 
 	while (1) {
+		linenoiseSetCompletionCallback(shell_linenoise_completion);
+
 		command_data shell_cd = {.par_cnt = 0};
 
 		char *shell_str = linenoise("Quadcopter Shell > ");
