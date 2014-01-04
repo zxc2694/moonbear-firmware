@@ -73,6 +73,10 @@ void shell_task()
 		command_data shell_cd = {.par_cnt = 0};
 
 		char *shell_str = linenoise("Quadcopter Shell > ");
+		
+		if(shell_str == NULL)
+			continue;
+
 		commandExec(shell_str, &shell_cd, shellCmd_list, SHELL_CMD_CNT);
 
 		linenoiseHistoryAdd(shell_str);

@@ -162,7 +162,13 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 					char *command_str;
 
 					command_str = linenoise("(monitor) ");
-				
+					
+					/* Ctrl^C */
+					if(command_str == NULL) { 
+						printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+						continue;
+					}				
+
 					/* Check if it is internal command */
 					/* The Internal command means that need not call
 					   any functions but handle at here
@@ -291,35 +297,36 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 				printf("\x1b[0A\x1b[0G\x1b[0K");
 				printf("[Warning:Are you sure you want to enable the new settings? (y/n)]\n\r");
 				
-				char *confirm_ch = linenoise("> ");
-
+				char *confirm_ch = NULL;			
+	
 				while(1) {
-					if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0)
+					confirm_ch = linenoise("> ");
+
+					if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
+						/* Enable the new settings */
+						int i;
+						for(i = 0; i < PARAMETER_CNT; i++) {
+							if(par_data[i].int_origin == 0) {
+								/* Data is a float */
+								if(par_data[i].par_is_changed == 1)
+									*(par_data[i].flt_origin) = par_data[i].flt_buf;
+							} else {
+								/* Data is a int */
+								if(par_data[i].par_is_changed == 1)
+									*(par_data[i].int_origin) = par_data[i].int_buf;
+							}
+						}
+
+						monitor_it_cmd = MONITOR_RESUME;
 						break;
-					else if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0)
+					} else if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0 || confirm_ch == NULL)
+						break;
+					else if(confirm_ch == NULL) /* Ctrl^C */
 						break;
 					else {	
 						printf("[Error:Please type y(yes) or n(no)]\n\r");
-						confirm_ch = linenoise("> ");
 						printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
 					}
-				}
-
-				if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y")) {
-					/* Enable the new settings */
-					int i;
-					for(i = 0; i < PARAMETER_CNT; i++) {
-						if(par_data[i].int_origin == 0) {
-							/* Data is a float */
-							if(par_data[i].par_is_changed == 1)
-								*(par_data[i].flt_origin) = par_data[i].flt_buf;
-						} else {
-							/* Data is a int */
-							if(par_data[i].par_is_changed == 1)
-								*(par_data[i].int_origin) = par_data[i].int_buf;
-						}
-					}
-					monitor_it_cmd = MONITOR_RESUME;
 				}
 
 				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
@@ -354,40 +361,37 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 		for(i = 0; i < PARAMETER_CNT; i++) {
 			if(strcmp(parameter[0], par_data[i].par_str) == 0) {
 				if(is_num(parameter[1]) == 1) {
-
 					printf("[Warning:Are you sure you want to change the setting? (y/n)]\n\r");
-					char *confirm_ch = linenoise("> ");
+
+					char *confirm_ch = NULL;
 
 					while(1) {
-						if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0)
+						confirm_ch = linenoise("> ");
+
+						if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
+							/* If the pointer of int_orginial is set to 0,then this is a float */
+							if(par_data[i].int_origin == 0) {
+								/* Data is a float */
+								par_data[i].flt_buf = atof(parameter[1]);
+							} else {
+								/* Data is a int */
+								par_data[i].flt_buf = atof(parameter[1]);
+							}
+							par_is_changed = 1;
+							par_data[i].par_is_changed = 1;
+
 							break;
-						else if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0)
+						} else if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0)
+							break;
+						else if(confirm_ch == NULL)
 							break;
 						else {
 							printf("[Error:Please type y(yes) or n(no)]\n\r");
-							confirm_ch = linenoise("> ");
 							printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
 						}
 					}
 
-					if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0) {
-						break;
-					} else if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
-
-						/* If the pointer of int_orginial is set to 0,then this is a float */
-						if(par_data[i].int_origin == 0) {
-							/* Data is a float */
-							par_data[i].flt_buf = atof(parameter[1]);
-						} else {
-							/* Data is a int */
-							par_data[i].flt_buf = atof(parameter[1]);
-						}
-						par_is_changed = 1;						
-						par_data[i].par_is_changed = 1;
-
-						printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
-					}
-
+					printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
 					break;
 				} else {
 					/* Parameter 2 send a valid value */
