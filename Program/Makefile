@@ -17,7 +17,7 @@ ST_LIB = ./lib/STM32F4xx_StdPeriph_Driver
 PROGRAM_ALG = ./algorithm
 PROGRAM_DIR = ./driver
 PROGRAM_MOD = ./module
-PROGRAM_SYS = ./Program_System
+PROGRAM_SYS = ./system
 PROGRAM_FAT = ./Program_Fatfs
 PROGRAM_SHELL = ./shell
 PROGRAM_STD_LIB = ./stdlib
@@ -54,7 +54,7 @@ CFLAGS+=-I$(FREERTOS_PORT_INC)
 CFLAGS+=-I./lib/STM32F4xx_StdPeriph_Driver/inc
 
 #Major programs including
-CFLAGS+=-I./Program_System
+CFLAGS+=-I./system
 CFLAGS+=-I./algorithm
 CFLAGS+=-I./driver
 CFLAGS+=-I./module
@@ -94,8 +94,8 @@ SRC+=$(PROGRAM_ALG)/algorithm_*.c \
 		$(PROGRAM_SYS)/QCopterFC_ahrs.c \
 		$(PROGRAM_SYS)/QCopterFC_ctrl.c \
 		$(PROGRAM_SYS)/sensor_correct.c \
-		Program_System/QCopterFC.c \
-		Program_System/sys_manager.c \
+		system/QCopterFC.c \
+		system/sys_manager.c \
 		lib/CMSIS/FastMathFunctions/arm_cos_f32.c \
 		lib/CMSIS/FastMathFunctions/arm_sin_f32.c \
 		test.c \
