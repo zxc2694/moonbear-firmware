@@ -22,6 +22,9 @@ DIR dirs;
 FIL file;
 extern SYSTEM_STATUS sys_status;
 
+#define ReadBuf_Size 500
+#define WriteData_Size 500
+
 void SDIO_Config(void)
 {
 	while (SD_Init() != SD_OK)
@@ -34,8 +37,8 @@ void sdio_task()
 	while (sys_status == SYSTEM_UNINITIALIZED);
 
 	uint32_t i = 0;
-	uint8_t ReadBuf[128] = {0};
-	char WriteData[50];
+	uint8_t ReadBuf[ReadBuf_Size] = {0};
+	char WriteData[WriteData_Size];
 	float Kp = 12.123;
 	float Kd = 50.966;
 	char j;
@@ -50,7 +53,7 @@ void sdio_task()
 		res = f_write(&file, WriteData, strlen(WriteData), (UINT *)&i);
 	}
 	file.fptr = 0;
-	res = f_read(&file, ReadBuf, strlen(WriteData), (UINT *)&i);
+	res = f_read(&file, ReadBuf, ReadBuf_Size, (UINT *)&i);
 	f_close(&file);
 	printf("%s", ReadBuf);
 
