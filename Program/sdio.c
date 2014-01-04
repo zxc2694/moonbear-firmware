@@ -38,18 +38,21 @@ void sdio_task()
 	char WriteData[50];
 	float Kp = 12.123;
 	float Kd = 50.966;
+	char j;
 
-	sprintf(WriteData,"Kp : %f , Kd : %f  ",Kp,Kd);
 	res = f_mount(&FatFs, "", 1);
 	res = f_opendir(&dirs, "0:/");
 	res = f_readdir(&dirs, &finfo);
 	res = f_open(&file, "SDCard_K.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
-	res = f_write(&file, WriteData, strlen(WriteData), (UINT *)&i);
+
+	for(j=0;j<3;j++){
+		sprintf(WriteData,"Kp : %f , Kd : %f \n\r",Kp,Kd);
+		res = f_write(&file, WriteData, strlen(WriteData), (UINT *)&i);
+	}
 	file.fptr = 0;
 	res = f_read(&file, ReadBuf, strlen(WriteData), (UINT *)&i);
-
 	f_close(&file);
-	printf("%s\n", ReadBuf);
+	printf("%s", ReadBuf);
 
 	while (1) {
 		vTaskDelay(200);
