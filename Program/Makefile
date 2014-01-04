@@ -15,7 +15,7 @@ FREERTOS_PORT_INC=./lib/FreeRTOS/Source/portable/GCC/ARM_$(ARCH)
 
 ST_LIB = ./lib/STM32F4xx_StdPeriph_Driver
 PROGRAM_ALG = ./algorithm
-PROGRAM_DIR = ./Program_Driver
+PROGRAM_DIR = ./driver
 PROGRAM_MOD = ./module
 PROGRAM_SYS = ./Program_System
 PROGRAM_FAT = ./Program_Fatfs
@@ -56,7 +56,7 @@ CFLAGS+=-I./lib/STM32F4xx_StdPeriph_Driver/inc
 #Major programs including
 CFLAGS+=-I./Program_System
 CFLAGS+=-I./algorithm
-CFLAGS+=-I./Program_Driver
+CFLAGS+=-I./driver
 CFLAGS+=-I./module
 CFLAGS+=-I./Program_Fatfs
 CFLAGS+=-I./shell
