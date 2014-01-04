@@ -118,7 +118,7 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 		printf("Please type \"help\" to get more informations\n\r");
 		printf("**************************************************************\n\r");
 
-		printf("PID\tPitch\tRoll\tYow\n\r");
+		printf("PID\tPitch\tRoll\tYaw\n\r");
 		printf("Kp\t%f\t%f\t%f\n\r", PID_Pitch.Kp, PID_Roll.Kp, PID_Yaw.Kp);
 		printf("Ki\t%f\t%f\t%f\n\r", PID_Pitch.Ki, PID_Roll.Ki, PID_Yaw.Ki);
 		printf("Kd\t%f\t%f\t%f\n\r", PID_Pitch.Kd, PID_Roll.Kd, PID_Yaw.Kd);
