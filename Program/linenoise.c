@@ -296,6 +296,8 @@ static int linenoiseEdit(char *buf, size_t buflen, const char *prompt)
 	    history_len--;
 	    vPortFree(history[history_len]);
 	    return (int)l.len;	    
+	case CTRL_C:
+	    return -1;
 	case BACKSPACE:   /* backspace */	
 	case CTRL_H:     /* ctrl-h */
 	    linenoiseEditBackspace(&l);

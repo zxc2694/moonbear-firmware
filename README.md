@@ -33,6 +33,7 @@ After enable the command line, you can type :
 
 Linenoise hotkeys
 ======================
+* Ctrl+c : Drop the current line
 * Ctrl+d : Remove char at right of cursor, or of the line is empty, act as end-of-file
 * Ctrl+u : Delete the whole line
 * Ctrl+k : Delete from current to end of line
