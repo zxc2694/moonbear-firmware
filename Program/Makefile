@@ -9,11 +9,11 @@ OBJCOPY=arm-none-eabi-objcopy
 
 #FreeRTOS
 ARCH=CM4F
-FREERTOS_SRC=./Libraries/FreeRTOS/Source
-FREERTOS_INC=./Libraries/FreeRTOS/Source/include
-FREERTOS_PORT_INC=./Libraries/FreeRTOS/Source/portable/GCC/ARM_$(ARCH)
+FREERTOS_SRC=./lib/FreeRTOS/Source
+FREERTOS_INC=./lib/FreeRTOS/Source/include
+FREERTOS_PORT_INC=./lib/FreeRTOS/Source/portable/GCC/ARM_$(ARCH)
 
-ST_LIB = ./Libraries/STM32F4xx_StdPeriph_Driver
+ST_LIB = ./lib/STM32F4xx_StdPeriph_Driver
 PROGRAM_ALG = ./Program_Algorithm
 PROGRAM_DIR = ./Program_Driver
 PROGRAM_MOD = ./Program_Module
@@ -44,14 +44,14 @@ CFLAGS+= \
 	-D ARM_MATH_CM4
 	# __FPU_USED=1
 	#__CC_ARM
-CFLAGS+=-I./Libraries/CMSIS
+CFLAGS+=-I./lib/CMSIS
 
 #FreeRTOS including
 CFLAGS+=-I$(FREERTOS_INC)
 CFLAGS+=-I$(FREERTOS_PORT_INC)
 
 #STM32F4xx Peripherys including
-CFLAGS+=-I./Libraries/STM32F4xx_StdPeriph_Driver/inc
+CFLAGS+=-I./lib/STM32F4xx_StdPeriph_Driver/inc
 
 #Major programs including
 CFLAGS+=-I./Program_System
@@ -65,11 +65,11 @@ CFLAGS+=-I./stdlib
 LDFLAGS+=-lm -lc -lgcc
 
 #STM32 CMSIS
-SRC=$(wildcard ./Libraries/CMSIS/*.c)
+SRC=$(wildcard ./lib/CMSIS/*.c)
 
 #STM32F4xx Peripherys source code
-#SRC+=$(wildcard ./Libraries/STM32F4xx_StdPeriph_Driver/src/*.c)
-SRC+=./Libraries/CMSIS/system_stm32f4xx.c \
+#SRC+=$(wildcard ./lib/STM32F4xx_StdPeriph_Driver/src/*.c)
+SRC+=./lib/CMSIS/system_stm32f4xx.c \
 	$(ST_LIB)/src/misc.c \
 	$(ST_LIB)/src/stm32f4xx_rcc.c \
 	$(ST_LIB)/src/stm32f4xx_dma.c \
@@ -96,8 +96,8 @@ SRC+=$(PROGRAM_ALG)/algorithm_*.c \
 		$(PROGRAM_SYS)/sensor_correct.c \
 		Program_System/QCopterFC.c \
 		Program_System/sys_manager.c \
-		Libraries/CMSIS/FastMathFunctions/arm_cos_f32.c \
-		Libraries/CMSIS/FastMathFunctions/arm_sin_f32.c \
+		lib/CMSIS/FastMathFunctions/arm_cos_f32.c \
+		lib/CMSIS/FastMathFunctions/arm_sin_f32.c \
 		test.c \
 		sdio.c \
 #Fatfs
@@ -133,7 +133,7 @@ SRC+=$(PROGRAM_SHELL)/linenoise.c\
 	$(PROGRAM_SHELL)/status_monitor.c\
 
 #STM32 startup file
-STARTUP=./Libraries/CMSIS/startup_stm32f4xx.s
+STARTUP=./lib/CMSIS/startup_stm32f4xx.s
 #======================================================================#
 
 #Make all
