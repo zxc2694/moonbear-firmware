@@ -46,7 +46,7 @@ void sdio_task()
 	res = f_open(&file, "SDCard_K.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
 	res = f_write(&file, WriteData, strlen(WriteData), (UINT *)&i);
 	file.fptr = 0;
-	res = f_read(&file, ReadBuf, strlen(ReadBuf), (UINT *)&i);
+	res = f_read(&file, ReadBuf, strlen(WriteData), (UINT *)&i);
 
 	f_close(&file);
 	printf("%s\n", ReadBuf);
