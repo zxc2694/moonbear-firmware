@@ -27,8 +27,8 @@ SD_STATUS SDstatus;
 #define ReadBuf_Size 500
 #define WriteData_Size 500
 
-uint8_t ReadBuf[ReadBuf_Size] = {0};
-char WriteData[WriteData_Size];
+uint8_t ReadBuf[ReadBuf_Size] = {'\0'};
+char WriteData[WriteData_Size] = {EOF};
 
 void SDIO_Config(void)
 {
