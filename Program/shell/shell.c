@@ -25,7 +25,7 @@ void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
-void shell_sdio(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -34,7 +34,7 @@ enum SHELL_CMD_ID {
 	help_ID,
 	monitor_ID,
 	ps_ID,
-	sdio_ID,
+	sdinfo_ID,
 	SHELL_CMD_CNT
 };
 
@@ -45,7 +45,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(help, shell),
 	CMD_DEF(monitor, shell),
 	CMD_DEF(ps, shell),
-	CMD_DEF(sdio, shell),
+	CMD_DEF(sdinfo, shell),
 };
 
 /**** Shell task **********************************************************************/
@@ -104,6 +104,7 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("help \tShow the list of all commands\n\r");
 	printf("monitor The QuadCopter Status monitor\n\r");
 	printf("ps \tShow the list of all tasks\n\r\n\r");
+	printf("sdinfo  \tShow SD card informaions.\n\r");
 }
 
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
@@ -118,7 +119,7 @@ void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("%s\n\r", buf);
 }
 
-void shell_sdio(char parameter[][MAX_CMD_LEN], int par_cnt)
+void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	vTaskResume(sdio_task_handle);
 	SDstatus = SD_UNREADY;
