@@ -4,6 +4,7 @@
 
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
+xTaskHandle sdio_task_handle = NULL;
 xTaskHandle statusReport_handle = NULL;
 volatile int16_t ACC_FIFO[3][256] = {{0}};
 volatile int16_t GYR_FIFO[3][256] = {{0}};
@@ -368,7 +369,7 @@ int main(void)
 	 xTaskCreate(sdio_task,
 	 	    (signed portCHAR *) "Using SD card",
 	 	    512, NULL,
-	 	    tskIDLE_PRIORITY + 5, NULL);
+	 	    tskIDLE_PRIORITY + 5, &sdio_task_handle);
 
 #if configSTATUS_GUI
 	xTaskCreate(statusReport_task,
