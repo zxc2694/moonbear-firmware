@@ -58,7 +58,7 @@ void sdio_task()
 	file.fptr = 0;
 	res = f_read(&file, ReadBuf, ReadBuf_Size, (UINT *)&i);
 	f_close(&file);
-	printf("%s", ReadBuf);
+
 	SDstatus = SD_READY ;
 	while (1) {
 		vTaskDelay(200);

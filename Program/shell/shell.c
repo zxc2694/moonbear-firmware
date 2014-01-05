@@ -17,8 +17,11 @@
 
 #include "status_monitor.h"
 
+#define ReadBuf_Size 500
 extern sdio_task_handle;
 extern SD_STATUS SDstatus;
+extern ReadBuf[ReadBuf_Size];
+
 /* Shell Command handlers */
 void shell_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
@@ -144,4 +147,6 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 	SDstatus = SD_UNREADY;
 	vTaskResume(sdio_task_handle);
 	while(SDstatus == SD_UNREADY);
+	printf("Show SD card content : \n\r");
+	printf("%s", ReadBuf);	
 }
