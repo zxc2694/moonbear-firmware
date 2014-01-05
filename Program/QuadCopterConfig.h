@@ -10,43 +10,52 @@
 #define configSTATUS_SHELL		1
 
 /* Includes */
-//STM32
-#include "stm32f4_system.h"
-#include "stm32f4xx_conf.h"
-
 //FreeRTOS
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
 
+//System
+#include "main.h"
 #include "sys_manager.h"
 #include "std.h"
-
-#include "sdio.h"
-
-#include "QCopterFC.h"
-#include "QCopterFC_ctrl.h"
 #include "QCopterFC_ahrs.h"
+#include "QCopterFC_ctrl.h"
+#include "sensor_correct.h"
 
-#include "module_board.h"
-#include "module_rs232.h"
-#include "module_motor.h"
-#include "module_sensor.h"
-#include "module_nrf24l01.h"
-#include "module_mpu9150.h"
-#include "module_ms5611.h"
-
+//Algorithm
 #include "algorithm_pid.h"
 #include "algorithm_moveAve.h"
-#include "algorithm_mathUnit.h"
 #include "algorithm_quaternion.h"
+#include "algorithm_mathUnit.h"
 
-/* Shell */
+//Driver
+#include "stm32f4_system.h"
+#include "stm32f4xx_conf.h"
+#include "stm32f4_delay.h"
+#include "stm32f4_flash.h"
+#include "stm32f4_i2c.h"
+#include "stm32f4_spi.h"
+#include "sdio.h"
+
+//Module
+#include "module_ak8975.h"
+#include "module_board.h"
+#include "module_motor.h"
+#include "module_mpu6050.h"
+#include "module_mpu9150.h"
+#include "module_ms5611.h"
+#include "module_nrf24l01.h"
+#include "module_rs232.h"
+#include "module_sensor.h"
+#include "stm32f4_sdio.h"
+
+//Shell
 #include "linenoise.h"
 #include "shell.h"
 
-/* Unit test */
+//Unit test
 #include "test.h"
 
 #endif

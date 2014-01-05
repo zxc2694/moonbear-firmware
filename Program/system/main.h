@@ -1,7 +1,7 @@
-/* #include "QCopterFC.h" */
+/* #include "main.h" */
 
-#ifndef __QCOPTERFC_H
-#define __QCOPTERFC_H
+#ifndef __MAIN_H
+#define __MAIN_H
 
 #include "stm32f4xx.h"
 /*=====================================================================================================*/

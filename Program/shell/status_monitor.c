@@ -156,13 +156,6 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 		printf("Throttle\t%d\n\r", global_var[RC_EXP_THR].param);
 		printf("Engine\t\t%s\n\r", MOTOR_STATUS);
-
-		printf("--------------------------------------------------------------\n\r");
-
-		#define LED_STATUS "Off"
-		printf("LED lights\n\r");
-		printf("LED1\t: %s\n\rLED2\t: %s\n\rLED3\t: %s\n\rLED4\t: %s\n\r", LED_STATUS, LED_STATUS, LED_STATUS, LED_STATUS);
-
 		printf("**************************************************************\n\r\n\r");
 
 		vTaskDelay(250);
@@ -259,8 +252,6 @@ void monitor_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("pitch.kp  pitch.ki  pitch.kd\n\r");
 	printf("roll.kp   roll.ki   roll.kd\n\r");
 	printf("yaw.kp    yaw.ki    yaw.kd\n\r");
-	printf("LED1  LED2\n\r");
-	printf("LED3  LED4\n\r");
 	printf("------------------------------------------------------------------------------------------\n\r");
 
 	printf("\n\rresume\n\r");
