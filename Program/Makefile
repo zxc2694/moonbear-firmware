@@ -94,8 +94,8 @@ SRC+=$(PROGRAM_ALG)/algorithm_*.c \
 		$(PROGRAM_SYS)/QCopterFC_ahrs.c \
 		$(PROGRAM_SYS)/QCopterFC_ctrl.c \
 		$(PROGRAM_SYS)/sensor_correct.c \
-		system/QCopterFC.c \
-		system/sys_manager.c \
+		$(PROGRAM_SYS)/main.c \
+		$(PROGRAM_SYS)/sys_manager.c \
 		lib/CMSIS/FastMathFunctions/arm_cos_f32.c \
 		lib/CMSIS/FastMathFunctions/arm_sin_f32.c \
 		test.c \

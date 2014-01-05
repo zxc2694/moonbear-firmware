@@ -1,6 +1,6 @@
 #include "stm32f4_system.h"
 #include "stm32f4_i2c.h"
-#include "QCopterFC.h"
+#include "main.h"
 #include "QCopterFC_ctrl.h"
 #include "QCopterFC_ahrs.h"
 #include "module_board.h"
