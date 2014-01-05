@@ -18,6 +18,7 @@
 #include "status_monitor.h"
 
 extern sdio_task_handle;
+extern SD_STATUS SDstatus;
 /* Shell Command handlers */
 void shell_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
@@ -120,6 +121,8 @@ void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
 void shell_sdio(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	vTaskResume(sdio_task_handle);
+	SDstatus = SD_UNREADY;
+	while(SDstatus == SD_UNREADY);
 	printf("-----SD Init Info-----\r\n");
 	printf(" Capacity : ");
 	printf("%d MB\r\n", SDCardInfo.CardCapacity >> 20);

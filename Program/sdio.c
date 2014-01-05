@@ -8,6 +8,7 @@
 #include "stm32f4_system.h"
 #include "stm32f4_sdio.h"
 #include "module_rs232.h"
+#include "string.h"
 #include "sys_manager.h"
 #include "ff.h"
 #include "diskio.h"
@@ -21,6 +22,7 @@ FILINFO finfo;
 DIR dirs;
 FIL file;
 extern SYSTEM_STATUS sys_status;
+SD_STATUS SDstatus;
 
 #define ReadBuf_Size 500
 #define WriteData_Size 500
@@ -56,7 +58,7 @@ void sdio_task()
 	res = f_read(&file, ReadBuf, ReadBuf_Size, (UINT *)&i);
 	f_close(&file);
 	printf("%s", ReadBuf);
-
+	SDstatus = SD_READY ;
 	while (1) {
 		vTaskDelay(200);
 	}
