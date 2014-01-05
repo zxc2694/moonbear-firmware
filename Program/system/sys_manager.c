@@ -1,4 +1,4 @@
-#include "sys_manager.h"
+#include "QuadCopterConfig.h"
 
 global_struct global_var[] = {
 	[PWM1_CCR] = {.param_name = "PWM1_CCR", .param = 0},

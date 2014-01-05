@@ -1,20 +1,4 @@
-#include "stm32f4_system.h"
-#include "stm32f4_i2c.h"
-#include "QCopterFC.h"
-#include "QCopterFC_ctrl.h"
-#include "QCopterFC_ahrs.h"
-#include "module_board.h"
-#include "module_motor.h"
-#include "module_sensor.h"
-#include "module_mpu9150.h"
-#include "module_ms5611.h"
-#include "algorithm_pid.h"
-#include "algorithm_moveAve.h"
-#include "algorithm_mathUnit.h"
-#include "algorithm_quaternion.h"
-#include "sys_manager.h"
-#include "std.h"
-#include "sensor_correct.h"
+#include "QuadCopterConfig.h"
 extern Sensor_Mode SensorMode;
 extern SensorAcc Acc;
 extern SensorGyr Gyr;
