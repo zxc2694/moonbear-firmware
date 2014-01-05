@@ -32,6 +32,7 @@
 
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
+xTaskHandle sdio_task_handle = NULL;
 xTaskHandle statusReport_handle = NULL;
 volatile int16_t ACC_FIFO[3][256] = {{0}};
 volatile int16_t GYR_FIFO[3][256] = {{0}};
@@ -404,7 +405,7 @@ int main(void)
 	 xTaskCreate(sdio_task,
 	 	    (signed portCHAR *) "Using SD card",
 	 	    512, NULL,
-	 	    tskIDLE_PRIORITY + 5, NULL);
+	 	    tskIDLE_PRIORITY + 5, &sdio_task_handle);
 
 #ifndef SHELL_IS_EXIST
 	xTaskCreate(statusReport_task,
@@ -427,6 +428,7 @@ int main(void)
 
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
+	vTaskSuspend(sdio_task_handle);
 #ifndef SHELL_IS_EXIST
 	vTaskSuspend(statusReport_handle);
 #endif
