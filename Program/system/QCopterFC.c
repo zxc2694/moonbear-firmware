@@ -44,7 +44,7 @@ volatile uint32_t Correction_Time = 0;
 
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 extern SYSTEM_STATUS sys_status;
-//#define SHELL_IS_EXIST
+#define SHELL_IS_EXIST
 #define SENSOR_NOT_EXIST
 #define NRF_NOT_EXIST
 

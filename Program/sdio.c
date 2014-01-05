@@ -27,6 +27,9 @@ SD_STATUS SDstatus;
 #define ReadBuf_Size 500
 #define WriteData_Size 500
 
+uint8_t ReadBuf[ReadBuf_Size] = {0};
+char WriteData[WriteData_Size];
+
 void SDIO_Config(void)
 {
 	while (SD_Init() != SD_OK)
@@ -39,8 +42,6 @@ void sdio_task()
 	while (sys_status == SYSTEM_UNINITIALIZED);
 
 	uint32_t i = 0;
-	uint8_t ReadBuf[ReadBuf_Size] = {0};
-	char WriteData[WriteData_Size];
 	float Kp = 12.123;
 	float Kd = 50.966;
 	char j;

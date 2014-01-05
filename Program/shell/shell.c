@@ -26,6 +26,7 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -35,6 +36,7 @@ enum SHELL_CMD_ID {
 	monitor_ID,
 	ps_ID,
 	sdinfo_ID,
+	sdsave_ID,
 	SHELL_CMD_CNT
 };
 
@@ -46,6 +48,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(monitor, shell),
 	CMD_DEF(ps, shell),
 	CMD_DEF(sdinfo, shell),
+	CMD_DEF(sdsave, shell),
 };
 
 /**** Shell task **********************************************************************/
@@ -104,7 +107,9 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("help \tShow the list of all commands\n\r");
 	printf("monitor The QuadCopter Status monitor\n\r");
 	printf("ps \tShow the list of all tasks\n\r\n\r");
-	printf("sdinfo  \tShow SD card informaions.\n\r");
+	printf("sdinfo  \tShow SD card informations.\n\r");
+	printf("sdsave  \tSave PID informations in the SD card.\n\r");
+
 }
 
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
@@ -121,9 +126,6 @@ void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
-	vTaskResume(sdio_task_handle);
-	SDstatus = SD_UNREADY;
-	while(SDstatus == SD_UNREADY);
 	printf("-----SD Init Info-----\r\n");
 	printf(" Capacity : ");
 	printf("%d MB\r\n", SDCardInfo.CardCapacity >> 20);
@@ -133,5 +135,13 @@ void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("%d\r\n", SDCardInfo.CardType);
 	printf(" RCA : ");
 	printf("%d\r\n", SDCardInfo.RCA);
-	printf("----------------------\r\n\r\n");	
+	printf("----------------------\r\n\r\n");
+	vTaskDelay(100);	
+}
+
+void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	SDstatus = SD_UNREADY;
+	vTaskResume(sdio_task_handle);
+	while(SDstatus == SD_UNREADY);
 }
