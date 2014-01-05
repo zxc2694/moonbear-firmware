@@ -31,7 +31,7 @@ enum SHELL_CMD_ID {
 	clear_ID,
 	help_ID,
 	monitor_ID,
-	ps_ID,
+	/*ps_ID,*/
 	sdio_ID,
 	SHELL_CMD_CNT
 };
@@ -42,7 +42,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(clear, shell),
 	CMD_DEF(help, shell),
 	CMD_DEF(monitor, shell),
-	CMD_DEF(ps, shell),
+	/*CMD_DEF(ps, shell),*/
 	CMD_DEF(sdio, shell),
 };
 
