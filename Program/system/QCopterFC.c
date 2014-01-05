@@ -1,34 +1,6 @@
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-#include "stm32f4_system.h"
-
-#include "QCopterFC.h"
-#include "QCopterFC_ctrl.h"
-#include "QCopterFC_ahrs.h"
-#include "module_board.h"
-#include "module_rs232.h"
-#include "module_motor.h"
-#include "module_sensor.h"
-#include "module_nrf24l01.h"
-#include "module_mpu9150.h"
-#include "module_ms5611.h"
-
-#include "test.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "semphr.h"
-
-#include "algorithm_pid.h"
-#include "algorithm_moveAve.h"
-#include "algorithm_mathUnit.h"
-#include "algorithm_quaternion.h"
-
-#include "sys_manager.h"
-#include "std.h"
-#include "linenoise.h"
-#include "shell.h"
-#include "sdio.h"
+#include "QuadCopterConfig.h"
 
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
@@ -44,9 +16,6 @@ volatile uint32_t Correction_Time = 0;
 
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 extern SYSTEM_STATUS sys_status;
-#define SHELL_IS_EXIST
-#define SENSOR_NOT_EXIST
-#define NRF_NOT_EXIST
 
 /*=====================================================================================================*/
 #define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
@@ -65,9 +34,9 @@ void vApplicationMallocFailedHook( void )
 		vTaskDelay(200);
 	}
 }
+
 void vApplicationIdleHook(void)
 {
-
 }
 
 void system_init(void)
@@ -79,7 +48,10 @@ void system_init(void)
 	PWM_Capture_Config();
 	Sensor_Config();
 	nRF24L01_Config();
+
+#if configSD_BOARD
 	SDIO_Config();
+#endif
 
 	PID_Init(&PID_Yaw);
 	PID_Init(&PID_Roll);
@@ -102,18 +74,12 @@ void system_init(void)
 	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
 
-#ifndef NRF_NOT_EXIST
-
+#if configFLIGHT_CONTROL_BOARD
 	/* nRF Check */
 	while ( nRF_Check()== ERROR );
 
-#endif
-
-#ifndef SENSOR_NOT_EXIST
-
 	/* Sensor Init */
 	while(Sensor_Init() == ERROR);
-
 #endif
 
 	Delay_10ms(10);
@@ -193,7 +159,7 @@ void correction_task()
 	}
 	LED_G = 0;
 	vTaskResume(FlightControl_Handle);
-#ifndef SHELL_IS_EXIST
+#if configSTATUS_GUI
 	vTaskResume(statusReport_handle);
 #endif
 	vTaskDelete(NULL);
@@ -341,7 +307,6 @@ void flightControl_task()
 	}
 }
 
-#ifndef SHELL_IS_EXIST
 void statusReport_task()
 {
 	//Waiting for system finish initialize
@@ -366,7 +331,6 @@ void statusReport_task()
 		vTaskDelay(100);
 	}
 }
-#endif
 
 void check_task()
 {
@@ -407,14 +371,14 @@ int main(void)
 	 	    512, NULL,
 	 	    tskIDLE_PRIORITY + 5, &sdio_task_handle);
 
-#ifndef SHELL_IS_EXIST
+#if configSTATUS_GUI
 	xTaskCreate(statusReport_task,
 		    (signed portCHAR *) "Status report",
 		    2000, NULL,
 		    tskIDLE_PRIORITY + 5, &statusReport_handle);
 #endif
 
-#ifdef SHELL_IS_EXIST
+#if configSTATUS_SHELL
 	xTaskCreate(shell_task,
 		    (signed portCHAR *) "Shell",
 		    2048, NULL,
@@ -428,8 +392,7 @@ int main(void)
 
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
-	vTaskSuspend(sdio_task_handle);
-#ifndef SHELL_IS_EXIST
+#if configSTATUS_GUI
 	vTaskSuspend(statusReport_handle);
 #endif
 	vTaskStartScheduler();

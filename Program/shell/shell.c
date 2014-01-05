@@ -37,7 +37,7 @@ enum SHELL_CMD_ID {
 	clear_ID,
 	help_ID,
 	monitor_ID,
-	ps_ID,
+	/*ps_ID,*/
 	sdinfo_ID,
 	sdsave_ID,
 	SHELL_CMD_CNT
@@ -49,7 +49,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(clear, shell),
 	CMD_DEF(help, shell),
 	CMD_DEF(monitor, shell),
-	CMD_DEF(ps, shell),
+	/*CMD_DEF(ps, shell),*/
 	CMD_DEF(sdinfo, shell),
 	CMD_DEF(sdsave, shell),
 };
@@ -109,7 +109,7 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("clear  \tClear the screan\n\r");
 	printf("help \tShow the list of all commands\n\r");
 	printf("monitor The QuadCopter Status monitor\n\r");
-	printf("ps \tShow the list of all tasks\n\r\n\r");
+	printf("ps \tShow the list of all tasks\n\r");
 	printf("sdinfo  \tShow SD card informations.\n\r");
 	printf("sdsave  \tSave PID informations in the SD card.\n\r");
 
@@ -140,13 +140,4 @@ void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("%d\r\n", SDCardInfo.RCA);
 	printf("----------------------\r\n\r\n");
 	vTaskDelay(100);	
-}
-
-void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
-{
-	SDstatus = SD_UNREADY;
-	vTaskResume(sdio_task_handle);
-	while(SDstatus == SD_UNREADY);
-	printf("Show SD card content : \n\r");
-	printf("%s", ReadBuf);	
 }

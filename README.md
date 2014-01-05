@@ -1,4 +1,4 @@
-QuadrotorFlightControl
+QuadcopterFlightControl
 ======================
 The enhanced version of [QCopterFlightControl 2.0](https://github.com/Hom19910422/QCopterFlightControl)
 
