@@ -4,3 +4,4 @@ cscope*
 *.bin
 *.elf
 *.out
+*.swp
