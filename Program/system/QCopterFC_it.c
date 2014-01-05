@@ -1,25 +1,6 @@
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-#include "stm32f4_system.h"
-#include "stm32f4_i2c.h"
-#include "main.h"
-#include "QCopterFC_ctrl.h"
-#include "QCopterFC_ahrs.h"
-#include "module_board.h"
-#include "module_motor.h"
-#include "module_sensor.h"
-#include "module_mpu9150.h"
-#include "module_ms5611.h"
-#include "algorithm_pid.h"
-#include "algorithm_moveAve.h"
-#include "algorithm_mathUnit.h"
-#include "algorithm_quaternion.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "semphr.h"
-#include "std.h"
-#include "sys_manager.h"
+#include "QuadCopterConfig.h"
 vs16 Tmp_PID_KP;
 vs16 Tmp_PID_KI;
 vs16 Tmp_PID_KD;

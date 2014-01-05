@@ -1,21 +1,11 @@
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-#include "stm32f4_system.h"
-#include "module_rs232.h"
+#include "QuadCopterConfig.h"
+
 #include <unistd.h>
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
-
-#include "stm32f4_system.h"
-#include "module_rs232.h"
-
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "semphr.h"
-
-#include "sys_manager.h"
 /*=====================================================================================================*/
 /*=====================================================================================================*
 **函數 : RS232_Config

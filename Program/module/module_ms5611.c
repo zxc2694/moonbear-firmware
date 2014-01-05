@@ -1,8 +1,6 @@
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-#include "stm32f4_system.h"
-#include "stm32f4_i2c.h"
-#include "module_ms5611.h"
+#include "QuadCopterConfig.h"
 static void MS5611_ReadPROM(MS5611_ST *COEFF);
 static void MS5611_ReadADC(MS5611_ST *COEFF, u8 ADC_Sel);
 static void MS5611_Calculate(MS5611_ST *COEFF);
