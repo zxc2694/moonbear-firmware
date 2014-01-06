@@ -2,7 +2,7 @@
 #define __QUADCOPTER_CONFIG_H
 
 /* Hardware environments */
-#define configFLIGHT_CONTROL_BOARD	0
+#define configFLIGHT_CONTROL_BOARD	1
 #define configSD_BOARD			1
 
 /* Status report functions */
