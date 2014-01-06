@@ -353,6 +353,7 @@ void nrf_sending_task()
 {
 	char str[] = "Quadcopter is sending msg!";
 	char buf[32];
+	uint8_t Sta;
 	int i;
 	 for ( i = 0 ; i<strlen(str) ; i++)
 	 	buf[i] = str[i];
@@ -411,6 +412,11 @@ int main(void)
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, &FlightControl_Handle);
 
+	xTaskCreate(nrf_sending_task,
+	(signed portCHAR *) "NRF_SENDING",
+	512, NULL,
+	tskIDLE_PRIORITY + 5, NULL);
+	
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
 	vTaskSuspend(sdio_task_handle);
