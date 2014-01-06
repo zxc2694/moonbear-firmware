@@ -392,6 +392,7 @@ int main(void)
 
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
+	vTaskSuspend(sdio_task_handle);
 #if configSTATUS_GUI
 	vTaskSuspend(statusReport_handle);
 #endif

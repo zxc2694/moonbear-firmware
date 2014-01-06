@@ -110,8 +110,8 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("help \tShow the list of all commands\n\r");
 	printf("monitor The QuadCopter Status monitor\n\r");
 	printf("ps \tShow the list of all tasks\n\r");
-	printf("sdinfo  \tShow SD card informations.\n\r");
-	printf("sdsave  \tSave PID informations in the SD card.\n\r");
+	printf("sdinfo\tShow SD card informations.\n\r");
+	printf("sdsave\tSave PID informations in the SD card.\n\r");
 
 }
 
@@ -146,7 +146,14 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	SDstatus = SD_UNREADY;
 	vTaskResume(sdio_task_handle);
-	while(SDstatus == SD_UNREADY);
-	printf("Show SD card content : \n\r");
-	printf("%s", ReadBuf);	
+	printf("Read SD card ...... ");
+	vTaskDelay(4000);
+
+	if(SDstatus == SD_READY){
+		printf("SD card content : \n\r");
+		printf("%s", ReadBuf);	
+	}
+	else if(SDstatus == SD_UNREADY){
+		printf("Error! Please try again.");
+	}
 }
