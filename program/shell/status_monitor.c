@@ -84,11 +84,11 @@ parameter_data par_data[PARAMETER_CNT] = {
 };
 
 int par_is_changed = 0; //The flag shows that the settings is changed or not
+int unsaved_print_cnt = 0;
 
 /* Monitor Internal Command */
 char monitor_cmd[MONITOR_IT_CMD_CNT - 1][MAX_CMD_LEN] = {"quit", "resume"};
 int monitor_it_cmd;
-
 
 int monitorInternalCmdIndentify(char *command)
 {
@@ -118,11 +118,20 @@ void monitor_linenoise_completion(const char *buf, linenoiseCompletions *lc)
 	}
 }
 
-void print_unsaved_setting()
+void clean_line(int line_cnt)
+{
+	int i;
+	for(i = 0; i < line_cnt; i++) {
+		printf("\x1b[0G\x1b[0K\x1b[0A");
+	}
+	printf("\x1b[0G\x1b[0K");
+}
+
+int print_unsaved_setting()
 {
 	printf("Unsaved Settings (use \"set update\") to enable the settings)\n\r");
 
-	int i;
+	int i, unsaved_cnt = 0;
 	for(i = 0; i < PARAMETER_CNT; i++) {
 		if(par_data[i].par_is_changed == 1) {
 			if(par_data[i].int_origin == 0) {
@@ -132,10 +141,13 @@ void print_unsaved_setting()
 				/* Data is a int */
 				printf("%s: %d -> %f\n\r", par_data[i].par_str, *(par_data[i].int_origin), par_data[i].int_buf);
 			}
+			unsaved_cnt++;
 		}	
 	}
 
 	printf("\n\r");
+	
+	return (unsaved_cnt + 2);
 }
 
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
@@ -192,7 +204,7 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 		while(monitor_it_cmd != MONITOR_QUIT && monitor_it_cmd != MONITOR_RESUME) {
 			if(key_pressed == ENTER) {
 				/* Clean and move up two lines*/
-				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+				clean_line(1);
 	
 				while(monitor_it_cmd != MONITOR_QUIT && monitor_it_cmd != MONITOR_RESUME) {
 					char *command_str;
@@ -201,7 +213,7 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 					
 					/* Ctrl^C */
 					if(command_str == NULL) { 
-						printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+						clean_line(1);
 						continue;
 					}				
 
@@ -318,7 +330,7 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 		printf("[Please press any key to resume...]");
 		
 		serial.getch();
-		printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+		clean_line(1);
 		break;
 	    case 1:
 		if(strcmp(parameter[0], "update") == 0) {
@@ -354,18 +366,18 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 						break;
 					else {	
 						printf("[Error:Please type y(yes) or n(no)]\n\r");
-						printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+						clean_line(2);
 					}
 				}
 
-				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+				clean_line(2);
 			} else {
 				printf("\x1b[0A\x1b[0G\x1b[0K");
 				printf("[None of the settings have been changed]\n\r");
 				printf("[Please press any key to resume...]");
 
 				serial.getch();
-				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+				clean_line(1);
 			}
 		} else {
 			int i;
@@ -381,7 +393,7 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 			printf("[Please press any key to resume...]");
 			
 			serial.getch();
-			printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+			clean_line(2);
 		}
 		break;	
 	    case 2:
@@ -420,8 +432,8 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 						}
 					}
 					
-					printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
-					print_unsaved_setting();
+					clean_line(3 + unsaved_print_cnt);
+					unsaved_print_cnt = print_unsaved_setting();
 					break;
 				} else {
 					/* Parameter 2 send a valid value */
