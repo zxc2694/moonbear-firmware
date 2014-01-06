@@ -110,8 +110,8 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("help \tShow the list of all commands\n\r");
 	printf("monitor The QuadCopter Status monitor\n\r");
 	printf("ps \tShow the list of all tasks\n\r");
-	printf("sdinfo\tShow SD card informations.\n\r");
-	printf("sdsave\tSave PID informations in the SD card.\n\r");
+	printf("sdinfo\tShow SD card informations\n\r");
+	printf("sdsave\tSave PID informations in the SD card\n\r\n\r");
 
 }
 
