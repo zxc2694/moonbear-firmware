@@ -349,7 +349,28 @@ void check_task()
 
 }
 
+void nrf_sending_task()
+{
+	char str[] = "Quadcopter is sending msg!";
+	char buf[32]={0};
+	uint8_t Sta;
+	int i;
+	 for ( i = 0 ; i<strlen(str) ; i++)
+	 	buf[i] = str[i];
 
+	while (sys_status == SYSTEM_UNINITIALIZED);
+
+	nRF_TX_Mode();
+	while(1){
+		do {
+
+	  		Sta = nRF_Tx_Data( (uint8_t*)buf);
+	  		vTaskDelay(200);
+
+		} while (Sta == MAX_RT);
+	}
+
+}
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
@@ -366,11 +387,12 @@ int main(void)
 		    (signed portCHAR *) "Initial checking",
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, &correction_task_handle);
+#if configSD_BOARD
 	 xTaskCreate(sdio_task,
 	 	    (signed portCHAR *) "Using SD card",
 	 	    512, NULL,
 	 	    tskIDLE_PRIORITY + 5, &sdio_task_handle);
-
+#endif
 #if configSTATUS_GUI
 	xTaskCreate(statusReport_task,
 		    (signed portCHAR *) "Status report",
@@ -390,8 +412,14 @@ int main(void)
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, &FlightControl_Handle);
 
+	xTaskCreate(nrf_sending_task,
+	(signed portCHAR *) "NRF_SENDING",
+	512, NULL,
+	tskIDLE_PRIORITY + 5, NULL);
+
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
+	vTaskSuspend(sdio_task_handle);
 #if configSTATUS_GUI
 	vTaskSuspend(statusReport_handle);
 #endif
