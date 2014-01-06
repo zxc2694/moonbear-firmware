@@ -349,14 +349,20 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 						for(i = 0; i < PARAMETER_CNT; i++) {
 							if(par_data[i].int_origin == 0) {
 								/* Data is a float */
-								if(par_data[i].par_is_changed == 1)
+								if(par_data[i].par_is_changed == 1) {
 									*(par_data[i].flt_origin) = par_data[i].flt_buf;
+									par_data[i].par_is_changed = 0;
+								}
 							} else {
 								/* Data is a int */
-								if(par_data[i].par_is_changed == 1)
+								if(par_data[i].par_is_changed == 1) {
 									*(par_data[i].int_origin) = par_data[i].int_buf;
+									par_data[i].par_is_changed = 0;
+								}
 							}
 						}
+						par_is_changed = 0;
+						unsaved_print_cnt = 0;
 
 						monitor_it_cmd = MONITOR_RESUME;
 						break;
@@ -416,7 +422,7 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 								par_data[i].flt_buf = atof(parameter[1]);
 							} else {
 								/* Data is a int */
-								par_data[i].flt_buf = atof(parameter[1]);
+								par_data[i].int_buf = atoi(parameter[1]);
 							}
 							par_is_changed = 1;
 							par_data[i].par_is_changed = 1;
