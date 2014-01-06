@@ -141,3 +141,12 @@ void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("----------------------\r\n\r\n");
 	vTaskDelay(100);	
 }
+
+void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	SDstatus = SD_UNREADY;
+	vTaskResume(sdio_task_handle);
+	while(SDstatus == SD_UNREADY);
+	printf("Show SD card content : \n\r");
+	printf("%s", ReadBuf);	
+}
