@@ -118,6 +118,26 @@ void monitor_linenoise_completion(const char *buf, linenoiseCompletions *lc)
 	}
 }
 
+void print_unsaved_setting()
+{
+	printf("Unsaved Settings (use \"set update\") to enable the settings)\n\r");
+
+	int i;
+	for(i = 0; i < PARAMETER_CNT; i++) {
+		if(par_data[i].par_is_changed == 1) {
+			if(par_data[i].int_origin == 0) {
+				/* Data is a float */
+				printf("%s: %f -> %f\n\r", par_data[i].par_str, *(par_data[i].flt_origin), par_data[i].flt_buf);
+			} else {
+				/* Data is a int */
+				printf("%s: %d -> %f\n\r", par_data[i].par_str, *(par_data[i].int_origin), par_data[i].int_buf);
+			}
+		}	
+	}
+
+	printf("\n\r");
+}
+
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	int last_rc_exp_pitch = global_var[RC_EXP_PITCH].param;
@@ -157,6 +177,10 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 		printf("Throttle\t%d\n\r", global_var[RC_EXP_THR].param);
 		printf("Engine\t\t%s\n\r", MOTOR_STATUS);
 		printf("**************************************************************\n\r\n\r");
+
+		if(par_is_changed) {
+			print_unsaved_setting();
+		}
 
 		vTaskDelay(250);
 		printf("[Please press <Space> to refresh the status]\n\r");
@@ -395,8 +419,9 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 							printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
 						}
 					}
-
+					
 					printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+					print_unsaved_setting();
 					break;
 				} else {
 					/* Parameter 2 send a valid value */
