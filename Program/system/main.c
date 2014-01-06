@@ -350,20 +350,19 @@ void check_task()
 
 void nrf_sending_task()
 {
-	char *str = "SUCCESS";
-	char buf[32]= {'A'};
+	char str[] = "Quadcopter is sending msg!";
+	char buf[32];
 	int i;
-	for ( i = 0 ; i<strlen(str) ; i++)
-		buf[i] = *str;
-	ErrorStatus Sta = ERROR;
+	 for ( i = 0 ; i<strlen(str) ; i++)
+	 	buf[i] = str[i];
+
 	while (sys_status == SYSTEM_UNINITIALIZED);
 
 	nRF_TX_Mode();
 	while(1){
-		nRF_TX_Mode();
 		do {
 
-	  		Sta = nRF_Tx_Data(buf);
+	  		Sta = nRF_Tx_Data( (uint8_t*)buf);
 	  		vTaskDelay(200);
 
 		} while (Sta == MAX_RT);
@@ -386,11 +385,12 @@ int main(void)
 		    (signed portCHAR *) "Initial checking",
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, &correction_task_handle);
+#if configSD_BOARD
 	 xTaskCreate(sdio_task,
 	 	    (signed portCHAR *) "Using SD card",
 	 	    512, NULL,
 	 	    tskIDLE_PRIORITY + 5, NULL);
-
+#endif
 #if configSTATUS_GUI
 	xTaskCreate(statusReport_task,
 		    (signed portCHAR *) "Status report",
