@@ -348,7 +348,28 @@ void check_task()
 
 }
 
+void nrf_sending_task()
+{
+	char *str = "SUCCESS";
+	char buf[32]= {'A'};
+	int i;
+	for ( i = 0 ; i<strlen(str) ; i++)
+		buf[i] = *str;
+	ErrorStatus Sta = ERROR;
+	while (sys_status == SYSTEM_UNINITIALIZED);
 
+	nRF_TX_Mode();
+	while(1){
+		nRF_TX_Mode();
+		do {
+
+	  		Sta = nRF_Tx_Data(buf);
+	  		vTaskDelay(200);
+
+		} while (Sta == MAX_RT);
+	}
+
+}
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
@@ -388,6 +409,12 @@ int main(void)
 		    (signed portCHAR *) "Flight control",
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, &FlightControl_Handle);
+
+	xTaskCreate(nrf_sending_task,
+		    (signed portCHAR *) "NRF_SENDING",
+		    512, NULL,
+		    tskIDLE_PRIORITY + 5, NULL);
+
 
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
