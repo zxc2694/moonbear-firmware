@@ -2,8 +2,8 @@
 #define __QUADCOPTER_CONFIG_H
 
 /* Hardware environments */
-#define configFLIGHT_CONTROL_BOARD	1
-#define configSD_BOARD			1
+#define configFLIGHT_CONTROL_BOARD	0
+#define configSD_BOARD			0
 
 /* Status report functions */
 #define configSTATUS_GUI		0
@@ -54,6 +54,7 @@
 //Shell
 #include "linenoise.h"
 #include "shell.h"
+#include "parser.h"
 
 //Unit test
 #include "test.h"
