@@ -21,7 +21,7 @@
 extern sdio_task_handle;
 extern SD_STATUS SDstatus;
 extern ReadBuf[ReadBuf_Size];
-
+extern xSemaphoreHandle sdio_semaphore;
 /* Shell Command handlers */
 void shell_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
@@ -110,8 +110,8 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("help \tShow the list of all commands\n\r");
 	printf("monitor The QuadCopter Status monitor\n\r");
 	printf("ps \tShow the list of all tasks\n\r");
-	printf("sdinfo\tShow SD card informations\n\r");
-	printf("sdsave\tSave PID informations in the SD card\n\r\n\r");
+	printf("sdinfo\tShow SD card informations.\n\r");
+	printf("sdsave\tSave PID informations in the SD card.\n\r");
 
 }
 
@@ -145,15 +145,15 @@ void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	SDstatus = SD_UNREADY;
-	vTaskResume(sdio_task_handle);
-	printf("Read SD card ...... ");
-	vTaskDelay(4000);
-
+	printf("Read SD card ...... \n\r");
+	xSemaphoreGive(sdio_semaphore);
+	vTaskDelay(500);
 	if(SDstatus == SD_READY){
-		printf("SD card content : \n\r");
+		printf("SD card content : \n\r");		
 		printf("%s", ReadBuf);	
 	}
 	else if(SDstatus == SD_UNREADY){
-		printf("Error! Please try again.");
+		printf("Error! Please try again.\n\r");
 	}
+	
 }
