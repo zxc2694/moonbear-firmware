@@ -16,12 +16,14 @@
 void monitor_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
 void monitor_help(char parameter[][MAX_CMD_LEN], int par_cnt);
 void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt);
+void monitor_reset(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum MONITOR_CMD_ID {
 	unknown_cmd_ID,
 	help_ID,
 	set_ID,
+	reset_ID,
 	MONITOR_CMD_CNT
 };
 
@@ -29,7 +31,8 @@ enum MONITOR_CMD_ID {
 command_list monitorCmd_list[MONITOR_CMD_CNT] = {
 	CMD_DEF(unknown_cmd, monitor),
 	CMD_DEF(help, monitor),
-	CMD_DEF(set, monitor)
+	CMD_DEF(set, monitor),
+	CMD_DEF(reset, monitor)
 };
 
 /* Internal commands */
@@ -301,6 +304,9 @@ void monitor_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("\n\rresume\n\r");
 	printf("-Disable the commandline and resume to status report mode\n\r");
 
+	printf("\n\rreset [parameter] /reset all\n\r");
+	printf("-Drop the unsaved settings\n\r");	
+
 	printf("\n\rquit\n\r");
 	printf("-Quit the QuadCopter Status Monitor\n\r");
 
@@ -485,4 +491,80 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 		print_error_msg("[Error:Too many arguments pass through with the \"set\" command]\n\r");
 	}
 
+}
+
+int reset_all(char parameter[][MAX_CMD_LEN])
+{
+	if(strcmp(parameter[0], "all") == 0)
+	{      
+		if(par_is_changed == 0) {
+			print_error_msg("[None of the settings have been changed]\n\r");
+			return CMD_EXECUTED; 
+		}
+
+		printf("[Warning:Are you sure you want to change the setting? (y/n)]\n\r");
+		char *confirm_ch = NULL;
+
+		while(1) {
+			confirm_ch = linenoise("> ");
+
+			if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
+				int i;
+				/* Clean the buffer and the flag of all copter parameters */
+				for(i = 0; i < PARAMETER_CNT; i++) {
+					/* If the pointer of int_orginial is set to 0,then this is a float */
+					if(par_data[i].int_origin == 0) {
+						/* Data is a float */
+						par_data[i].flt_buf = 0.0;
+					} else {
+						/* Data is a int */
+						par_data[i].int_buf = 0;
+					}
+				
+					par_is_changed = 0;
+					par_data[i].par_is_changed = 0;
+					unsaved_print_cnt = 0;
+				}
+				break;
+			} else if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0) {
+				break;
+			} else if(confirm_ch == NULL) {
+				clean_line(3);
+				return CMD_EXECUTED;
+			} else {
+				printf("[Error:Please type y(yes) or n(no)]\n\r");
+				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+			}
+			
+		}
+		
+		monitor_it_cmd = MONITOR_RESUME;
+		return CMD_EXECUTED;
+	}
+
+	return CMD_UNEXECUTED;
+}
+
+void monitor_reset(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	switch(par_cnt) {
+	    case 0:
+	    {
+		/* User didn't pass any arguments */
+		print_error_msg("[Error:Command \"reset\" required at least 1 parameter]\n\r");
+		break;
+	    }
+	    case 1:
+	    {
+		/* reset all */
+		if(reset_all(parameter) == CMD_EXECUTED);
+		/* unknown parameter handling */
+		else print_error_msg("[Error:Unknown argument pass through with the \"reset\" command]\n\r");
+
+		break;	
+	    }
+	    default:
+		/* Too much arguments */
+		print_error_msg("[Error:Too many arguments pass through with the \"reset\" command]\n\r");
+	}
 }
