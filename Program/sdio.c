@@ -22,7 +22,7 @@ FILINFO finfo;
 DIR dirs;
 FIL file;
 extern SYSTEM_STATUS sys_status;
-extern xTaskHandle sdio_task_handle;
+extern xSemaphoreHandle sdio_semaphore;
 SD_STATUS SDstatus;
 
 #define ReadBuf_Size 500
@@ -42,7 +42,8 @@ void sdio_task()
 {
 	while (sys_status == SYSTEM_UNINITIALIZED);
 	while(1){
-		while(SDstatus == SD_UNREADY){
+
+		if( xSemaphoreTake(sdio_semaphore, 99999) ){
 			uint32_t i = 0;
 			res = f_mount(&FatFs, "", 1);
 			res = f_opendir(&dirs, "0:/");
@@ -63,7 +64,8 @@ void sdio_task()
 			f_close(&file);
 			SDstatus = SD_READY ;
 		}
+		
 		vTaskDelay(300);
-		vTaskSuspend(sdio_task_handle);
+
 	}
 }

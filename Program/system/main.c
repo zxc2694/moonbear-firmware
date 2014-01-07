@@ -4,8 +4,9 @@
 
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
-xTaskHandle sdio_task_handle = NULL;
+
 xTaskHandle statusReport_handle = NULL;
+xSemaphoreHandle sdio_semaphore = NULL;
 volatile int16_t ACC_FIFO[3][256] = {{0}};
 volatile int16_t GYR_FIFO[3][256] = {{0}};
 volatile int16_t MAG_FIFO[3][256] = {{0}};
@@ -357,7 +358,8 @@ int main(void)
 
 	vSemaphoreCreateBinary(serial_tx_wait_sem);
 	serial_rx_queue = xQueueCreate(1, sizeof(serial_msg));
-
+	/*Create sdio run semaphore*/
+	sdio_semaphore = xSemaphoreCreateBinary();
 	xTaskCreate(check_task,
 		    (signed portCHAR *) "Initial checking",
 		    512, NULL,
@@ -369,7 +371,7 @@ int main(void)
 	 xTaskCreate(sdio_task,
 	 	    (signed portCHAR *) "Using SD card",
 	 	    512, NULL,
-	 	    tskIDLE_PRIORITY + 5, &sdio_task_handle);
+	 	    tskIDLE_PRIORITY + 6, NULL);
 
 #if configSTATUS_GUI
 	xTaskCreate(statusReport_task,
@@ -392,7 +394,6 @@ int main(void)
 
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
-	vTaskSuspend(sdio_task_handle);
 #if configSTATUS_GUI
 	vTaskSuspend(statusReport_handle);
 #endif
