@@ -63,7 +63,7 @@ void sdio_task()
 			f_close(&file);
 			SDstatus = SD_READY ;
 		}
+		vTaskDelay(300);
 		vTaskSuspend(sdio_task_handle);
-		vTaskDelay(20);
 	}
 }

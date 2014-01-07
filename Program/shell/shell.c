@@ -146,14 +146,12 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	SDstatus = SD_UNREADY;
 	vTaskResume(sdio_task_handle);
-	printf("Read SD card ...... ");
-	vTaskDelay(4000);
-
+	printf("Read SD card ...... \n\r");
+	vTaskDelay(400);	
 	if(SDstatus == SD_READY){
 		printf("SD card content : \n\r");
 		printf("%s", ReadBuf);	
 	}
 	else if(SDstatus == SD_UNREADY){
-		printf("Error! Please try again.");
+		printf("Error! Please try again.\n\r");
 	}
-}
