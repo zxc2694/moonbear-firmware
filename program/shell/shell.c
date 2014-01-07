@@ -131,7 +131,7 @@ void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	printf("-----SD Init Info-----\r\n");
 	printf(" Capacity : ");
-	printf("%d MB\r\n", SDCardInfo.CardCapacity >> 20);
+	printf("%d MB\r\n", (int)(SDCardInfo.CardCapacity >> 20));
 	printf(" CardBlockSize : ");
 	printf("%d\r\n", SDCardInfo.CardBlockSize);
 	printf(" CardType : ");
