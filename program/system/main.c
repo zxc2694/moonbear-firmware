@@ -314,11 +314,9 @@ void statusReport_task()
 	while (1) {
 
 
-		printf("'Acc_x':'%d','Acc_y':'%d','Acc_z':'%d',",
-			Acc.X, Acc.Y, Acc.Z);
 
-		printf("'Gyro_x':'%d','Gyro_y':'%d','Gyro_z':'%d'}\r\n",
-			Gyr.X, Gyr.Y, Gyr.Z);
+
+
 
 		vTaskDelay(100);
 	}
@@ -355,6 +353,12 @@ void nrf_sending_task()
 			global_var[TRUE_ROLL].param, 
 			global_var[TRUE_PITCH].param,
 			global_var[TRUE_YAW].param);
+		nRF_send_msg( (uint8_t *)buf);
+		sprintf( buf, "'Acc_x':'%d','Acc_y':'%d','Acc_z':'%d',",
+			Acc.X, Acc.Y, Acc.Z);
+		nRF_send_msg( (uint8_t *)buf);
+		sprintf( buf, "'Gyro_x':'%d','Gyro_y':'%d','Gyro_z':'%d'}\r\n",
+			Gyr.X, Gyr.Y, Gyr.Z);
 		nRF_send_msg( (uint8_t *)buf);
 	}
 
