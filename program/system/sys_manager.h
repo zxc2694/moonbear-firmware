@@ -40,7 +40,10 @@ typedef __IO enum {
 
 typedef __IO enum {
 	SD_READY = 0,
-	SD_UNREADY 
+	SD_UNREADY, 
+	SD_SAVE,
+	SD_UNSAVE,
+	SD_ERSAVE
 } SD_STATUS;
 
 
@@ -60,4 +63,5 @@ global_struct global_var[GLOABAL_PARAM_COUNT];
 extern xSemaphoreHandle serial_tx_wait_sem;
 extern xQueueHandle serial_rx_queue;
 extern SD_STATUS SDstatus;
+extern SD_STATUS SDcondition;
 #endif

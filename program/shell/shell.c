@@ -20,6 +20,7 @@
 #define ReadBuf_Size 500
 extern sdio_task_handle;
 extern SD_STATUS SDstatus;
+extern SD_STATUS SDcondition;
 extern ReadBuf[ReadBuf_Size];
 extern xSemaphoreHandle sdio_semaphore;
 /* Shell Command handlers */
@@ -145,15 +146,20 @@ void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	SDstatus = SD_UNREADY;
-	printf("Read SD card ...... \n\r");
+	SDcondition == SD_UNSAVE;
 	xSemaphoreGive(sdio_semaphore);
-	vTaskDelay(500);
-	if(SDstatus == SD_READY){
+	while(SDstatus == SD_UNREADY);
+	vTaskDelay(200);
+	if(SDcondition == SD_SAVE){
+		printf("Has been saved ! \n\r\n\r");
+		printf("Read SD card ...... \n\r");
 		printf("SD card content : \n\r");		
 		printf("%s", ReadBuf);	
 	}
-	else if(SDstatus == SD_UNREADY){
-		printf("Error! Please try again.\n\r");
+	else if(SDcondition == SD_UNSAVE){
+		printf("OK! not store!\n\r");
 	}
-	
+	else if(SDcondition == SD_ERSAVE){
+		printf("error!\n\r");
+	}
 }
