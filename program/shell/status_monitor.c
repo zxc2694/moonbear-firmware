@@ -4,18 +4,7 @@
 #include <ctype.h>
 #include <string.h>
 
-/* Linenoise and shell includes */
-#include "shell.h"
-#include "linenoise.h"
-#include "parser.h"
-
-#include "module_rs232.h"
-#include "algorithm_quaternion.h"
-#include "algorithm_pid.h"
-#include "sys_manager.h"
-
-#include "FreeRTOS.h"
-#include "task.h"
+#include "QuadCopterConfig.h"
 
 #define PAR_DEF(PAR, PAR_STR, INT_ORG, FLT_ORG) \
 	[PAR] = {.par_str = #PAR_STR, .int_origin = INT_ORG, .flt_origin = FLT_ORG, .par_is_changed = 0}
