@@ -194,14 +194,18 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 		printf("--------------------------------------------------------------\n\r");
 
-		#define MOTOR_STATUS "Off"
 		printf("RC Messages\tCurrent\tLast\n\r");
 		printf("Pitch(expect)\t%f\t%f\n\r", global_var[RC_EXP_PITCH].param, last_rc_exp_pitch);
 		printf("Roll(expect)\t%f\t%f\n\r", global_var[RC_EXP_ROLL].param, last_rc_exp_roll);
 		printf("Yaw(expect)\t%f\t%f\n\r", global_var[RC_EXP_YAW].param, last_rc_exp_yaw);	
 
 		printf("Throttle\t%d\n\r", global_var[RC_EXP_THR].param);
-		printf("Engine\t\t%s\n\r", MOTOR_STATUS);
+
+ 		if(global_var[PWM5_CCR].param > (MAX_PWM5_INPUT + MIN_PWM5_INPUT) / 2)
+			printf("Engine\t\t%s\n\r", "Off");
+		else
+			printf("Engine\t\t%s\n\r", "On");
+
 		printf("**************************************************************\n\r\n\r");
 
 		if(par_is_changed) {
