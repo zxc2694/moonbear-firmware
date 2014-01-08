@@ -18,7 +18,7 @@ PROGRAM_ALG = ./algorithm
 PROGRAM_DIR = ./driver
 PROGRAM_MOD = ./module
 PROGRAM_SYS = ./system
-PROGRAM_FAT = ./Program_Fatfs
+PROGRAM_FAT = ./fatfs
 PROGRAM_SHELL = ./shell
 PROGRAM_STD_LIB = ./stdlib
 _PROJECTFC_ = ./ProjectFC
@@ -58,7 +58,7 @@ CFLAGS+=-I./system
 CFLAGS+=-I./algorithm
 CFLAGS+=-I./driver
 CFLAGS+=-I./module
-CFLAGS+=-I./Program_Fatfs
+CFLAGS+=-I./fatfs
 CFLAGS+=-I./shell
 CFLAGS+=-I./stdlib
 
