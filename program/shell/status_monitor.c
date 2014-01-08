@@ -125,25 +125,28 @@ void clean_line(int line_cnt)
 
 int print_unsaved_setting()
 {
-	printf("Unsaved Settings (use \"set update\") to enable the settings)\n\r");
+	if(par_is_changed == 1) {
+		printf("Unsaved Settings (use \"set update\") to enable the settings)\n\r");
 
-	int i, unsaved_cnt = 0;
-	for(i = 0; i < PARAMETER_CNT; i++) {
-		if(par_data[i].par_is_changed == 1) {
-			if(par_data[i].int_origin == 0) {
-				/* Data is a float */
-				printf("%s: %f -> %f\n\r", par_data[i].par_str, *(par_data[i].flt_origin), par_data[i].flt_buf);
-			} else {
-				/* Data is a int */
-				printf("%s: %d -> %f\n\r", par_data[i].par_str, *(par_data[i].int_origin), par_data[i].int_buf);
-			}
-			unsaved_cnt++;
-		}	
+		int i, unsaved_cnt = 0;
+		for(i = 0; i < PARAMETER_CNT; i++) {
+			if(par_data[i].par_is_changed == 1) {
+				if(par_data[i].int_origin == 0) {
+					/* Data is a float */
+					printf("%s: %f -> %f\n\r", par_data[i].par_str, *(par_data[i].flt_origin), par_data[i].flt_buf);
+				} else {
+					/* Data is a int */
+					printf("%s: %d -> %f\n\r", par_data[i].par_str, *(par_data[i].int_origin), par_data[i].int_buf);
+				}
+				unsaved_cnt++;
+			}	
+		}
+
+
+		printf("\n\r");
+		return (unsaved_cnt + 2);
 	}
-
-	printf("\n\r");
-	
-	return (unsaved_cnt + 2);
+	return 0;
 }
 
 void print_error_msg(char *error_msg)
@@ -493,6 +496,63 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 }
 
+int unsaved_check()
+{
+	int i;
+	for(i = 0; i < PARAMETER_CNT; i++) {
+		if(par_data[i].par_is_changed == 1)
+			return 1;
+	}
+	
+	return 0;
+}
+
+int reset_parameter(char parameter[][MAX_CMD_LEN])
+{
+	int i;
+	for(i = 0; i < PARAMETER_CNT; i++) {
+		if(strcmp(parameter[0], par_data[i].par_str) == 0) {
+			if(par_data[i].par_is_changed == 1) {
+				printf("\x1b[0A\x1b[0G\x1b[0K");
+				printf("[Warning:Are you sure you want to reset the unsaved setting? (y/n)]\n\r");
+				
+				char *confirm_ch = NULL;			
+		
+				while(1) {
+					confirm_ch = linenoise("> ");
+
+					if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
+						/* Drop the setting */
+						par_data[i].flt_buf = 0.0;
+						par_data[i].int_buf = 0;
+						/* Clean the is_changed flag */
+						par_data[i].par_is_changed = 0;
+		
+						par_is_changed = unsaved_check();						
+
+						clean_line(2 + unsaved_print_cnt);
+						unsaved_print_cnt = print_unsaved_setting();
+						break;
+					} else if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0 || confirm_ch == NULL) {
+						clean_line(2);
+						break;
+					} else if(confirm_ch == NULL) /* Ctrl^C */ {
+						clean_line(2);
+						break;
+					} else {	
+						printf("[Error:Please type y(yes) or n(no)]\n\r");
+						clean_line(2);
+					}
+				}
+			} else {
+				print_error_msg("[The setting have not been changed]\n\r");
+			}
+			return CMD_EXECUTED;
+		}
+	}
+	return CMD_UNEXECUTED;
+}
+
 int reset_all(char parameter[][MAX_CMD_LEN])
 {
 	if(strcmp(parameter[0], "all") == 0)
@@ -502,7 +562,7 @@ int reset_all(char parameter[][MAX_CMD_LEN])
 			return CMD_EXECUTED; 
 		}
 
-		printf("[Warning:Are you sure you want to change the setting? (y/n)]\n\r");
+		printf("[Warning:Are you sure you want to reset all settings? (y/n)]\n\r");
 		char *confirm_ch = NULL;
 
 		while(1) {
@@ -556,8 +616,10 @@ void monitor_reset(char parameter[][MAX_CMD_LEN], int par_cnt)
 	    }
 	    case 1:
 	    {
+		/* reset [parameter] */
+		if(reset_parameter(parameter) == CMD_EXECUTED);
 		/* reset all */
-		if(reset_all(parameter) == CMD_EXECUTED);
+		else if(reset_all(parameter) == CMD_EXECUTED);
 		/* unknown parameter handling */
 		else print_error_msg("[Error:Unknown argument pass through with the \"reset\" command]\n\r");
 
