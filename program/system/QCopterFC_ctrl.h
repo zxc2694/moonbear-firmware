@@ -8,25 +8,29 @@
 /*=====================================================================================================*/
 #define MIN_PWM_INPUT 1000
 #define MAX_PWM_INPUT 5000
-// #define MAX_PWM1_INPUT 3766.0
-// #define MIN_PWM1_INPUT 2120.0
-// #define MID_PWM1_INPUT 3036.0
 
-// #define MAX_PWM2_INPUT 3854.0
-// #define MIN_PWM2_INPUT 2206.0
-// #define MID_PWM2_INPUT 3045.0
+#if USE_FUTABA_CONTROLLER
+#define MAX_PWM1_INPUT 3766.0
+#define MIN_PWM1_INPUT 2120.0
+#define MID_PWM1_INPUT 3036.0
 
-// #define MAX_PWM3_INPUT 3853.0
-// #define MIN_PWM3_INPUT 2205.0
-// #define MID_PWM3_INPUT 2214.0
+#define MAX_PWM2_INPUT 3854.0
+#define MIN_PWM2_INPUT 2206.0
+#define MID_PWM2_INPUT 3045.0
 
-// #define MAX_PWM4_INPUT 3872.0
-// #define MIN_PWM4_INPUT 2224.0
-// #define MID_PWM4_INPUT 3033.0
+#define MAX_PWM3_INPUT 3853.0
+#define MIN_PWM3_INPUT 2205.0
+#define MID_PWM3_INPUT 2214.0
 
-// #define MAX_PWM5_INPUT 4145.0
-// #define MIN_PWM5_INPUT 1931.0
+#define MAX_PWM4_INPUT 3872.0
+#define MIN_PWM4_INPUT 2224.0
+#define MID_PWM4_INPUT 3033.0
 
+#define MAX_PWM5_INPUT 4145.0
+#define MIN_PWM5_INPUT 1931.0
+#endif
+
+#if USE_WFLY_CONTROLLER
 #define MAX_PWM1_INPUT 3900.0
 #define MID_PWM1_INPUT 3040.0
 #define MIN_PWM1_INPUT 2201.0
@@ -45,6 +49,7 @@
 #define MAX_PWM5_INPUT 3900.0
 
 #define MIN_PWM5_INPUT 2201.0
+#endif 
 
 #define MAX_CTRL_ROLL 45
 #define MIN_CTRL_ROLL -45
