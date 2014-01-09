@@ -54,6 +54,7 @@
 //Shell
 #include "linenoise.h"
 #include "shell.h"
+#include "parser.h"
 
 //Unit test
 #include "test.h"

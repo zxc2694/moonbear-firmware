@@ -4,18 +4,10 @@
 #include <ctype.h>
 #include <string.h>
 
-/* Linenoise and shell includes */
-#include "shell.h"
-#include "linenoise.h"
-#include "parser.h"
+#include "QuadCopterConfig.h"
 
-#include "module_rs232.h"
-#include "algorithm_quaternion.h"
-#include "algorithm_pid.h"
-#include "sys_manager.h"
-
-#include "FreeRTOS.h"
-#include "task.h"
+#define CMD_EXECUTED 0
+#define CMD_UNEXECUTED 1
 
 #define PAR_DEF(PAR, PAR_STR, INT_ORG, FLT_ORG) \
 	[PAR] = {.par_str = #PAR_STR, .int_origin = INT_ORG, .flt_origin = FLT_ORG, .par_is_changed = 0}
@@ -24,12 +16,14 @@
 void monitor_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
 void monitor_help(char parameter[][MAX_CMD_LEN], int par_cnt);
 void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt);
+void monitor_reset(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum MONITOR_CMD_ID {
 	unknown_cmd_ID,
 	help_ID,
 	set_ID,
+	reset_ID,
 	MONITOR_CMD_CNT
 };
 
@@ -37,7 +31,8 @@ enum MONITOR_CMD_ID {
 command_list monitorCmd_list[MONITOR_CMD_CNT] = {
 	CMD_DEF(unknown_cmd, monitor),
 	CMD_DEF(help, monitor),
-	CMD_DEF(set, monitor)
+	CMD_DEF(set, monitor),
+	CMD_DEF(reset, monitor)
 };
 
 /* Internal commands */
@@ -83,6 +78,7 @@ parameter_data par_data[PARAMETER_CNT] = {
 	PAR_DEF(YAW_KD, ywa.kd, 0, &(PID_Yaw.Kd))
 };
 
+/* Flags */
 int par_is_changed = 0; //The flag shows that the settings is changed or not
 int unsaved_print_cnt = 0;
 
@@ -129,25 +125,43 @@ void clean_line(int line_cnt)
 
 int print_unsaved_setting()
 {
-	printf("Unsaved Settings (use \"set update\") to enable the settings)\n\r");
+	if(par_is_changed == 1) {
+		printf("Unsaved Settings (use \"set update\") to enable the settings)\n\r");
 
-	int i, unsaved_cnt = 0;
-	for(i = 0; i < PARAMETER_CNT; i++) {
-		if(par_data[i].par_is_changed == 1) {
-			if(par_data[i].int_origin == 0) {
-				/* Data is a float */
-				printf("%s: %f -> %f\n\r", par_data[i].par_str, *(par_data[i].flt_origin), par_data[i].flt_buf);
-			} else {
-				/* Data is a int */
-				printf("%s: %d -> %f\n\r", par_data[i].par_str, *(par_data[i].int_origin), par_data[i].int_buf);
-			}
-			unsaved_cnt++;
-		}	
+		int i, unsaved_cnt = 0;
+		for(i = 0; i < PARAMETER_CNT; i++) {
+			if(par_data[i].par_is_changed == 1) {
+				if(par_data[i].int_origin == 0) {
+					/* Data is a float */
+					printf("%s: %f -> %f\n\r", par_data[i].par_str, *(par_data[i].flt_origin), par_data[i].flt_buf);
+				} else {
+					/* Data is a int */
+					printf("%s: %d -> %f\n\r", par_data[i].par_str, *(par_data[i].int_origin), par_data[i].int_buf);
+				}
+				unsaved_cnt++;
+			}	
+		}
+
+
+		printf("\n\r");
+		return (unsaved_cnt + 2);
+	}
+	return 0;
+}
+
+void print_error_msg(char *error_msg)
+{
+	int i, new_line_cnt = 0;	
+	for(i = 0; i < strlen(error_msg); i++) {
+		if(error_msg[i] == '\n')
+			new_line_cnt++;
 	}
 
-	printf("\n\r");
-	
-	return (unsaved_cnt + 2);
+	printf("%s", error_msg);
+	printf("[Please press any key to resume...]");
+
+	serial.getch();
+	clean_line(new_line_cnt + 1);
 }
 
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
@@ -180,14 +194,18 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 		printf("--------------------------------------------------------------\n\r");
 
-		#define MOTOR_STATUS "Off"
 		printf("RC Messages\tCurrent\tLast\n\r");
 		printf("Pitch(expect)\t%f\t%f\n\r", global_var[RC_EXP_PITCH].param, last_rc_exp_pitch);
 		printf("Roll(expect)\t%f\t%f\n\r", global_var[RC_EXP_ROLL].param, last_rc_exp_roll);
 		printf("Yaw(expect)\t%f\t%f\n\r", global_var[RC_EXP_YAW].param, last_rc_exp_yaw);	
 
 		printf("Throttle\t%d\n\r", global_var[RC_EXP_THR].param);
-		printf("Engine\t\t%s\n\r", MOTOR_STATUS);
+
+ 		if(global_var[PWM5_CCR].param > (MAX_PWM5_INPUT + MIN_PWM5_INPUT) / 2)
+			printf("Engine\t\t%s\n\r", "Off");
+		else
+			printf("Engine\t\t%s\n\r", "On");
+
 		printf("**************************************************************\n\r\n\r");
 
 		if(par_is_changed) {
@@ -293,6 +311,9 @@ void monitor_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("\n\rresume\n\r");
 	printf("-Disable the commandline and resume to status report mode\n\r");
 
+	printf("\n\rreset [parameter] /reset all\n\r");
+	printf("-Drop the unsaved settings\n\r");	
+
 	printf("\n\rquit\n\r");
 	printf("-Quit the QuadCopter Status Monitor\n\r");
 
@@ -321,32 +342,22 @@ int is_num(char *str)
 	return 1;
 }
 
-void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
+int update_setting(char parameter[][MAX_CMD_LEN])
 {
-	switch(par_cnt) {
-	    case 0:
-		printf("\x1b[0A\x1b[0G\x1b[0K");
-		printf("[Error:Command \"set\" required at least 1 parameter]\n\r");
-		printf("[Please press any key to resume...]");
-		
-		serial.getch();
-		clean_line(1);
-		break;
-	    case 1:
-		if(strcmp(parameter[0], "update") == 0) {
-			if(par_is_changed == 1) {
-				printf("\x1b[0A\x1b[0G\x1b[0K");
-				printf("[Warning:Are you sure you want to enable the new settings? (y/n)]\n\r");
+	if(strcmp(parameter[0], "update") == 0) {
+		if(par_is_changed == 1) {
+			printf("\x1b[0A\x1b[0G\x1b[0K");
+			printf("[Warning:Are you sure you want to enable the new settings? (y/n)]\n\r");
 				
-				char *confirm_ch = NULL;			
+			char *confirm_ch = NULL;			
 	
-				while(1) {
-					confirm_ch = linenoise("> ");
+			while(1) {
+				confirm_ch = linenoise("> ");
 
-					if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
-						/* Enable the new settings */
-						int i;
-						for(i = 0; i < PARAMETER_CNT; i++) {
+				if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
+					/* Enable the new settings */
+					int i;
+					for(i = 0; i < PARAMETER_CNT; i++) {
 							if(par_data[i].int_origin == 0) {
 								/* Data is a float */
 								if(par_data[i].par_is_changed == 1) {
@@ -360,115 +371,266 @@ void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
 									par_data[i].par_is_changed = 0;
 								}
 							}
-						}
-						par_is_changed = 0;
-						unsaved_print_cnt = 0;
-
-						monitor_it_cmd = MONITOR_RESUME;
-						break;
-					} else if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0 || confirm_ch == NULL)
-						break;
-					else if(confirm_ch == NULL) /* Ctrl^C */
-						break;
-					else {	
-						printf("[Error:Please type y(yes) or n(no)]\n\r");
-						clean_line(2);
 					}
+					par_is_changed = 0;
+					unsaved_print_cnt = 0;
+
+					monitor_it_cmd = MONITOR_RESUME;
+					break;
+				} else if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0 || confirm_ch == NULL) {
+					break;
+				} else if(confirm_ch == NULL) /* Ctrl^C */ {
+					break;
+				} else {	
+					printf("[Error:Please type y(yes) or n(no)]\n\r");
+					clean_line(2);
 				}
-
-				clean_line(2);
-			} else {
-				printf("\x1b[0A\x1b[0G\x1b[0K");
-				printf("[None of the settings have been changed]\n\r");
-				printf("[Please press any key to resume...]");
-
-				serial.getch();
-				clean_line(1);
 			}
 		} else {
-			int i;
-			for(i = 0; i < PARAMETER_CNT; i++) {
-				if(strcmp(parameter[0], par_data[i].par_str) == 0) {
-					printf("[Error:Missing to pass a value while setting the parameter]\n\r");
-					break;
-				} else if(i == (PARAMETER_CNT - 1)) {
-					printf("[Error:Unknown argument pass through with the \"set\" command]\n\r");
-				}
-			}			
-
-			printf("[Please press any key to resume...]");
-			
-			serial.getch();
-			clean_line(2);
+			print_error_msg("[None of the settings have been changed]\n\r");
 		}
-		break;	
-	    case 2:
-	    {
-		int i;
-		for(i = 0; i < PARAMETER_CNT; i++) {
-			if(strcmp(parameter[0], par_data[i].par_str) == 0) {
-				if(is_num(parameter[1]) == 1) {
-					printf("[Warning:Are you sure you want to change the setting? (y/n)]\n\r");
 
-					char *confirm_ch = NULL;
+		return CMD_EXECUTED;
+	}
+	
+	return CMD_UNEXECUTED;
+}
 
-					while(1) {
-						confirm_ch = linenoise("> ");
+int set_parameter(char parameter[][MAX_CMD_LEN])
+{
+	int i, set_status = CMD_UNEXECUTED;
+	for(i = 0; i < PARAMETER_CNT; i++) {
+		if(strcmp(parameter[0], par_data[i].par_str) == 0) {
+			if(is_num(parameter[1]) == 1) {
+				printf("[Warning:Are you sure you want to change the setting? (y/n)]\n\r");
 
-						if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
-							/* If the pointer of int_orginial is set to 0,then this is a float */
-							if(par_data[i].int_origin == 0) {
-								/* Data is a float */
-								par_data[i].flt_buf = atof(parameter[1]);
-							} else {
-								/* Data is a int */
-								par_data[i].int_buf = atoi(parameter[1]);
-							}
-							par_is_changed = 1;
-							par_data[i].par_is_changed = 1;
+				char *confirm_ch = NULL;
 
-							break;
-						} else if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0)
-							break;
-						else if(confirm_ch == NULL)
-							break;
-						else {
-							printf("[Error:Please type y(yes) or n(no)]\n\r");
-							printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+				while(1) {
+					confirm_ch = linenoise("> ");
+
+					if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
+						/* If the pointer of int_orginial is set to 0,then this is a float */
+						if(par_data[i].int_origin == 0) {
+							/* Data is a float */
+							par_data[i].flt_buf = atof(parameter[1]);
+						} else {
+							/* Data is a int */
+							par_data[i].int_buf = atoi(parameter[1]);
 						}
+						par_is_changed = 1;
+						par_data[i].par_is_changed = 1;
+
+						break;
+					} else if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0) {
+						break;
+					} else if(confirm_ch == NULL) {
+						clean_line(3 + unsaved_print_cnt);
+						return CMD_EXECUTED;
+					} else {
+						printf("[Error:Please type y(yes) or n(no)]\n\r");
+						printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
 					}
-					
-					clean_line(3 + unsaved_print_cnt);
-					unsaved_print_cnt = print_unsaved_setting();
-					break;
-				} else {
-					/* Parameter 2 send a valid value */
-					printf("[Error:%s is not a valid value]\n\r", parameter[1]);
-					printf("[Please press any key to resume...]");
-
-					serial.getch();
-					printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
-					break;
 				}
-			}
-
-			/* Last time of comparasion and still can't find the parameter of the copter */
-			if(i == PARAMETER_CNT - 1) {
-				printf("[Error:Unknown QuadCopter parameter]\n\r");
+				set_status = CMD_EXECUTED;
+					
+				clean_line(3 + unsaved_print_cnt);
+				unsaved_print_cnt = print_unsaved_setting();
+				break;
+			} else {
+				/* Parameter 2 send a valid value */
+				printf("[Error:%s is not a valid value]\n\r", parameter[1]);
 				printf("[Please press any key to resume...]");
 
 				serial.getch();
 				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+
+				set_status = CMD_EXECUTED;
+				break;
 			}
 		}
-	    }
-		break;
-	    default:
-		printf("[Error:Too many arguments pass through with the \"set\" command]\n\r");
-		printf("[Please press any key to resume...]");
-
-		serial.getch();
-		printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
 	}
 
+	return set_status;
+}
+
+void monitor_set(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	switch(par_cnt) {
+	    case 0:
+	    {
+		/* User didn't pass any arguments */
+		print_error_msg("[Error:Command \"set\" required at least 1 parameter]\n\r");
+		break;
+	    }
+	    case 1:
+	    {
+		/* set update */
+		if(update_setting(parameter) == CMD_EXECUTED);
+		/* unknown parameter handling */
+		else {
+			/* Check if the user pass the parameter at here */
+			int i;
+			for(i = 0; i < PARAMETER_CNT; i++) {
+				if(strcmp(parameter[0], par_data[i].par_str) == 0) {
+					print_error_msg("[Error:Missing to pass a value while setting the parameter]\n\r");
+					break;
+				} else if(i == (PARAMETER_CNT - 1)) {
+					print_error_msg("[Error:Unknown argument pass through with the \"set\" command]\n\r");
+				}
+			}			
+		}
+
+		break;	
+	    }
+	    case 2:
+	    {	
+		/* set [parameter] [value] */
+		if(set_parameter(parameter) == CMD_EXECUTED); 
+		else {
+			/* Can't find the parameter of the QuadCopter */
+			print_error_msg("[Error:Unknown argument pass through with the \"set\" command]\n\r");
+		}
+		break;
+	    }
+	    default:
+		/* Too much arguments */
+		print_error_msg("[Error:Too many arguments pass through with the \"set\" command]\n\r");
+	}
+
+}
+
+int unsaved_check()
+{
+	int i;
+	for(i = 0; i < PARAMETER_CNT; i++) {
+		if(par_data[i].par_is_changed == 1)
+			return 1;
+	}
+	
+	return 0;
+}
+
+int reset_parameter(char parameter[][MAX_CMD_LEN])
+{
+	int i;
+	for(i = 0; i < PARAMETER_CNT; i++) {
+		if(strcmp(parameter[0], par_data[i].par_str) == 0) {
+			if(par_data[i].par_is_changed == 1) {
+				printf("\x1b[0A\x1b[0G\x1b[0K");
+				printf("[Warning:Are you sure you want to reset the unsaved setting? (y/n)]\n\r");
+				
+				char *confirm_ch = NULL;			
+		
+				while(1) {
+					confirm_ch = linenoise("> ");
+
+					if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
+						/* Drop the setting */
+						par_data[i].flt_buf = 0.0;
+						par_data[i].int_buf = 0;
+						/* Clean the is_changed flag */
+						par_data[i].par_is_changed = 0;
+		
+						par_is_changed = unsaved_check();						
+
+						clean_line(2 + unsaved_print_cnt);
+						unsaved_print_cnt = print_unsaved_setting();
+						break;
+					} else if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0 || confirm_ch == NULL) {
+						clean_line(2);
+						break;
+					} else if(confirm_ch == NULL) /* Ctrl^C */ {
+						clean_line(2);
+						break;
+					} else {	
+						printf("[Error:Please type y(yes) or n(no)]\n\r");
+						clean_line(2);
+					}
+				}
+			} else {
+				print_error_msg("[The setting have not been changed]\n\r");
+			}
+			return CMD_EXECUTED;
+		}
+	}
+	return CMD_UNEXECUTED;
+}
+
+int reset_all(char parameter[][MAX_CMD_LEN])
+{
+	if(strcmp(parameter[0], "all") == 0)
+	{      
+		if(par_is_changed == 0) {
+			print_error_msg("[None of the settings have been changed]\n\r");
+			return CMD_EXECUTED; 
+		}
+
+		printf("[Warning:Are you sure you want to reset all settings? (y/n)]\n\r");
+		char *confirm_ch = NULL;
+
+		while(1) {
+			confirm_ch = linenoise("> ");
+
+			if(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
+				int i;
+				/* Clean the buffer and the flag of all copter parameters */
+				for(i = 0; i < PARAMETER_CNT; i++) {
+					/* If the pointer of int_orginial is set to 0,then this is a float */
+					if(par_data[i].int_origin == 0) {
+						/* Data is a float */
+						par_data[i].flt_buf = 0.0;
+					} else {
+						/* Data is a int */
+						par_data[i].int_buf = 0;
+					}
+				
+					par_is_changed = 0;
+					par_data[i].par_is_changed = 0;
+					unsaved_print_cnt = 0;
+				}
+				break;
+			} else if(strcmp(confirm_ch, "n") == 0 || strcmp(confirm_ch, "N") == 0) {
+				break;
+			} else if(confirm_ch == NULL) {
+				clean_line(3);
+				return CMD_EXECUTED;
+			} else {
+				printf("[Error:Please type y(yes) or n(no)]\n\r");
+				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+			}
+			
+		}
+		
+		monitor_it_cmd = MONITOR_RESUME;
+		return CMD_EXECUTED;
+	}
+
+	return CMD_UNEXECUTED;
+}
+
+void monitor_reset(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	switch(par_cnt) {
+	    case 0:
+	    {
+		/* User didn't pass any arguments */
+		print_error_msg("[Error:Command \"reset\" required at least 1 parameter]\n\r");
+		break;
+	    }
+	    case 1:
+	    {
+		/* reset [parameter] */
+		if(reset_parameter(parameter) == CMD_EXECUTED);
+		/* reset all */
+		else if(reset_all(parameter) == CMD_EXECUTED);
+		/* unknown parameter handling */
+		else print_error_msg("[Error:Unknown argument pass through with the \"reset\" command]\n\r");
+
+		break;	
+	    }
+	    default:
+		/* Too much arguments */
+		print_error_msg("[Error:Too many arguments pass through with the \"reset\" command]\n\r");
+	}
 }
