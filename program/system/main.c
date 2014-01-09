@@ -342,23 +342,24 @@ void check_task()
 void nrf_sending_task()
 {
 	char buf[128]={0};
-
+	nrf_package package;
 
 	//Waiting for system finish initialize
 	while (sys_status == SYSTEM_UNINITIALIZED);
 
 	nRF_TX_Mode();
 	while(1){
-		sprintf( buf, "{'Roll':'%f','Pitch':'%f','Yaw':'%f',",
-			global_var[TRUE_ROLL].param, 
-			global_var[TRUE_PITCH].param,
-			global_var[TRUE_YAW].param);
-		nRF_send_msg( (uint8_t *)buf);
-		sprintf( buf, "'Acc_x':'%d','Acc_y':'%d','Acc_z':'%d',",
-			Acc.X, Acc.Y, Acc.Z);
-		nRF_send_msg( (uint8_t *)buf);
-		sprintf( buf, "'Gyro_x':'%d','Gyro_y':'%d','Gyro_z':'%d'}\r\n",
-			Gyr.X, Gyr.Y, Gyr.Z);
+		package.roll = global_var[TRUE_ROLL].param*100;
+		package.pitch  = global_var[TRUE_PITCH].param*100;
+		package.yaw = global_var[TRUE_YAW].param*100;
+		package.acc_x = Acc.X;
+		package.acc_y = Acc.Y;
+		package.acc_z = Acc.Z;
+		package.gyro_x = Gyr.X;
+		package.gyro_y = Gyr.Y;
+		package.gyro_z = Gyr.Z;
+
+		nrf_generate_package( &package, (uint8_t* )buf);
 		nRF_send_msg( (uint8_t *)buf);
 	}
 
