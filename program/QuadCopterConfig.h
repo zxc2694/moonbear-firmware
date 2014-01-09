@@ -6,7 +6,7 @@
 #define configSD_BOARD			0
 
 /* Status report functions */
-#define configSTATUS_GUI		0
+#define configSTATUS_GUI		1
 #define configSTATUS_SHELL		1
 
 /* Includes */

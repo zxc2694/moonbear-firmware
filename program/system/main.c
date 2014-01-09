@@ -4,7 +4,6 @@
 
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
-xTaskHandle statusReport_handle = NULL;
 xSemaphoreHandle sdio_semaphore = NULL;
 volatile int16_t ACC_FIFO[3][256] = {{0}};
 volatile int16_t GYR_FIFO[3][256] = {{0}};
@@ -159,9 +158,6 @@ void correction_task()
 	}
 	LED_G = 0;
 	vTaskResume(FlightControl_Handle);
-#if configSTATUS_GUI
-	vTaskResume(statusReport_handle);
-#endif
 	vTaskDelete(NULL);
 }
 
@@ -317,16 +313,10 @@ void statusReport_task()
 
 	while (1) {
 
-		printf("{'Roll':'%f','Pitch':'%f','Yaw':'%f',",
-			global_var[TRUE_ROLL].param, 
-			global_var[TRUE_PITCH].param,
-			global_var[TRUE_YAW].param);
 
-		printf("'Acc_x':'%d','Acc_y':'%d','Acc_z':'%d',",
-			Acc.X, Acc.Y, Acc.Z);
 
-		printf("'Gyro_x':'%d','Gyro_y':'%d','Gyro_z':'%d'}\r\n",
-			Gyr.X, Gyr.Y, Gyr.Z);
+
+
 
 		vTaskDelay(100);
 	}
@@ -351,23 +341,25 @@ void check_task()
 
 void nrf_sending_task()
 {
-	char str[] = "Quadcopter is sending msg!";
-	char buf[32]={0};
-	uint8_t Sta;
-	int i;
-	 for ( i = 0 ; i<strlen(str) ; i++)
-	 	buf[i] = str[i];
+	char buf[128]={0};
 
+
+	//Waiting for system finish initialize
 	while (sys_status == SYSTEM_UNINITIALIZED);
 
 	nRF_TX_Mode();
 	while(1){
-		do {
-
-	  		Sta = nRF_Tx_Data( (uint8_t*)buf);
-	  		vTaskDelay(200);
-
-		} while (Sta == MAX_RT);
+		sprintf( buf, "{'Roll':'%f','Pitch':'%f','Yaw':'%f',",
+			global_var[TRUE_ROLL].param, 
+			global_var[TRUE_PITCH].param,
+			global_var[TRUE_YAW].param);
+		nRF_send_msg( (uint8_t *)buf);
+		sprintf( buf, "'Acc_x':'%d','Acc_y':'%d','Acc_z':'%d',",
+			Acc.X, Acc.Y, Acc.Z);
+		nRF_send_msg( (uint8_t *)buf);
+		sprintf( buf, "'Gyro_x':'%d','Gyro_y':'%d','Gyro_z':'%d'}\r\n",
+			Gyr.X, Gyr.Y, Gyr.Z);
+		nRF_send_msg( (uint8_t *)buf);
 	}
 
 }
@@ -394,12 +386,9 @@ int main(void)
 	 	    512, NULL,
 	 	    tskIDLE_PRIORITY + 6, NULL);
 #endif
-#if configSTATUS_GUI
-	xTaskCreate(statusReport_task,
-		    (signed portCHAR *) "Status report",
-		    2000, NULL,
-		    tskIDLE_PRIORITY + 5, &statusReport_handle);
-#endif
+
+
+
 
 #if configSTATUS_SHELL
 	xTaskCreate(shell_task,
@@ -412,17 +401,15 @@ int main(void)
 		    (signed portCHAR *) "Flight control",
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, &FlightControl_Handle);
-
+#if configSTATUS_GUI
 	xTaskCreate(nrf_sending_task,
 	(signed portCHAR *) "NRF_SENDING",
-	512, NULL,
+	1024, NULL,
 	tskIDLE_PRIORITY + 5, NULL);
-
+#endif
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
-#if configSTATUS_GUI
-	vTaskSuspend(statusReport_handle);
-#endif
+
 	vTaskStartScheduler();
 
 	return 0;

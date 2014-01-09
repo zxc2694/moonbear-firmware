@@ -287,3 +287,31 @@ u8 nRF_Rx_Data(u8 *RxBuf)
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
+void nRF_send_msg(uint8_t* str)
+{	
+	uint8_t str_len = strlen( (const char *)str);
+	uint8_t send_times = str_len/RX_PLOAD_WIDTH + 1 ;
+	uint8_t buf[RX_PLOAD_WIDTH]={0};
+	uint8_t* ptr = str;
+	uint8_t Sta;
+	while(send_times >= 1){
+		if (send_times>1){
+
+			strncpy( (char *)buf, (const char *)ptr, RX_PLOAD_WIDTH);
+		} else {
+
+			memset( buf, 0, RX_PLOAD_WIDTH);
+			strncpy( (char *)buf, (const char *)ptr, 
+				str_len % RX_PLOAD_WIDTH );
+		}
+
+		do {
+
+	  		Sta = nRF_Tx_Data( (uint8_t*)buf);
+	  		
+
+		} while (Sta == MAX_RT);
+		send_times --;
+		ptr += 32;
+	}
+}
