@@ -1,6 +1,6 @@
 QuadcopterFlightControl
 ======================
-The enhanced version of [QCopterFlightControl 2.0](https://github.com/Hom19910422/QCopterFlightControl)
+This is a quadcopter flight control board base on [QCopterFlightControl2.0](https://github.com/Hom19910422/QCopterFlightControl).	In this version, we design new software which include FreeRTOS, a kind of real-time OS. That means we could manage manay task and implement mult-thread application. User can see the sensor status when you try to design or monitor you rotor. A special designed shell enironment could help user to send some command or do some actions on rotors.
 
 License
 ======================
