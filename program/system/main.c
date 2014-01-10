@@ -349,9 +349,9 @@ void nrf_sending_task()
 
 	nRF_TX_Mode();
 	while(1){
-		package.roll = global_var[TRUE_ROLL].param*100;
-		package.pitch  = global_var[TRUE_PITCH].param*100;
-		package.yaw = global_var[TRUE_YAW].param*100;
+		package.roll = (int16_t)global_var[TRUE_ROLL].param*100;
+		package.pitch  = (int16_t)global_var[TRUE_PITCH].param*100;
+		package.yaw = (int16_t)global_var[TRUE_YAW].param*100;
 		package.acc_x = Acc.X;
 		package.acc_y = Acc.Y;
 		package.acc_z = Acc.Z;
@@ -360,7 +360,7 @@ void nrf_sending_task()
 		package.gyro_z = Gyr.Z;
 
 		nrf_generate_package( &package, (uint8_t* )buf);
-		nRF_send_msg( (uint8_t *)buf);
+		nrf_send_package( (uint8_t* )buf );
 	}
 
 }

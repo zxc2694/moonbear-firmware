@@ -315,6 +315,15 @@ void nRF_send_msg(uint8_t* str)
 		ptr += 32;
 	}
 }
+void nrf_send_package(uint8_t* buf)
+{
+	uint8_t Sta;
+	do {
+
+	  	Sta = nRF_Tx_Data( (uint8_t*)buf);
+	  		
+	} while (Sta == MAX_RT);
+}
 void nrf_generate_package( nrf_package* package, uint8_t* buf)
 {
 	int16_t roll, pitch, yaw, acc_x, acc_y, acc_z, gyro_x,
