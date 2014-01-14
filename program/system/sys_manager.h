@@ -32,10 +32,12 @@ enum {
 	GLOABAL_PARAM_COUNT
 };
 typedef __IO enum {
-	SYSTEM_UNINITIALIZED = 0,
+	SYSTEM_UNINITIALIZED,
 	SYSTEM_INITIALIZED,
 	SYSTEM_CORRECTION_SENSOR,
-	SYSTEM_FLIGHT_CONTROL
+	SYSTEM_FLIGHT_CONTROL,
+	/* Hardware Error */
+	SYSTEM_ERROR_SD
 } SYSTEM_STATUS;
 
 typedef __IO enum {
@@ -60,6 +62,7 @@ typedef struct {
 
 global_struct global_var[GLOABAL_PARAM_COUNT];
 
+extern SYSTEM_STATUS sys_status;
 extern xSemaphoreHandle serial_tx_wait_sem;
 extern xQueueHandle serial_rx_queue;
 extern SD_STATUS SDstatus;

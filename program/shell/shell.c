@@ -68,10 +68,14 @@ void shell_linenoise_completion(const char *buf, linenoiseCompletions *lc)
 
 void shell_task()
 {
+	//Waiting for system finish initialize
+        while (sys_status != SYSTEM_INITIALIZED);
+
 	/* Clear the screen */
 	printf("\x1b[H\x1b[2J");
 	/* Show the prompt messages */
 	printf("[System status]Initialized successfully!\n\r");
+
 	printf("Please type \"help\" to get more informations\n\r");
 
 	while (1) {
