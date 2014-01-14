@@ -1,6 +1,6 @@
-/*=====================================================================================================*/
-/*=====================================================================================================*/
 #include "QuadCopterConfig.h"
+
+#define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
 
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
@@ -14,11 +14,9 @@ volatile int16_t MagDataY[8] = {0};
 volatile uint32_t Correction_Time = 0;
 
 Sensor_Mode SensorMode = Mode_GyrCorrect;
+
 extern SYSTEM_STATUS sys_status;
 
-/*=====================================================================================================*/
-#define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
-/*=====================================================================================================*/
 void vApplicationStackOverflowHook(xTaskHandle pxTask, signed char *pcTaskName)
 {
 	while(1) {
@@ -45,10 +43,13 @@ void system_init(void)
 	RS232_Config();
 	Motor_Config();
 	PWM_Capture_Config();
+
+#if configFLIGHT_CONTROL_BOARD
+	//IMU Config
 	Sensor_Config();
 	nRF24L01_Config();
 
-#if configSD_BOARD
+	//SD Config
 	SDIO_Config();
 #endif
 

@@ -1,14 +1,14 @@
 #ifndef __QUADCOPTER_CONFIG_H
 #define __QUADCOPTER_CONFIG_H
-/*RADIO CONTROL*/
+
+/* Hardware environments */
+#define configFLIGHT_CONTROL_BOARD	1
+/* Radio Control */
 #define USE_FUTABA_CONTROLLER 1
 #define USE_WFLY_CONTROLLER 0
-/* Hardware environments */
-#define configFLIGHT_CONTROL_BOARD	0
-#define configSD_BOARD			0
 
 /* Status report functions */
-#define configSTATUS_GUI		1
+#define configSTATUS_GUI		0
 #define configSTATUS_SHELL		1
 
 /* Includes */
