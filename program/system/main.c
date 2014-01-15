@@ -303,7 +303,7 @@ void flightControl_task()
 	}
 }
 
-void statusReport_task()
+void debug_print_task()
 {
 	//Waiting for system finish initialize
 	while (sys_status == SYSTEM_UNINITIALIZED);
@@ -313,7 +313,7 @@ void statusReport_task()
 
 	while (1) {
 
-
+		printf("you are calling printf!\r\n");
 
 
 
@@ -397,6 +397,16 @@ int main(void)
 		    2048, NULL,
 		    tskIDLE_PRIORITY + 5, NULL);
 #endif
+
+
+#if configDEBUG_PRINTF
+
+	xTaskCreate(debug_print_task,
+		    (signed portCHAR *) "debug printf",
+		    2048, NULL,
+		    tskIDLE_PRIORITY + 5, NULL);
+#endif
+
 
 	xTaskCreate(flightControl_task,
 		    (signed portCHAR *) "Flight control",

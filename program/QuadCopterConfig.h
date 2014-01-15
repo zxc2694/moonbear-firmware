@@ -9,7 +9,8 @@
 
 /* Status report functions */
 #define configSTATUS_GUI		1
-#define configSTATUS_SHELL		1
+#define configSTATUS_SHELL		0
+#define configDEBUG_PRINTF		1
 
 /* Includes */
 //FreeRTOS
