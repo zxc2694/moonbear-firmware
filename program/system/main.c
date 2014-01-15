@@ -288,7 +288,7 @@ void flightControl_task()
 			Bound(Final_M4, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
 
 
-			if (safety == 1) {
+			if (safety == ENGINE_OFF) {
 				Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
 			} else {
