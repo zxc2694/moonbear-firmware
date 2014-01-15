@@ -7,7 +7,7 @@
 #include "linenoise.h"
 #include "parser.h"
 
-#include "module_rs232.h"
+#include "rs232.h"
 #include "algorithm_quaternion.h"
 #include "sys_manager.h"
 #include "stm32f4_sdio.h"

@@ -1,6 +1,6 @@
 #include "stm32f4_system.h"
-#include "module_rs232.h"
-#include "module_nrf24l01.h"
+#include "rs232.h"
+#include "nrf24l01.h"
 #include <unistd.h>
 #include <stdarg.h>
 /*=====================================================================================================*

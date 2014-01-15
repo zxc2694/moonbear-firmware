@@ -8,7 +8,7 @@
 #include "linenoise.h"  
 #include "stm32f4_system.h"
 #include "stm32f4_sdio.h"
-#include "module_rs232.h"
+#include "rs232.h"
 #include "string.h"
 #include "sys_manager.h"
 #include "algorithm_pid.h"

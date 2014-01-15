@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "module_rs232.h"
+#include "rs232.h"
 #include "memory.h"
 #include "linenoise.h"  
 
