@@ -307,18 +307,6 @@ void flightControl_task()
 	}
 }
 
-void statusReport_task()
-{
-	//Waiting for system finish initialize
-	while (sys_status != SYSTEM_INITIALIZED);
-
-	/* Show the Initialization message */
-	printf("[System status]Initialized successfully!\n\r");
-
-	while (1) {
-	}
-}
-
 void check_task()
 {
 	//Waiting for system finish initialize
@@ -386,6 +374,7 @@ int main(void)
 	serial_rx_queue = xQueueCreate(1, sizeof(serial_msg));
 	/*Create sdio run semaphore*/
 	sdio_semaphore = xSemaphoreCreateBinary();
+
 	xTaskCreate(check_task,
 		    (signed portCHAR *) "Initial checking",
 		    512, NULL,
@@ -396,12 +385,10 @@ int main(void)
 		    tskIDLE_PRIORITY + 9, &correction_task_handle);
 #if configSD_BOARD
 	 xTaskCreate(sdio_task,
-	 	    (signed portCHAR *) "Using SD card",
+	 	    (signed portCHAR *) "SD Handler",
 	 	    512, NULL,
 	 	    tskIDLE_PRIORITY + 6, NULL);
 #endif
-
-
 
 
 #if configSTATUS_SHELL
