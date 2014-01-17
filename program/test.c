@@ -32,7 +32,7 @@ void test_printf(void)
 void test_puts(void)
 {
 	char str[] = "Hello puts.";
-	putstr(str);
+	serial.puts(str);
 }
 
 /*=====================================================================================================*
@@ -49,7 +49,7 @@ void test_Xbee(void)
 	printf("Test Xbee .....\n\r");
 
 	while (1) {
-		x = getch_base();
+		x = serial.getc;
 		printf("%c\n\r", x);
 	}
 }
@@ -68,6 +68,6 @@ void test_gets(void)
 	printf("Please, input the word....\n\r");
 
 	while (1) {
-		getstr();
+		serial.gets();
 	}
 }
