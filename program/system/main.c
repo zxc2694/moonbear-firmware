@@ -292,7 +292,7 @@ void flightControl_task()
 			Bound(Final_M4, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
 
 
-			if (safety == 1) {
+			if (safety == ENGINE_OFF) {
 				Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
 			} else {
@@ -304,6 +304,25 @@ void flightControl_task()
 
 		}
 
+	}
+}
+
+void debug_print_task()
+{
+	//Waiting for system finish initialize
+	while (sys_status == SYSTEM_UNINITIALIZED);
+
+	/* Show the Initialization message */
+	printf("[System status]Initialized successfully!\n\r");
+
+	while (1) {
+
+		printf("you are calling printf!\r\n");
+
+
+
+
+		vTaskDelay(100);
 	}
 }
 
@@ -397,6 +416,16 @@ int main(void)
 		    2048, NULL,
 		    tskIDLE_PRIORITY + 5, NULL);
 #endif
+
+
+#if configDEBUG_PRINTF
+
+	xTaskCreate(debug_print_task,
+		    (signed portCHAR *) "debug printf",
+		    2048, NULL,
+		    tskIDLE_PRIORITY + 5, NULL);
+#endif
+
 
 	xTaskCreate(flightControl_task,
 		    (signed portCHAR *) "Flight control",

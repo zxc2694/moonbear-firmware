@@ -63,6 +63,8 @@ typedef enum RC_State{
 	GET_SIGNAL = 0x00,
 	NO_SIGNAL = 0x01
 }RC_State;
+#define ENGINE_OFF 1
+#define ENGINE_ON 0
 
 
 /*=====================================================================================================*/

@@ -3,13 +3,17 @@
 
 /* Hardware environments */
 #define configFLIGHT_CONTROL_BOARD	1
+
 /* Radio Control */
-#define USE_FUTABA_CONTROLLER 1
-#define USE_WFLY_CONTROLLER 0
+#define USE_FUTABA_CONTROLLER		1
+#define USE_WFLY_CONTROLLER		0
 
 /* Status report functions */
-#define configSTATUS_GUI		1
+#define configSTATUS_GUI		0
 #define configSTATUS_SHELL		1
+
+/* Debugging function */
+#define configDEBUG_PRINTF		0
 
 /* Includes */
 //FreeRTOS

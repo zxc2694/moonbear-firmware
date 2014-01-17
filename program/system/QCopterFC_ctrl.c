@@ -62,9 +62,9 @@ void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *
 
 	/*Get PWM5 Input capture to set safety switch*/
 	if (global_var[PWM5_CCR].param > (MAX_PWM5_INPUT + MIN_PWM5_INPUT) / 2)
-		*safety = 1;
+		*safety = ENGINE_OFF;
 	else
-		*safety = 0;
+		*safety = ENGINE_ON;
 
 	Bound(*Roll, MIN_CTRL_ROLL, MAX_CTRL_ROLL);
 	Bound(*Pitch, MIN_CTRL_PITCH, MAX_CTRL_PITCH);
