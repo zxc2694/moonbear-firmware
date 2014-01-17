@@ -1,6 +1,6 @@
-/*=====================================================================================================*/
-/*=====================================================================================================*/
 #include "QuadCopterConfig.h"
+
+#define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
 
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
@@ -14,11 +14,9 @@ volatile int16_t MagDataY[8] = {0};
 volatile uint32_t Correction_Time = 0;
 
 Sensor_Mode SensorMode = Mode_GyrCorrect;
+
 extern SYSTEM_STATUS sys_status;
 
-/*=====================================================================================================*/
-#define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
-/*=====================================================================================================*/
 void vApplicationStackOverflowHook(xTaskHandle pxTask, signed char *pcTaskName)
 {
 	while(1) {
@@ -45,11 +43,15 @@ void system_init(void)
 	RS232_Config();
 	Motor_Config();
 	PWM_Capture_Config();
+
+#if configFLIGHT_CONTROL_BOARD
+	//IMU Config
 	Sensor_Config();
 	nRF24L01_Config();
 
-#if configSD_BOARD
-	SDIO_Config();
+	//SD Config
+	if(SDIO_Config() != SD_OK)
+		sys_status = SYSTEM_ERROR_SD;
 #endif
 
 	PID_Init(&PID_Yaw);
@@ -88,7 +90,9 @@ void system_init(void)
 	LED_G = 1;
 	LED_B = 1;
 
-	sys_status = SYSTEM_INITIALIZED;
+	//Check if no error
+	if(sys_status != SYSTEM_ERROR_SD)
+		sys_status = SYSTEM_INITIALIZED;
 
 }
 
@@ -164,7 +168,7 @@ void correction_task()
 void flightControl_task()
 {
 	//Waiting for system finish initialize
-	while (sys_status == SYSTEM_UNINITIALIZED);
+	while (sys_status != SYSTEM_INITIALIZED);
 	sys_status = SYSTEM_FLIGHT_CONTROL;
 	while (1) {
 		GPIO_ToggleBits(GPIOC, GPIO_Pin_7);
@@ -325,7 +329,7 @@ void debug_print_task()
 void check_task()
 {
 	//Waiting for system finish initialize
-	while (sys_status == SYSTEM_UNINITIALIZED);
+	while (sys_status != SYSTEM_INITIALIZED);
 
 	while (remote_signal_check() == NO_SIGNAL);
 	LED_B = 0;
@@ -364,6 +368,22 @@ void nrf_sending_task()
 	}
 
 }
+
+void error_handler_task()
+{
+	while (sys_status != SYSTEM_ERROR_SD);
+
+	/* Clear the screen */
+	printf("\x1b[H\x1b[2J");
+
+	if(SDstatus != SD_OK) {
+		printf("[System status]SD Initialized failed!\n\r");
+		printf("Please Insert the SD card correctly then reboot the QuadCopter!");	
+	}
+
+	while(1);
+}
+
 int main(void)
 {
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
@@ -373,6 +393,7 @@ int main(void)
 	serial_rx_queue = xQueueCreate(1, sizeof(serial_msg));
 	/*Create sdio run semaphore*/
 	sdio_semaphore = xSemaphoreCreateBinary();
+
 	xTaskCreate(check_task,
 		    (signed portCHAR *) "Initial checking",
 		    512, NULL,
@@ -383,12 +404,10 @@ int main(void)
 		    tskIDLE_PRIORITY + 9, &correction_task_handle);
 #if configSD_BOARD
 	 xTaskCreate(sdio_task,
-	 	    (signed portCHAR *) "Using SD card",
+	 	    (signed portCHAR *) "SD Handler",
 	 	    512, NULL,
 	 	    tskIDLE_PRIORITY + 6, NULL);
 #endif
-
-
 
 
 #if configSTATUS_SHELL
@@ -418,6 +437,12 @@ int main(void)
 	1024, NULL,
 	tskIDLE_PRIORITY + 5, NULL);
 #endif
+
+        xTaskCreate(error_handler_task,
+        (signed portCHAR *) "Error handler",
+        512, NULL,
+        tskIDLE_PRIORITY + 5, NULL);
+
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
 

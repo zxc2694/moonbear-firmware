@@ -1,72 +1,77 @@
-/*=====================================================================================================*/
-/*=====================================================================================================*/
-#include "QuadCopterConfig.h"
-
 #include <unistd.h>
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
-/*=====================================================================================================*/
-/*=====================================================================================================*
-**函數 : RS232_Config
-**功能 :
-**輸入 :
-**輸出 :
-**使用 :
-**=====================================================================================================*/
-/*=====================================================================================================*/
-void RS232_Config(void)
-{
-	GPIO_InitTypeDef GPIO_InitStruct;
-	USART_InitTypeDef USART_InitStruct;
-	NVIC_InitTypeDef NVIC_InitStruct;
 
+#include "QuadCopterConfig.h"
+
+/* Serial Initializaton ------------------------------------------------------*/
+
+/**
+  * @brief  USART3 Serial port initialization
+  * @param  None
+  * @retval None
+  */	
+void RS232_Config(void) /* Tx:Pb10, Rx:Pb11 */
+{
+	/* RCC Initialization */
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,  ENABLE);
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
 
+	/* GPIO Initialization */
+	GPIO_InitTypeDef GPIO_InitStruct = {
+		.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11,
+		.GPIO_Mode = GPIO_Mode_AF,
+		.GPIO_OType = GPIO_OType_PP,
+		.GPIO_PuPd = GPIO_PuPd_UP,
+		.GPIO_Speed = GPIO_Speed_50MHz
+	};
+
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource10, GPIO_AF_USART3);
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource11, GPIO_AF_USART3);
+	GPIO_Init(GPIOB, &GPIO_InitStruct);		
 
-	/* USART3 Tx PB10 */	/* USART3 Rx PB11 */
-	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11;
-	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStruct);
+	/* USART3 Initialization */
+	USART_InitTypeDef USART_InitStruct = {
+		.USART_BaudRate = 57600,
+		.USART_WordLength = USART_WordLength_8b,
+		.USART_StopBits = USART_StopBits_1,
+		.USART_Parity = USART_Parity_No,
+		.USART_HardwareFlowControl = USART_HardwareFlowControl_None,
+		.USART_Mode = USART_Mode_Rx | USART_Mode_Tx
+	};
 
-	USART_InitStruct.USART_BaudRate = 57600;
-	USART_InitStruct.USART_WordLength = USART_WordLength_8b;
-	USART_InitStruct.USART_StopBits = USART_StopBits_1;
-	USART_InitStruct.USART_Parity = USART_Parity_No;
-	USART_InitStruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-	USART_InitStruct.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 	USART_Init(USART3, &USART_InitStruct);
 	USART_Cmd(USART3, ENABLE);
-
 	USART_ClearFlag(USART3, USART_FLAG_TC);
 
-	/* NVIC Settings */
-	USART_ITConfig(USART3, USART_IT_TXE, DISABLE);
-	USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
-
-	NVIC_InitStruct.NVIC_IRQChannel = USART3_IRQn;
-	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1;
-	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
-	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+	/* NVIC Initialization */
+	NVIC_InitTypeDef NVIC_InitStruct = {
+		.NVIC_IRQChannel = USART3_IRQn,
+		.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1,
+		.NVIC_IRQChannelSubPriority = 0,
+		.NVIC_IRQChannelCmd = ENABLE
+	};
 	NVIC_Init(&NVIC_InitStruct);
 }
 
-/*=====================================================================================================*/
-/*=====================================================================================================*
-**函數 : getch_base()  &  putch_base(char str)
-**功能 : Serial read/write callback functions
-**輸入 :
-**輸出 :
-**使用 :
-**=====================================================================================================*/
-/*=====================================================================================================*/
-char getch_base(void)
+/* Serial Structure ----------------------------------------------------------*/
+
+/* Serial structure */
+SERIAL serial = {
+	.getc = getc_base,
+	.putc = putc_base,
+	.gets = gets_base,
+	.puts = puts_base
+};
+
+/**
+  * Function name : serial.getc (function base)
+  * @brief  get a char from the serial char queue
+  * @param  None
+  * @retval None
+  */
+char getc_base(void)
 {
 	serial_msg msg;
 
@@ -75,7 +80,13 @@ char getch_base(void)
 	return msg.ch;
 }
 
-void putch_base(char str)
+/**
+  * Function name : serial.putc (function base)
+  * @brief  send a char through the serial
+  * @param  None
+  * @retval None
+  */
+void putc_base(char str)
 {
 	while(!xSemaphoreTake(serial_tx_wait_sem, portMAX_DELAY));
 
@@ -83,40 +94,30 @@ void putch_base(char str)
 	USART_ITConfig(USART3, USART_IT_TXE, ENABLE);
 }
 
-/* Serial read/write callback functions */
-serial_ops serial = {
-    .getch = getch_base,
-    .putch = putch_base,
-};
-
-/*=====================================================================================================*
-**函數 : getstr()
-**功能 :It can show on the USART when I input the word.
-**輸入 :
-**輸出 : 
-**使用 :
-**=====================================================================================================*/
-/*=====================================================================================================*/
-int getstr(void)
+/**
+  * Function name : serial.gets (function base)
+  * @brief  get a string from the serial
+  * @param  None
+  * @retval None
+  */
+int gets_base(void)
 {   
         char str;
-	str = serial.getch();
+	str = serial.getc();
 	printf("%c",str);
 	return 1;
 }
 
-/*=====================================================================================================*
-**函數 : putstr
-**功能 :
-**輸入 :
-**輸出 : 
-**使用 :
-**=====================================================================================================*/
-/*=====================================================================================================*/
-int putstr(const char *msg)
+/**
+  * Function name : serial.puts (function base)
+  * @brief  send a string through the serial
+  * @param  None
+  * @retval None
+  */
+int puts_base(const char *msg)
 {   
 	for(; *msg; msg++)
-		serial.putch(*msg);
+		serial.putc(*msg);
 	return 1;
 }
 
@@ -421,6 +422,6 @@ int printf(const char *format, ...)
 	}
 
 	va_end(para);
-	putstr(str);
+	serial.puts(str);
 	return 1;
 }

@@ -88,7 +88,7 @@ SRC+=$(PROGRAM_STD_LIB)/string.c\
 #Major programs source code
 SRC+=$(PROGRAM_ALG)/algorithm_*.c \
 		$(PROGRAM_DIR)/stm32f4_*.c \
-		$(PROGRAM_MOD)/module_*.c \
+		$(PROGRAM_MOD)/*.c \
 		$(PROGRAM_MOD)/stm32f4_sdio.c \
 		$(PROGRAM_SYS)/QCopterFC_it.c \
 		$(PROGRAM_SYS)/QCopterFC_ahrs.c \

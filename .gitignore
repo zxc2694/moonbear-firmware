@@ -5,3 +5,5 @@ cscope*
 *.elf
 *.out
 *.swp
+*.swn
+*.swo

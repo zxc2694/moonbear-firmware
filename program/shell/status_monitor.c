@@ -160,7 +160,7 @@ void print_error_msg(char *error_msg)
 	printf("%s", error_msg);
 	printf("[Please press any key to resume...]");
 
-	serial.getch();
+	serial.getc();
 	clean_line(new_line_cnt + 1);
 }
 
@@ -216,7 +216,7 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 		printf("[Please press <Space> to refresh the status]\n\r");
 		printf("[Please press <Enter> to enable the command line]");
 	
-		char key_pressed = serial.getch();
+		char key_pressed = serial.getc();
 		monitor_it_cmd = 0;		
 	
 		while(monitor_it_cmd != MONITOR_QUIT && monitor_it_cmd != MONITOR_RESUME) {
@@ -253,7 +253,7 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 			} else if(key_pressed == SPACE) {
 				break;
 			} else {
-				key_pressed = serial.getch();
+				key_pressed = serial.getc();
 			}			
 		}
 
@@ -278,7 +278,7 @@ void monitor_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt)
  	printf("\x1b[0A\x1b[0G\x1b[0K"); 
 	printf("[Unknown command:Please press any key to resume...]");
 
-	serial.getch();
+	serial.getc();
 	printf("\x1b[0G\x1b[0K");
 }
 
@@ -322,9 +322,9 @@ void monitor_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("\n\r[Please press q to quit the manual]");
 
 	/* Exit */
-	char ch = serial.getch();
+	char ch = serial.getc();
 	while(ch != 'q' && ch != 'Q')
-		ch = serial.getch();
+		ch = serial.getc();
 	
 	monitor_it_cmd = MONITOR_RESUME;
 }
@@ -442,7 +442,7 @@ int set_parameter(char parameter[][MAX_CMD_LEN])
 				printf("[Error:%s is not a valid value]\n\r", parameter[1]);
 				printf("[Please press any key to resume...]");
 
-				serial.getch();
+				serial.getc();
 				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
 
 				set_status = CMD_EXECUTED;

@@ -1,15 +1,18 @@
 #ifndef __QUADCOPTER_CONFIG_H
 #define __QUADCOPTER_CONFIG_H
-/*RADIO CONTROL*/
-#define USE_FUTABA_CONTROLLER 1
-#define USE_WFLY_CONTROLLER 0
+
 /* Hardware environments */
 #define configFLIGHT_CONTROL_BOARD	1
-#define configSD_BOARD			1
+
+/* Radio Control */
+#define USE_FUTABA_CONTROLLER		1
+#define USE_WFLY_CONTROLLER		0
 
 /* Status report functions */
-#define configSTATUS_GUI		1
+#define configSTATUS_GUI		0
 #define configSTATUS_SHELL		0
+
+/* Debugging function */
 #define configDEBUG_PRINTF		1
 
 /* Includes */
@@ -43,15 +46,15 @@
 #include "sdio.h"
 
 //Module
-#include "module_ak8975.h"
-#include "module_board.h"
-#include "module_motor.h"
-#include "module_mpu6050.h"
-#include "module_mpu9150.h"
-#include "module_ms5611.h"
-#include "module_nrf24l01.h"
-#include "module_rs232.h"
-#include "module_sensor.h"
+#include "ak8975.h"
+#include "board.h"
+#include "motor.h"
+#include "mpu6050.h"
+#include "mpu9150.h"
+#include "ms5611.h"
+#include "nrf24l01.h"
+#include "rs232.h"
+#include "sensor.h"
 #include "stm32f4_sdio.h"
 
 //Shell
