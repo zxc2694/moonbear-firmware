@@ -118,32 +118,32 @@ void clean_line(int line_cnt)
 {
 	int i;
 	for(i = 0; i < line_cnt; i++) {
-		printf("\x1b[0G\x1b[0K\x1b[0A");
+		serial.printf("\x1b[0G\x1b[0K\x1b[0A");
 	}
-	printf("\x1b[0G\x1b[0K");
+	serial.printf("\x1b[0G\x1b[0K");
 }
 
 int print_unsaved_setting()
 {
 	if(par_is_changed == 1) {
-		printf("Unsaved Settings (use \"set update\") to enable the settings)\n\r");
+		serial.printf("Unsaved Settings (use \"set update\") to enable the settings)\n\r");
 
 		int i, unsaved_cnt = 0;
 		for(i = 0; i < PARAMETER_CNT; i++) {
 			if(par_data[i].par_is_changed == 1) {
 				if(par_data[i].int_origin == 0) {
 					/* Data is a float */
-					printf("%s: %f -> %f\n\r", par_data[i].par_str, *(par_data[i].flt_origin), par_data[i].flt_buf);
+					serial.printf("%s: %f -> %f\n\r", par_data[i].par_str, *(par_data[i].flt_origin), par_data[i].flt_buf);
 				} else {
 					/* Data is a int */
-					printf("%s: %d -> %f\n\r", par_data[i].par_str, *(par_data[i].int_origin), par_data[i].int_buf);
+					serial.printf("%s: %d -> %f\n\r", par_data[i].par_str, *(par_data[i].int_origin), par_data[i].int_buf);
 				}
 				unsaved_cnt++;
 			}	
 		}
 
 
-		printf("\n\r");
+		serial.printf("\n\r");
 		return (unsaved_cnt + 2);
 	}
 	return 0;
@@ -157,8 +157,8 @@ void print_error_msg(char *error_msg)
 			new_line_cnt++;
 	}
 
-	printf("%s", error_msg);
-	printf("[Please press any key to resume...]");
+	serial.printf("%s", error_msg);
+	serial.printf("[Please press any key to resume...]");
 
 	serial.getc();
 	clean_line(new_line_cnt + 1);
@@ -174,47 +174,47 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 		linenoiseSetCompletionCallback(monitor_linenoise_completion);
 
 		/* Clean the screen */
-		printf("\x1b[H\x1b[2J");
+		serial.printf("\x1b[H\x1b[2J");
 
 		/* Welcome Messages */
-		printf("QuadCopter Status Monitor\n\r");
-		printf("Copyleft - NCKU Open Source Work of 2013 Embedded system class\n\r");
-		printf("Please type \"help\" to get more informations\n\r");
-		printf("**************************************************************\n\r");
+		serial.printf("QuadCopter Status Monitor\n\r");
+		serial.printf("Copyleft - NCKU Open Source Work of 2013 Embedded system class\n\r");
+		serial.printf("Please type \"help\" to get more informations\n\r");
+		serial.printf("**************************************************************\n\r");
 
-		printf("PID\tPitch\tRoll\tYaw\n\r");
-		printf("Kp\t%f\t%f\t%f\n\r", PID_Pitch.Kp, PID_Roll.Kp, PID_Yaw.Kp);
-		printf("Ki\t%f\t%f\t%f\n\r", PID_Pitch.Ki, PID_Roll.Ki, PID_Yaw.Ki);
-		printf("Kd\t%f\t%f\t%f\n\r", PID_Pitch.Kd, PID_Roll.Kd, PID_Yaw.Kd);
+		serial.printf("PID\tPitch\tRoll\tYaw\n\r");
+		serial.printf("Kp\t%f\t%f\t%f\n\r", PID_Pitch.Kp, PID_Roll.Kp, PID_Yaw.Kp);
+		serial.printf("Ki\t%f\t%f\t%f\n\r", PID_Pitch.Ki, PID_Roll.Ki, PID_Yaw.Ki);
+		serial.printf("Kd\t%f\t%f\t%f\n\r", PID_Pitch.Kd, PID_Roll.Kd, PID_Yaw.Kd);
 
-		printf("--------------------------------------------------------------\n\r");
+		serial.printf("--------------------------------------------------------------\n\r");
 
-		printf("Copter Attitudes <true value>\n\r");
-		printf("Pitch\t: %f\n\rRoll\t: %f\n\rYaw\t: %f\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
+		serial.printf("Copter Attitudes <true value>\n\r");
+		serial.printf("Pitch\t: %f\n\rRoll\t: %f\n\rYaw\t: %f\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
 
-		printf("--------------------------------------------------------------\n\r");
+		serial.printf("--------------------------------------------------------------\n\r");
 
-		printf("RC Messages\tCurrent\tLast\n\r");
-		printf("Pitch(expect)\t%f\t%f\n\r", global_var[RC_EXP_PITCH].param, last_rc_exp_pitch);
-		printf("Roll(expect)\t%f\t%f\n\r", global_var[RC_EXP_ROLL].param, last_rc_exp_roll);
-		printf("Yaw(expect)\t%f\t%f\n\r", global_var[RC_EXP_YAW].param, last_rc_exp_yaw);	
+		serial.printf("RC Messages\tCurrent\tLast\n\r");
+		serial.printf("Pitch(expect)\t%f\t%f\n\r", global_var[RC_EXP_PITCH].param, last_rc_exp_pitch);
+		serial.printf("Roll(expect)\t%f\t%f\n\r", global_var[RC_EXP_ROLL].param, last_rc_exp_roll);
+		serial.printf("Yaw(expect)\t%f\t%f\n\r", global_var[RC_EXP_YAW].param, last_rc_exp_yaw);	
 
-		printf("Throttle\t%d\n\r", global_var[RC_EXP_THR].param);
+		serial.printf("Throttle\t%d\n\r", global_var[RC_EXP_THR].param);
 
  		if(global_var[PWM5_CCR].param > (MAX_PWM5_INPUT + MIN_PWM5_INPUT) / 2)
-			printf("Engine\t\t%s\n\r", "Off");
+			serial.printf("Engine\t\t%s\n\r", "Off");
 		else
-			printf("Engine\t\t%s\n\r", "On");
+			serial.printf("Engine\t\t%s\n\r", "On");
 
-		printf("**************************************************************\n\r\n\r");
+		serial.printf("**************************************************************\n\r\n\r");
 
 		if(par_is_changed) {
 			print_unsaved_setting();
 		}
 
 		vTaskDelay(250);
-		printf("[Please press <Space> to refresh the status]\n\r");
-		printf("[Please press <Enter> to enable the command line]");
+		serial.printf("[Please press <Space> to refresh the status]\n\r");
+		serial.printf("[Please press <Enter> to enable the command line]");
 	
 		char key_pressed = serial.getc();
 		monitor_it_cmd = 0;		
@@ -247,7 +247,7 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 						command_data monitor_cd = {.par_cnt = 0};			
 						commandExec(command_str, &monitor_cd, monitorCmd_list, MONITOR_CMD_CNT);
 					} else {
-						printf("\x1b[0A");
+						serial.printf("\x1b[0A");
 					}
 				}
 			} else if(key_pressed == SPACE) {
@@ -269,57 +269,57 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 	}
 
 	/* Clean the screen */
-        printf("\x1b[H\x1b[2J");
+        serial.printf("\x1b[H\x1b[2J");
 }
 
 /**** Customize command function ******************************************************/
 void monitor_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
- 	printf("\x1b[0A\x1b[0G\x1b[0K"); 
-	printf("[Unknown command:Please press any key to resume...]");
+ 	serial.printf("\x1b[0A\x1b[0G\x1b[0K"); 
+	serial.printf("[Unknown command:Please press any key to resume...]");
 
 	serial.getc();
-	printf("\x1b[0G\x1b[0K");
+	serial.printf("\x1b[0G\x1b[0K");
 }
 
 void monitor_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
-	printf("\x1b[H\x1b[2J");
-	printf("QuadCopter Status Monitor Manual\n\r");
-	printf("******************************************************************************************\n\r");	
+	serial.printf("\x1b[H\x1b[2J");
+	serial.printf("QuadCopter Status Monitor Manual\n\r");
+	serial.printf("******************************************************************************************\n\r");	
 
-	printf("\n\rDiscription:\n\r");
-	printf("The monitor support reporting and setting the information of the QuadCopter in real time\n\r");
-	printf("\n\r------------------------------------------------------------------------------------------\n\r");
+	serial.printf("\n\rDiscription:\n\r");
+	serial.printf("The monitor support reporting and setting the information of the QuadCopter in real time\n\r");
+	serial.printf("\n\r------------------------------------------------------------------------------------------\n\r");
 
-	printf("*To refresh the status, please press [Space]\n\r");
-	printf("*To modify the settings, please press [Enter] to enable the commandline\n\r");
-	printf("------------------------------------------------------------------------------------------\n\r");
+	serial.printf("*To refresh the status, please press [Space]\n\r");
+	serial.printf("*To modify the settings, please press [Enter] to enable the commandline\n\r");
+	serial.printf("------------------------------------------------------------------------------------------\n\r");
 
-	printf("\n\rAll Commands:\n\r");
+	serial.printf("\n\rAll Commands:\n\r");
 
-	printf("\n\rset [parameter] [value] / set update\n\r");
-	printf("-Set the parameters of the QuadCopter(*The settings will change after typing \"set update\")\n\r");
+	serial.printf("\n\rset [parameter] [value] / set update\n\r");
+	serial.printf("-Set the parameters of the QuadCopter(*The settings will change after typing \"set update\")\n\r");
 
-	printf("\n\r------------------------------------------------------------------------------------------\n\r");
-	printf("Modifiable parameter list:\n\r\n\r");
-	printf("pitch.kp  pitch.ki  pitch.kd\n\r");
-	printf("roll.kp   roll.ki   roll.kd\n\r");
-	printf("yaw.kp    yaw.ki    yaw.kd\n\r");
-	printf("------------------------------------------------------------------------------------------\n\r");
+	serial.printf("\n\r------------------------------------------------------------------------------------------\n\r");
+	serial.printf("Modifiable parameter list:\n\r\n\r");
+	serial.printf("pitch.kp  pitch.ki  pitch.kd\n\r");
+	serial.printf("roll.kp   roll.ki   roll.kd\n\r");
+	serial.printf("yaw.kp    yaw.ki    yaw.kd\n\r");
+	serial.printf("------------------------------------------------------------------------------------------\n\r");
 
-	printf("\n\rresume\n\r");
-	printf("-Disable the commandline and resume to status report mode\n\r");
+	serial.printf("\n\rresume\n\r");
+	serial.printf("-Disable the commandline and resume to status report mode\n\r");
 
-	printf("\n\rreset [parameter] /reset all\n\r");
-	printf("-Drop the unsaved settings\n\r");	
+	serial.printf("\n\rreset [parameter] /reset all\n\r");
+	serial.printf("-Drop the unsaved settings\n\r");	
 
-	printf("\n\rquit\n\r");
-	printf("-Quit the QuadCopter Status Monitor\n\r");
+	serial.printf("\n\rquit\n\r");
+	serial.printf("-Quit the QuadCopter Status Monitor\n\r");
 
-	printf("\n\r******************************************************************************************\n\r");	
+	serial.printf("\n\r******************************************************************************************\n\r");	
 
-	printf("\n\r[Please press q to quit the manual]");
+	serial.printf("\n\r[Please press q to quit the manual]");
 
 	/* Exit */
 	char ch = serial.getc();
@@ -346,8 +346,8 @@ int update_setting(char parameter[][MAX_CMD_LEN])
 {
 	if(strcmp(parameter[0], "update") == 0) {
 		if(par_is_changed == 1) {
-			printf("\x1b[0A\x1b[0G\x1b[0K");
-			printf("[Warning:Are you sure you want to enable the new settings? (y/n)]\n\r");
+			serial.printf("\x1b[0A\x1b[0G\x1b[0K");
+			serial.printf("[Warning:Are you sure you want to enable the new settings? (y/n)]\n\r");
 				
 			char *confirm_ch = NULL;			
 	
@@ -382,7 +382,7 @@ int update_setting(char parameter[][MAX_CMD_LEN])
 				} else if(confirm_ch == NULL) /* Ctrl^C */ {
 					break;
 				} else {	
-					printf("[Error:Please type y(yes) or n(no)]\n\r");
+					serial.printf("[Error:Please type y(yes) or n(no)]\n\r");
 					clean_line(2);
 				}
 			}
@@ -402,7 +402,7 @@ int set_parameter(char parameter[][MAX_CMD_LEN])
 	for(i = 0; i < PARAMETER_CNT; i++) {
 		if(strcmp(parameter[0], par_data[i].par_str) == 0) {
 			if(is_num(parameter[1]) == 1) {
-				printf("[Warning:Are you sure you want to change the setting? (y/n)]\n\r");
+				serial.printf("[Warning:Are you sure you want to change the setting? (y/n)]\n\r");
 
 				char *confirm_ch = NULL;
 
@@ -428,8 +428,8 @@ int set_parameter(char parameter[][MAX_CMD_LEN])
 						clean_line(3 + unsaved_print_cnt);
 						return CMD_EXECUTED;
 					} else {
-						printf("[Error:Please type y(yes) or n(no)]\n\r");
-						printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+						serial.printf("[Error:Please type y(yes) or n(no)]\n\r");
+						serial.printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
 					}
 				}
 				set_status = CMD_EXECUTED;
@@ -439,11 +439,11 @@ int set_parameter(char parameter[][MAX_CMD_LEN])
 				break;
 			} else {
 				/* Parameter 2 send a valid value */
-				printf("[Error:%s is not a valid value]\n\r", parameter[1]);
-				printf("[Please press any key to resume...]");
+				serial.printf("[Error:%s is not a valid value]\n\r", parameter[1]);
+				serial.printf("[Please press any key to resume...]");
 
 				serial.getc();
-				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+				serial.printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
 
 				set_status = CMD_EXECUTED;
 				break;
@@ -517,8 +517,8 @@ int reset_parameter(char parameter[][MAX_CMD_LEN])
 	for(i = 0; i < PARAMETER_CNT; i++) {
 		if(strcmp(parameter[0], par_data[i].par_str) == 0) {
 			if(par_data[i].par_is_changed == 1) {
-				printf("\x1b[0A\x1b[0G\x1b[0K");
-				printf("[Warning:Are you sure you want to reset the unsaved setting? (y/n)]\n\r");
+				serial.printf("\x1b[0A\x1b[0G\x1b[0K");
+				serial.printf("[Warning:Are you sure you want to reset the unsaved setting? (y/n)]\n\r");
 				
 				char *confirm_ch = NULL;			
 		
@@ -544,7 +544,7 @@ int reset_parameter(char parameter[][MAX_CMD_LEN])
 						clean_line(2);
 						break;
 					} else {	
-						printf("[Error:Please type y(yes) or n(no)]\n\r");
+						serial.printf("[Error:Please type y(yes) or n(no)]\n\r");
 						clean_line(2);
 					}
 				}
@@ -566,7 +566,7 @@ int reset_all(char parameter[][MAX_CMD_LEN])
 			return CMD_EXECUTED; 
 		}
 
-		printf("[Warning:Are you sure you want to reset all settings? (y/n)]\n\r");
+		serial.printf("[Warning:Are you sure you want to reset all settings? (y/n)]\n\r");
 		char *confirm_ch = NULL;
 
 		while(1) {
@@ -596,8 +596,8 @@ int reset_all(char parameter[][MAX_CMD_LEN])
 				clean_line(3);
 				return CMD_EXECUTED;
 			} else {
-				printf("[Error:Please type y(yes) or n(no)]\n\r");
-				printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
+				serial.printf("[Error:Please type y(yes) or n(no)]\n\r");
+				serial.printf("\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K\x1b[0A\x1b[0G\x1b[0K");
 			}
 			
 		}

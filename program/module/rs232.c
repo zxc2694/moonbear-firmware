@@ -67,7 +67,8 @@ SERIAL serial = {
 	.getc = getc_base,
 	.putc = putc_base,
 	.gets = gets_base,
-	.puts = puts_base
+	.puts = puts_base,
+	.printf = printf_base
 };
 
 /**
@@ -109,7 +110,7 @@ int gets_base(void)
 {   
         char str;
 	str = serial.getc();
-	printf("%c",str);
+	serial.printf("%c",str);
 	return 1;
 }
 
@@ -127,7 +128,7 @@ int puts_base(const char *msg)
 }
 
 
-int printf(const char *format, ...)
+int printf_base(const char *format, ...)
 {
 	char str[128];
 	va_list para;

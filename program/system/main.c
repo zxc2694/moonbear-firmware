@@ -1,6 +1,6 @@
 #include "QuadCopterConfig.h"
 
-#define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
+#define PRINT_DEBUG(var1) serial.printf("DEBUG PRINT"#var1"\r\n")
 
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
@@ -313,11 +313,11 @@ void debug_print_task()
 	while (sys_status == SYSTEM_UNINITIALIZED);
 
 	/* Show the Initialization message */
-	printf("[System status]Initialized successfully!\n\r");
+	serial.printf("[System status]Initialized successfully!\n\r");
 
 	while (1) {
 
-		printf("you are calling printf!\r\n");
+		serial.printf("you are calling printf!\r\n");
 
 
 
@@ -374,11 +374,11 @@ void error_handler_task()
 	while (sys_status != SYSTEM_ERROR_SD);
 
 	/* Clear the screen */
-	printf("\x1b[H\x1b[2J");
+	serial.printf("\x1b[H\x1b[2J");
 
 	if(SDstatus != SD_OK) {
-		printf("[System status]SD Initialized failed!\n\r");
-		printf("Please Insert the SD card correctly then reboot the QuadCopter!");	
+		serial.printf("[System status]SD Initialized failed!\n\r");
+		serial.printf("Please Insert the SD card correctly then reboot the QuadCopter!");	
 	}
 
 	while(1);
