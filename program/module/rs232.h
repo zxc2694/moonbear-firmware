@@ -13,10 +13,8 @@ void putc_base(char str);
 char getc_base(void);
 int puts_base(const char *msg);
 int gets_base(void);
+int printf(const char *format, ...);
 
 void RS232_Config(void);
-
-int printf(const char *format, ...);
-double atof(const char *s);
 
 #endif

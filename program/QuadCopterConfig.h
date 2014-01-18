@@ -10,10 +10,10 @@
 
 /* Status report functions */
 #define configSTATUS_GUI		0
-#define configSTATUS_SHELL		0
+#define configSTATUS_SHELL		1
 
 /* Debugging function */
-#define configDEBUG_PRINTF		1
+#define configDEBUG_PRINTF		0
 
 /* Includes */
 //FreeRTOS
