@@ -1,23 +1,7 @@
-/*=====================================================================================================*/
-/*=====================================================================================================*/
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "semphr.h"
-
-#include "linenoise.h"  
-#include "stm32f4_system.h"
-#include "stm32f4_sdio.h"
-#include "rs232.h"
-#include "string.h"
-#include "sys_manager.h"
-#include "algorithm_pid.h"
-#include "ff.h"
-#include "diskio.h"
-#include "sys_manager.h"
 #include "stdlib.h"
-/*=====================================================================================================*/
-/*=====================================================================================================*/
+
+#include "QuadCopterConfig.h"
+
 FATFS FatFs;
 FRESULT res;
 FILINFO finfo;

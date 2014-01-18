@@ -14,7 +14,7 @@
   * @param  None
   * @retval None
   */	
-void RS232_Config(void) /* Tx:Pb10, Rx:Pb11 */
+void Serial_Config(void) /* Tx:Pb10, Rx:Pb11 */
 {
 	/* RCC Initialization */
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,  ENABLE);

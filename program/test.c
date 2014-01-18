@@ -1,8 +1,7 @@
-#include "stm32f4_system.h"
-#include "rs232.h"
-#include "nrf24l01.h"
 #include <unistd.h>
 #include <stdarg.h>
+
+#include "QuadCopterConfig.h"
 /*=====================================================================================================*
 **函數 : test_printf
 **功能 :

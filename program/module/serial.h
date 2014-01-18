@@ -16,6 +16,6 @@ int puts_base(const char *msg);
 int gets_base(void);
 int printf_base(const char *format, ...);
 
-void RS232_Config(void);
+void Serial_Config(void);
 
 #endif

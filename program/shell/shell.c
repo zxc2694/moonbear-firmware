@@ -1,21 +1,7 @@
-/* Standard C lib includes */
 #include <stddef.h>
 #include <string.h>
 
-/* Linenoise and shell includes */
-#include "shell.h"
-#include "linenoise.h"
-#include "parser.h"
-
-#include "rs232.h"
-#include "algorithm_quaternion.h"
-#include "sys_manager.h"
-#include "stm32f4_sdio.h"
-
-#include "FreeRTOS.h"
-#include "task.h"
-
-#include "status_monitor.h"
+#include "QuadCopterConfig.h"
 
 #define ReadBuf_Size 500
 extern sdio_task_handle;
