@@ -83,7 +83,7 @@ SRC+=./lib/CMSIS/system_stm32f4xx.c \
 
 #C Standard Lib
 SRC+=$(PROGRAM_STD_LIB)/string.c\
-	$(PROGRAM_STD_LIB)/memory.c
+	$(PROGRAM_STD_LIB)/stdlib.c
 
 #Major programs source code
 SRC+=$(PROGRAM_ALG)/algorithm_*.c \
@@ -161,7 +161,8 @@ flash:
 
 #Make screen
 screen:
-	sudo screen /dev/ttyUSB0 57600
+	sudo su
+	screen /dev/ttyUSB0 57600 &
 #======================================================================#
 openocd: flash
 	openocd -s /opt/openocd/share/openocd/scripts/

@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "rs232.h"
-#include "memory.h"
+#include "stdlib.h"
 #include "linenoise.h"  
 
 #include "FreeRTOS.h"
