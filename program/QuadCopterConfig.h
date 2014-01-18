@@ -10,10 +10,10 @@
 
 /* Status report functions */
 #define configSTATUS_GUI		0
-#define configSTATUS_SHELL		0
+#define configSTATUS_SHELL		1
 
 /* Debugging function */
-#define configDEBUG_PRINTF		1
+#define configDEBUG_PRINTF		0
 
 /* Includes */
 //FreeRTOS
@@ -21,6 +21,10 @@
 #include "task.h"
 #include "queue.h"
 #include "semphr.h"
+
+//FatFS
+#include "diskio.h"
+#include "ff.h"
 
 //System
 #include "main.h"
@@ -53,7 +57,7 @@
 #include "mpu9150.h"
 #include "ms5611.h"
 #include "nrf24l01.h"
-#include "rs232.h"
+#include "serial.h"
 #include "sensor.h"
 #include "stm32f4_sdio.h"
 

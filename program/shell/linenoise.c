@@ -1,10 +1,7 @@
-#include <string.h>
+#include "QuadCopterConfig.h"
 
-#include "rs232.h"
-#include "memory.h"
-#include "linenoise.h"  
-
-#include "FreeRTOS.h"
+#include "string.h"
+#include "stdlib.h"
 
 #define LINENOISE_DEFAULT_HISTORY_MAX_LEN 100
 #define LINENOISE_MAX_LINE 256 //4096 is too much to this environment, it will crash!
@@ -38,9 +35,9 @@ void linenoiseClearScreen(void) {
 static void freeCompletions(linenoiseCompletions *lc) {
     size_t i;
     for (i = 0; i < lc->len; i++)  
-        vPortFree(lc->cvec[i]);    
+        free(lc->cvec[i]);    
     if (lc->cvec != NULL)
-        vPortFree(lc->cvec);
+        free(lc->cvec);
 }
 
 static void linenoiseBeep(void) {
@@ -112,7 +109,7 @@ void linenoiseSetCompletionCallback(linenoiseCompletionCallback *fn) {
 
 void linenoiseAddCompletion(linenoiseCompletions *lc, char *str) {     
     size_t len = strlen(str);
-    char *copy = (char *)pvPortMalloc(len+1);
+    char *copy = (char *)malloc(len+1);
     memcpy(copy,str,len+1);
     lc->cvec = (char**)realloc(lc->cvec,sizeof(char*)*(lc->len+1));
     lc->cvec[lc->len++] = copy;                                    
@@ -201,7 +198,7 @@ void linenoiseEditHistoryNext(struct linenoiseState *l, int dir) {
     if (history_len > 1) {
         /* Update the current history entry before to
          * overwrite it with the next one. */
-        vPortFree(history[history_len - 1 - l->history_index]);
+        free(history[history_len - 1 - l->history_index]);
         history[history_len - 1 - l->history_index] = strdup(l->buf);
         /* Show the new entry */       
         l->history_index += (dir == LINENOISE_HISTORY_PREV) ? 1 : -1;
@@ -290,7 +287,7 @@ static int linenoiseEdit(char *buf, size_t buflen, const char *prompt)
 	switch(c) {
 	case ENTER:    /* enter */
 	    history_len--;
-	    vPortFree(history[history_len]);
+	    free(history[history_len]);
 	    return (int)l.len;	    
 	case CTRL_C:
 	    return -1;
@@ -304,7 +301,7 @@ static int linenoiseEdit(char *buf, size_t buflen, const char *prompt)
                 linenoiseEditDelete(&l);
             } else {
                 history_len--;
-                vPortFree(history[history_len]);
+                free(history[history_len]);
                 return -1;
             }
             break;
@@ -404,14 +401,14 @@ int linenoiseHistoryAdd(const char *line) {
 
     if (history_max_len == 0) return 0;
     if (history == NULL) {
-        history = (char **)pvPortMalloc(sizeof(char*)*history_max_len);
+        history = (char **)malloc(sizeof(char*)*history_max_len);
         if (history == NULL) return 0; 
         memset(history,0,(sizeof(char*)*history_max_len));
     }
     linecopy = strdup(line);
     if (!linecopy) return 0;
     if (history_len == history_max_len) {
-        vPortFree(history[0]);
+       	free(history[0]);
         memmove(history,history+1,sizeof(char*)*(history_max_len-1));
         history_len--;
     }
