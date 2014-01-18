@@ -46,6 +46,9 @@ void RS232_Config(void) /* Tx:Pb10, Rx:Pb11 */
 	USART_ClearFlag(USART3, USART_FLAG_TC);
 
 	/* NVIC Initialization */
+	USART_ITConfig(USART3, USART_IT_TXE, DISABLE);
+        USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
+
 	NVIC_InitTypeDef NVIC_InitStruct = {
 		.NVIC_IRQChannel = USART3_IRQn,
 		.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1,
