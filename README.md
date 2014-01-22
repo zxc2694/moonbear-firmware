@@ -4,9 +4,9 @@ This is a quadcopter flight control project which based on [QCopterFlightControl
 
 In this version, we redesign the software and import the FreeRTOS(A kind of Real-Time OS which provide a multi-thread programming environment).
 
-Also, A specail designed Shell provide for adjusting and optimizing the Quad is also being provide in the system.The User can tune the PID, test motors or even get the whole system status easily for building up the project.
+Also, A special designed Shell provide for adjusting and optimizing the Quad is also being provide in the system.The User can tune the PID, test motors or even get the whole system status easily for building up the project.
 
-<img src = "https://lh6.googleusercontent.com/-30ZaooIhtY0/UlT09AWvWmI/AAAAAAAAER0/mvbLm6LFEQ4/w958-h539-no/DSC_1506.jpg" width=450>
+<img src = "https://lh6.googleusercontent.com/-30ZaooIhtY0/UlT09AWvWmI/AAAAAAAAER0/mvbLm6LFEQ4/w958-h539-no/DSC_1506.jpg" width=600>
 
 License
 ======================
