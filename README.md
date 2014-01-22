@@ -50,4 +50,3 @@ Linenoise hotkeys
 TODO
 ======================
 * Filter improvement
-* Attitudes stable by using optical flow
