@@ -331,7 +331,7 @@ void check_task()
 	//Waiting for system finish initialize
 	while (sys_status != SYSTEM_INITIALIZED);
 
-	while (remote_signal_check() == NO_SIGNAL);
+	while (remote_signal_check() == GET_SIGNAL);
 	LED_B = 0;
 	vTaskResume(correction_task_handle);
 	while(sys_status != SYSTEM_FLIGHT_CONTROL);
@@ -409,14 +409,10 @@ int main(void)
 	 	    tskIDLE_PRIORITY + 6, NULL);
 #endif
 
-
-#if configSTATUS_SHELL
 	xTaskCreate(shell_task,
 		    (signed portCHAR *) "Shell",
 		    2048, NULL,
 		    tskIDLE_PRIORITY + 5, NULL);
-#endif
-
 
 #if configDEBUG_PRINTF
 
