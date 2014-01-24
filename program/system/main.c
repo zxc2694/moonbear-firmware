@@ -402,12 +402,11 @@ int main(void)
 		    (signed portCHAR *) "Initial checking",
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, &correction_task_handle);
-#if configSD_BOARD
-	 xTaskCreate(sdio_task,
+
+	xTaskCreate(sdio_task,
 	 	    (signed portCHAR *) "SD Handler",
 	 	    512, NULL,
 	 	    tskIDLE_PRIORITY + 6, NULL);
-#endif
 
 	xTaskCreate(shell_task,
 		    (signed portCHAR *) "Shell",
