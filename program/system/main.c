@@ -331,7 +331,7 @@ void check_task()
 	//Waiting for system finish initialize
 	while (sys_status != SYSTEM_INITIALIZED);
 
-	while (remote_signal_check() == GET_SIGNAL);
+	while (remote_signal_check() == NO_SIGNAL);
 	LED_B = 0;
 	vTaskResume(correction_task_handle);
 	while(sys_status != SYSTEM_FLIGHT_CONTROL);
