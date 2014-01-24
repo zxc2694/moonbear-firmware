@@ -44,7 +44,6 @@ void system_init(void)
 	Motor_Config();
 	PWM_Capture_Config();
 
-#if configFLIGHT_CONTROL_BOARD
 	//IMU Config
 	Sensor_Config();
 	nRF24L01_Config();
@@ -52,7 +51,6 @@ void system_init(void)
 	//SD Config
 	if(SDIO_Config() != SD_OK)
 		sys_status = SYSTEM_ERROR_SD;
-#endif
 
 	PID_Init(&PID_Yaw);
 	PID_Init(&PID_Roll);
@@ -74,14 +72,11 @@ void system_init(void)
 
 	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
-
-#if configFLIGHT_CONTROL_BOARD
 	/* nRF Check */
 	while ( nRF_Check()== ERROR );
 
 	/* Sensor Init */
 	while(Sensor_Init() == ERROR);
-#endif
 
 	Delay_10ms(10);
 
