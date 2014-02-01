@@ -1,21 +1,17 @@
 QuadcopterFlightControl
 ======================
-This is a quadcopter flight control project which based on [QCopterFlightControl2.0](https://github.com/Hom19910422/QCopterFlightControl). 
-
-In this version, we redesign the software and import the FreeRTOS(A kind of Real-Time OS which provide a multi-thread programming environment).
-
-Also, A special designed Shell provide for adjusting and optimizing the Quad is also being provide in the system.The User can tune the PID, test motors or even get the whole system status easily for building up the project.
-
+This is a quadcopter flight control project based on [QCopterFlightControl2.0](https://github.com/Hom19910422/QCopterFlightControl).	The software is being heavily modified in order to adapt FreeRTOS derived multi-threaded and priority-based computing environment. That means we could manage manay task and implement mult-thread application. User can see the sensor status when you try to design or monitor you rotor. A special designed shell enironment could help user to send some command or do some actions on rotors.
 <img src = "https://lh6.googleusercontent.com/-30ZaooIhtY0/UlT09AWvWmI/AAAAAAAAER0/mvbLm6LFEQ4/w958-h539-no/DSC_1506.jpg" width=600>
 
 License
 ======================
-**Origin Source**
-* The [QCopterFlightControl](https://github.com/Hom19910422/QCopterFlightControl) project is auorized auorized under MIT License and release by [Hom19910422](Hom19910422@gmail.com)
+* The [QCopterFlightControl](https://github.com/Hom19910422/QCopterFlightControl) project is copyrighted by [Hom19910422](Hom19910422@gmail.com) and governed by MIT license.
 
-* The [lineoise](https://github.com/antirez/linenoise) is auorized under BSD License and release by [antirez](antirez@gmail.com)
 
-**Fork version**
+* The [lineoise](https://github.com/antirez/linenoise) is copyrighted under BSD license and release by [antirez](antirez@gmail.com)
+
+* Detailed license file can be found in `LICENSE`.
+
 * The [QuadcopterFlightControl](https://github.com/QuadCopterTainan/QuadcopterFlightControl) is released as MIT License and welcome to send any feedback to us!
 
 Features
