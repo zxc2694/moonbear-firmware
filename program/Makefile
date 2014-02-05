@@ -14,6 +14,7 @@ FREERTOS_INC=./lib/FreeRTOS/Source/include
 FREERTOS_PORT_INC=./lib/FreeRTOS/Source/portable/GCC/ARM_$(ARCH)
 
 ST_LIB = ./lib/STM32F4xx_StdPeriph_Driver
+PROGRAM_CONFIG = ./config
 PROGRAM_ALG = ./algorithm
 PROGRAM_DIR = ./driver
 PROGRAM_MOD = ./module
@@ -54,6 +55,7 @@ CFLAGS+=-I$(FREERTOS_PORT_INC)
 CFLAGS+=-I./lib/STM32F4xx_StdPeriph_Driver/inc
 
 #Major programs including
+CFLAGS+=-I./config
 CFLAGS+=-I./system
 CFLAGS+=-I./algorithm
 CFLAGS+=-I./driver
@@ -95,7 +97,7 @@ SRC+=$(PROGRAM_ALG)/algorithm_*.c \
 		$(PROGRAM_SYS)/QCopterFC_ctrl.c \
 		$(PROGRAM_SYS)/sensor_correct.c \
 		$(PROGRAM_SYS)/main.c \
-		$(PROGRAM_SYS)/sys_manager.c \
+		$(PROGRAM_SYS)/global.c \
 		lib/CMSIS/FastMathFunctions/arm_cos_f32.c \
 		lib/CMSIS/FastMathFunctions/arm_sin_f32.c \
 		test.c \

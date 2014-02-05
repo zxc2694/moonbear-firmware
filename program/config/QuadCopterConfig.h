@@ -26,7 +26,7 @@
 
 //System
 #include "main.h"
-#include "sys_manager.h"
+#include "global.h"
 #include "std.h"
 #include "QCopterFC_ahrs.h"
 #include "QCopterFC_ctrl.h"
