@@ -394,24 +394,24 @@ int main(void)
 		    512, NULL,
 		    tskIDLE_PRIORITY + 5, NULL);
 	xTaskCreate(correction_task,
-		    (signed portCHAR *) "Initial checking",
+		    (signed portCHAR *) "System correction",
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, &correction_task_handle);
 
 	xTaskCreate(sdio_task,
-	 	    (signed portCHAR *) "SD Handler",
+	 	    (signed portCHAR *) "SD handler",
 	 	    512, NULL,
-	 	    tskIDLE_PRIORITY + 6, NULL);
+	 	    tskIDLE_PRIORITY + 7, NULL);
 
 	xTaskCreate(shell_task,
 		    (signed portCHAR *) "Shell",
 		    2048, NULL,
-		    tskIDLE_PRIORITY + 5, NULL);
+		    tskIDLE_PRIORITY + 7, NULL);
 
 #if configDEBUG_PRINTF
 
 	xTaskCreate(debug_print_task,
-		    (signed portCHAR *) "debug printf",
+		    (signed portCHAR *) "Debug printf",
 		    2048, NULL,
 		    tskIDLE_PRIORITY + 5, NULL);
 #endif
@@ -423,7 +423,7 @@ int main(void)
 		    tskIDLE_PRIORITY + 9, &FlightControl_Handle);
 #if configSTATUS_GUI
 	xTaskCreate(nrf_sending_task,
-	(signed portCHAR *) "NRF_SENDING",
+	(signed portCHAR *) "NRF Sending",
 	1024, NULL,
 	tskIDLE_PRIORITY + 5, NULL);
 #endif
@@ -431,7 +431,7 @@ int main(void)
         xTaskCreate(error_handler_task,
         (signed portCHAR *) "Error handler",
         512, NULL,
-        tskIDLE_PRIORITY + 5, NULL);
+        tskIDLE_PRIORITY + 7, NULL);
 
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
