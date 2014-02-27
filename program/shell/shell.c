@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "QuadCopterConfig.h"
 
@@ -9,10 +10,8 @@ void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
-#ifdef SD_BLOCK
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
-#endif
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -33,10 +32,8 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(help, shell),
 	CMD_DEF(monitor, shell),
 	/*CMD_DEF(ps, shell),*/
-#ifdef SD_BLOCK
 	CMD_DEF(sdinfo, shell),
-	CMD_DEF(sdsave, shell),
-#endif
+	CMD_DEF(sdsave, shell)
 };
 
 /**** Shell task **********************************************************************/
@@ -116,40 +113,61 @@ void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
 	serial.printf("%s\n\r", buf);
 }
 
-#ifdef SD_BLOCK
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	serial.printf("-----SD Init Info-----\r\n");
-	serial.printf(" Capacity : ");
+	serial.printf("Capacity : ");
 	serial.printf("%d MB\r\n", (int)(SDCardInfo.CardCapacity >> 20));
-	serial.printf(" CardBlockSize : ");
+	serial.printf("CardBlockSize : ");
 	serial.printf("%d\r\n", SDCardInfo.CardBlockSize);
-	serial.printf(" CardType : ");
+	serial.printf("CardType : ");
 	serial.printf("%d\r\n", SDCardInfo.CardType);
-	serial.printf(" RCA : ");
+	serial.printf("RCA : ");
 	serial.printf("%d\r\n", SDCardInfo.RCA);
 	serial.printf("----------------------\r\n\r\n");
-	vTaskDelay(100);	
 }
 
+
+#define ReadBuf_Size 500
+#define WriteData_Size 500
+
+uint8_t ReadBuf[ReadBuf_Size] = {'\0'};
+char WriteData[WriteData_Size] = {EOF};
+
+/* TODO:Porting this command into the status monitor */
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
-	SDstatus = SD_UNREADY;
-	SDcondition == SD_UNSAVE;
-	xSemaphoreGive(sdio_semaphore);
-	while(SDstatus == SD_UNREADY);
-	vTaskDelay(200);
-	if(SDcondition == SD_SAVE){
-		serial.printf("Has been saved ! \n\r\n\r");
-		serial.printf("Read SD card ...... \n\r");
-		serial.printf("SD card content : \n\r");		
-		serial.printf("%s", ReadBuf);	
-	}
-	else if(SDcondition == SD_UNSAVE){
-		serial.printf("OK! not store!\n\r");
-	}
-	else if(SDcondition == SD_ERSAVE){
-		serial.printf("error!\n\r");
+	FATFS FatFs;
+	FRESULT res;
+	FILINFO finfo;
+	DIR dirs;
+	FIL file;		
+
+	char *confirm_ch = NULL;
+	confirm_ch = linenoise("Store all the PID settings? (y/n):");
+
+	while(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
+		uint32_t i = 0;
+		res = f_mount(&FatFs, "", 1);
+		res = f_opendir(&dirs, "0:/");
+		res = f_readdir(&dirs, &finfo);
+		res = f_open(&file, "SDCard_K.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+
+		sprintf(WriteData,"Pitch\n\r%f,%f,%f\n\rRoll\n\r%f,%f,%f\n\rYaw\n\r%f,%f,%f\n\r",
+			PID_Pitch.Kp, PID_Pitch.Ki, PID_Pitch.Kd,
+			PID_Roll.Kp, PID_Roll.Ki, PID_Roll.Kd,
+			PID_Yaw.Kp, PID_Yaw.Ki, PID_Yaw.Kd
+		);
+
+		res = f_write(&file, WriteData, strlen(WriteData), (UINT *)&i);
+
+		file.fptr = 0;
+		res = f_read(&file, ReadBuf, ReadBuf_Size, (UINT *)&i);
+		
+		/* Debug */
+		serial.printf("[Debug output]\n\r%s\n\r", ReadBuf);		
+
+		f_close(&file);
+		break;
 	}
 }
-#endif
