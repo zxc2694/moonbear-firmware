@@ -4,7 +4,7 @@
 
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
-xSemaphoreHandle sdio_semaphore = NULL;
+
 volatile int16_t ACC_FIFO[3][256] = {{0}};
 volatile int16_t GYR_FIFO[3][256] = {{0}};
 volatile int16_t MAG_FIFO[3][256] = {{0}};
@@ -49,7 +49,7 @@ void system_init(void)
 	nRF24L01_Config();
 
 	//SD Config
-	if(SDIO_Config() != SD_OK)
+	if(SD_Init() != SD_OK)
 		sys_status = SYSTEM_ERROR_SD;
 
 	PID_Init(&PID_Yaw);
@@ -371,7 +371,7 @@ void error_handler_task()
 	/* Clear the screen */
 	serial.printf("\x1b[H\x1b[2J");
 
-	if(SDstatus != SD_OK) {
+	if(SD_status != SD_OK) {
 		serial.printf("[System status]SD Initialized failed!\n\r");
 		serial.printf("Please Insert the SD card correctly then reboot the QuadCopter!");	
 	}
@@ -386,9 +386,7 @@ int main(void)
 
 	vSemaphoreCreateBinary(serial_tx_wait_sem);
 	serial_rx_queue = xQueueCreate(1, sizeof(serial_msg));
-	/*Create sdio run semaphore*/
-	sdio_semaphore = xSemaphoreCreateBinary();
-
+	
 	xTaskCreate(check_task,
 		    (signed portCHAR *) "Initial checking",
 		    512, NULL,
@@ -397,11 +395,6 @@ int main(void)
 		    (signed portCHAR *) "System correction",
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, &correction_task_handle);
-
-	xTaskCreate(sdio_task,
-	 	    (signed portCHAR *) "SD handler",
-	 	    512, NULL,
-	 	    tskIDLE_PRIORITY + 7, NULL);
 
 	xTaskCreate(shell_task,
 		    (signed portCHAR *) "Shell",

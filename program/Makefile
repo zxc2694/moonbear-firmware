@@ -98,7 +98,7 @@ SRC+=$(PROGRAM_ALG)/algorithm_*.c \
 		lib/CMSIS/FastMathFunctions/arm_cos_f32.c \
 		lib/CMSIS/FastMathFunctions/arm_sin_f32.c \
 		test.c \
-		sdio.c \
+
 #Fatfs
 SRC+=$(PROGRAM_FAT)/diskio.c\
 	$(PROGRAM_FAT)/ff.c\

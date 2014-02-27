@@ -45,7 +45,6 @@
 #include "stm32f4_flash.h"
 #include "stm32f4_i2c.h"
 #include "stm32f4_spi.h"
-#include "sdio.h"
 
 //Module
 #include "ak8975.h"

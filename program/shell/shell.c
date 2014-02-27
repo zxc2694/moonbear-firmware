@@ -3,20 +3,16 @@
 
 #include "QuadCopterConfig.h"
 
-#define ReadBuf_Size 500
-extern sdio_task_handle;
-extern SD_STATUS SDstatus;
-extern SD_STATUS SDcondition;
-extern ReadBuf[ReadBuf_Size];
-extern xSemaphoreHandle sdio_semaphore;
 /* Shell Command handlers */
 void shell_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
+#ifdef SD_BLOCK
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
+#endif
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -37,8 +33,10 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(help, shell),
 	CMD_DEF(monitor, shell),
 	/*CMD_DEF(ps, shell),*/
+#ifdef SD_BLOCK
 	CMD_DEF(sdinfo, shell),
 	CMD_DEF(sdsave, shell),
+#endif
 };
 
 /**** Shell task **********************************************************************/
@@ -118,6 +116,7 @@ void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
 	serial.printf("%s\n\r", buf);
 }
 
+#ifdef SD_BLOCK
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	serial.printf("-----SD Init Info-----\r\n");
@@ -153,3 +152,4 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 		serial.printf("error!\n\r");
 	}
 }
+#endif
