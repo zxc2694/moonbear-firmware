@@ -49,7 +49,7 @@ void system_init(void)
 	nRF24L01_Config();
 
 	//SD Config
-	if(SD_Init() != SD_OK)
+	if((SD_status = SD_Init()) != SD_OK)
 		sys_status = SYSTEM_ERROR_SD;
 
 	PID_Init(&PID_Yaw);
@@ -366,7 +366,7 @@ void nrf_sending_task()
 
 void error_handler_task()
 {
-	while (sys_status != SYSTEM_ERROR_SD);
+	while (sys_status != SYSTEM_ERROR_SD || sys_status == SYSTEM_UNINITIALIZED);
 
 	/* Clear the screen */
 	serial.printf("\x1b[H\x1b[2J");
