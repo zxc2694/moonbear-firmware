@@ -35,7 +35,7 @@ void Serial_Config(void) /* Tx:Pb10, Rx:Pb11 */
 
 	/* USART3 Initialization */
 	USART_InitTypeDef USART_InitStruct = {
-		.USART_BaudRate = 57600,
+		.USART_BaudRate = Baudrate,
 		.USART_WordLength = USART_WordLength_8b,
 		.USART_StopBits = USART_StopBits_1,
 		.USART_Parity = USART_Parity_No,

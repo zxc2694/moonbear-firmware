@@ -13,6 +13,9 @@
 /* Debugging function */
 #define configDEBUG_PRINTF		0
 
+/* Set baudrate */
+#define Baudrate 57600
+
 /* Includes */
 //FreeRTOS
 #include "FreeRTOS.h"
