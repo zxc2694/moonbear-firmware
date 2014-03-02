@@ -20,14 +20,14 @@ extern SYSTEM_STATUS sys_status;
 void vApplicationStackOverflowHook(xTaskHandle pxTask, signed char *pcTaskName)
 {
 	while(1) {
-		LED_R = ~LED_R;
+		LED_Toggle(LED_R);
 		vTaskDelay(200);
 	}
 }
 void vApplicationMallocFailedHook( void )
 {
 	while(1) {
-		LED_R = ~LED_R;
+		LED_Toggle(LED_R);
 		vTaskDelay(200);
 	}
 }
@@ -81,9 +81,9 @@ void system_init(void)
 	Delay_10ms(10);
 
 	/* Lock */
-	LED_R = 0;
-	LED_G = 1;
-	LED_B = 1;
+	SetLED(LED_R, DISABLE);
+	SetLED(LED_G, ENABLE);
+	SetLED(LED_B, ENABLE);
 
 	//Check if no error
 	if(sys_status != SYSTEM_ERROR_SD)
@@ -152,10 +152,10 @@ void correction_task()
 			sensor_correct = ERROR ;
 		}
 
-		LED_G = ~LED_G ;
+		LED_Toggle(LED_G);
 		vTaskDelay(200);
 	}
-	LED_G = 0;
+	SetLED(LED_G, DISABLE);
 	vTaskResume(FlightControl_Handle);
 	vTaskDelete(NULL);
 }
@@ -327,13 +327,13 @@ void check_task()
 	while (sys_status != SYSTEM_INITIALIZED);
 
 	while (remote_signal_check() == NO_SIGNAL);
-	LED_B = 0;
+	SetLED(LED_B, DISABLE);
 	vTaskResume(correction_task_handle);
 	while(sys_status != SYSTEM_FLIGHT_CONTROL);
 	vTaskDelay(2000);
-	LED_R = 1;
-	LED_G = 1;
-	LED_B = 1;
+	SetLED(LED_R, ENABLE);
+	SetLED(LED_G, ENABLE);
+	SetLED(LED_B, ENABLE);
 	vTaskDelete(NULL);
 
 }

@@ -15,9 +15,9 @@ void LED_Config(void)
 
 	GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-	LED_G = 1;
-	LED_R = 1;
-	LED_B = 1;
+	SetLED(LED_G, ENABLE);
+	SetLED(LED_R, ENABLE);
+	SetLED(LED_B, ENABLE);
 }
 
 void KEY_Config(void)
@@ -32,4 +32,14 @@ void KEY_Config(void)
 	};
 
 	GPIO_Init(GPIOB, &GPIO_InitStruct);
+}
+
+void SetLED(int LED, int state)
+{
+	PCO(LED) = state;
+}
+
+void LED_Toggle(int LED)
+{
+	PCO(LED) = ~PCO(LED);
 }
