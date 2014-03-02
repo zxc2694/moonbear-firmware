@@ -26,7 +26,7 @@ _PROJECTFC_ = ./ProjectFC
 
 CFLAGS=-g -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
-CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=hard
+CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
 CFLAGS+=-ffreestanding -nostdlib -Wall
 
 #Flash
@@ -89,15 +89,14 @@ SRC+=$(PROGRAM_ALG)/algorithm_*.c \
 		$(PROGRAM_DIR)/stm32f4_*.c \
 		$(PROGRAM_MOD)/*.c \
 		$(PROGRAM_MOD)/stm32f4_sdio.c \
-		$(PROGRAM_SYS)/QCopterFC_it.c \
+		$(PROGRAM_SYS)/interrupt.c \
 		$(PROGRAM_SYS)/QCopterFC_ahrs.c \
-		$(PROGRAM_SYS)/QCopterFC_ctrl.c \
-		$(PROGRAM_SYS)/sensor_correct.c \
+		$(PROGRAM_SYS)/remote_control.c \
+		$(PROGRAM_SYS)/IMU_correct.c \
 		$(PROGRAM_SYS)/main.c \
 		$(PROGRAM_SYS)/global.c \
 		lib/CMSIS/FastMathFunctions/arm_cos_f32.c \
 		lib/CMSIS/FastMathFunctions/arm_sin_f32.c \
-		test.c \
 
 #Fatfs
 SRC+=$(PROGRAM_FAT)/diskio.c\
@@ -112,9 +111,6 @@ INC_HEADERS =$(PROGRAM_ALG)/*.h \
 		$(PROGRAM_FAT)/*.h \
 		$(PROGRAM_SHELL)/*.h\
 		$(PROGRAM_STD_LIB)/*.h\
-		*.h
-
-
 
 #FreeRTOS source code
 SRC+=$(FREERTOS_SRC)/croutine.c\

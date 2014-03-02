@@ -7,7 +7,7 @@
 #define USE_WFLY_CONTROLLER		0
 
 /* Status report functions */
-#define configSTATUS_GUI		0
+#define configSTATUS_GUI		1
 #define configSTATUS_SHELL		1
 
 /* Debugging function */
@@ -29,8 +29,8 @@
 #include "global.h"
 #include "std.h"
 #include "QCopterFC_ahrs.h"
-#include "QCopterFC_ctrl.h"
-#include "sensor_correct.h"
+#include "remote_control.h"
+#include "IMU_correct.h"
 
 //Algorithm
 #include "algorithm_pid.h"
@@ -62,8 +62,5 @@
 #include "linenoise.h"
 #include "shell.h"
 #include "parser.h"
-
-//Unit test
-#include "test.h"
 
 #endif
