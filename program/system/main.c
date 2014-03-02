@@ -45,12 +45,12 @@ void system_init(void)
 	PWM_Capture_Config();
 
 	//IMU Config
-//	Sensor_Config();
-//	nRF24L01_Config();
+	Sensor_Config();
+	nRF24L01_Config();
 
 	//SD Config
-//	if((SD_status = SD_Init()) != SD_OK)
-//		sys_status = SYSTEM_ERROR_SD;
+	if((SD_status = SD_Init()) != SD_OK)
+		sys_status = SYSTEM_ERROR_SD;
 
 	PID_Init(&PID_Yaw);
 	PID_Init(&PID_Roll);
@@ -73,10 +73,10 @@ void system_init(void)
 	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
 	/* nRF Check */
-//	while ( nRF_Check()== ERROR );
+	while ( nRF_Check()== ERROR );
 
 	/* Sensor Init */
-//	while(Sensor_Init() == ERROR);
+	while(Sensor_Init() == ERROR);
 
 	Delay_10ms(10);
 
