@@ -160,8 +160,8 @@ screen:
 	screen /dev/ttyUSB0 57600 &
 #======================================================================#
 openocd: flash
-	openocd -s /opt/openocd/share/openocd/scripts/
+	openocd -s /opt/openocd/share/openocd/scripts/ -f ./debug/openocd.cfg
 gdbauto:
-	arm-none-eabi-gdbtui -x openocd_gdb.gdb
+	arm-none-eabi-gdbtui -x ./debug/openocd_gdb.gdb
 
 .PHONY:all clean flash openocd gdbauto
