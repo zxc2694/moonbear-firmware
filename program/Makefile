@@ -149,6 +149,7 @@ $(EXECUTABLE):$(SRC) $(STARTUP_OBJ) ${INC_HEADERS}
 clean:
 	rm -rf $(EXECUTABLE)
 	rm -rf $(BIN_IMAGE)
+	rm -rf $(STARTUP_OBJ)
 
 #Make flash
 flash:
