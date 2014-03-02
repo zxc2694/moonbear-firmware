@@ -21,7 +21,7 @@ PROGRAM_MOD = ./module
 PROGRAM_SYS = ./system
 PROGRAM_FAT = ./lib/fatfs
 PROGRAM_SHELL = ./shell
-PROGRAM_STD_LIB = ./stdlib
+PROGRAM_STD_LIB = ./lib/stdlib
 _PROJECTFC_ = ./ProjectFC
 
 CFLAGS=-g -mlittle-endian -mthumb
