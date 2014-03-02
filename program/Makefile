@@ -21,12 +21,13 @@ PROGRAM_MOD = ./module
 PROGRAM_SYS = ./system
 PROGRAM_FAT = ./lib/fatfs
 PROGRAM_SHELL = ./shell
+PROGRAM_DEBUG = ./debug
 PROGRAM_STD_LIB = ./lib/stdlib
 _PROJECTFC_ = ./ProjectFC
 
 CFLAGS=-g -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
-CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=hard
+CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
 CFLAGS+=-ffreestanding -nostdlib -Wall
 
 #Flash
@@ -59,6 +60,7 @@ CFLAGS+=-I./driver
 CFLAGS+=-I./module
 CFLAGS+=-I./lib/fatfs
 CFLAGS+=-I./shell
+CFLAGS+=-I./debug
 CFLAGS+=-I./stdlib
 
 LDFLAGS+=-lm -lc -lgcc
@@ -110,6 +112,7 @@ INC_HEADERS =$(PROGRAM_ALG)/*.h \
 		$(PROGRAM_SYS)/*.h \
 		$(PROGRAM_FAT)/*.h \
 		$(PROGRAM_SHELL)/*.h\
+		$(PROGRAM_DEBUG)/*.h \
 		$(PROGRAM_STD_LIB)/*.h\
 
 #FreeRTOS source code
@@ -126,6 +129,9 @@ SRC+=$(PROGRAM_SHELL)/linenoise.c\
 	$(PROGRAM_SHELL)/shell.c\
 	$(PROGRAM_SHELL)/parser.c\
 	$(PROGRAM_SHELL)/status_monitor.c\
+
+#Debugger
+SRC+=$(PROGRAM_DEBUG)/test.c
 
 #STM32 startup file
 STARTUP=./lib/CMSIS/startup_stm32f4xx.s

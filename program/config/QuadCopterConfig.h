@@ -63,4 +63,7 @@
 #include "shell.h"
 #include "parser.h"
 
+//Debugger
+#include "test.h"
+
 #endif

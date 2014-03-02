@@ -10,6 +10,7 @@ void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_test(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
 
@@ -20,6 +21,7 @@ enum SHELL_CMD_ID {
 	help_ID,
 	monitor_ID,
 	/*ps_ID,*/
+	test_ID,
 	sdinfo_ID,
 	sdsave_ID,
 	SHELL_CMD_CNT
@@ -32,6 +34,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(help, shell),
 	CMD_DEF(monitor, shell),
 	/*CMD_DEF(ps, shell),*/
+	CMD_DEF(test, shell),
 	CMD_DEF(sdinfo, shell),
 	CMD_DEF(sdsave, shell)
 };
@@ -56,6 +59,8 @@ void shell_task()
 	serial.printf("\x1b[H\x1b[2J");
 	/* Show the prompt messages */
 	serial.printf("[System status]Initialized successfully!\n\r");
+	serial.printf("QuadCopter Software Developing Shell\n\r");
+	serial.printf("Copyleft (MIT License) 2014 - Moon Bear Copter Team\n\r");
 
 	serial.printf("Please type \"help\" to get more informations\n\r");
 
