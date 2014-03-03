@@ -34,7 +34,7 @@
 #include "main.h"
 #include "global.h"
 #include "std.h"
-#include "QCopterFC_ahrs.h"
+#include "AHRS.h"
 #include "remote_control.h"
 #include "IMU_correct.h"
 

@@ -92,7 +92,7 @@ SRC+=$(PROGRAM_ALG)/*.c \
 		$(PROGRAM_MOD)/*.c \
 		$(PROGRAM_MOD)/stm32f4_sdio.c \
 		$(PROGRAM_SYS)/interrupt.c \
-		$(PROGRAM_SYS)/QCopterFC_ahrs.c \
+		$(PROGRAM_SYS)/AHRS.c \
 		$(PROGRAM_SYS)/remote_control.c \
 		$(PROGRAM_SYS)/IMU_correct.c \
 		$(PROGRAM_SYS)/main.c \
