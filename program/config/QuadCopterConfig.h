@@ -24,6 +24,12 @@
 #include "diskio.h"
 #include "ff.h"
 
+//Algorithm
+#include "PID.h"
+#include "moving_average.h"
+#include "quaternion.h"
+#include "_math.h"
+
 //System
 #include "main.h"
 #include "global.h"
@@ -31,12 +37,6 @@
 #include "QCopterFC_ahrs.h"
 #include "remote_control.h"
 #include "IMU_correct.h"
-
-//Algorithm
-#include "algorithm_pid.h"
-#include "algorithm_moveAve.h"
-#include "algorithm_quaternion.h"
-#include "algorithm_mathUnit.h"
 
 //Driver
 #include "stm32f4_system.h"

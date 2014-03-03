@@ -27,7 +27,7 @@ _PROJECTFC_ = ./ProjectFC
 
 CFLAGS=-g -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
-CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
+CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=hard
 CFLAGS+=-ffreestanding -nostdlib -Wall
 
 #Flash
@@ -87,7 +87,7 @@ SRC+=$(PROGRAM_STD_LIB)/string.c\
 	$(PROGRAM_STD_LIB)/stdlib.c
 
 #Major programs source code
-SRC+=$(PROGRAM_ALG)/algorithm_*.c \
+SRC+=$(PROGRAM_ALG)/*.c \
 		$(PROGRAM_DIR)/stm32f4_*.c \
 		$(PROGRAM_MOD)/*.c \
 		$(PROGRAM_MOD)/stm32f4_sdio.c \
