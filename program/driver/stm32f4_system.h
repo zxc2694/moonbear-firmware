@@ -1,12 +1,10 @@
-/* #include "stm32f4_system.h" */
-
 #ifndef __STM32F4_SYSTEM_H
 #define __STM32F4_SYSTEM_H
 
+#include "QuadCopterConfig.h"
+
 #include "stm32f4xx.h"
-#include "stm32f4_delay.h"
-/*=====================================================================================================*/
-/*=====================================================================================================*/
+
 #define Bit_Band(Addr, BitNum)  ((Addr & 0xF0000000)+0x2000000+((Addr &0xFFFFF)<<5)+(BitNum<<2))
 #define Mem_Addr(Addr)          *((vu16 *)(Addr))
 #define Bit_Addr(Addr, BitNum)  Mem_Addr(Bit_Band(Addr, BitNum))

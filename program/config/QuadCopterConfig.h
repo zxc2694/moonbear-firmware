@@ -41,11 +41,11 @@
 //Driver
 #include "stm32f4_system.h"
 #include "stm32f4xx_conf.h"
-#include "stm32f4_delay.h"
-#include "stm32f4_flash.h"
-#include "stm32f4_i2c.h"
-#include "stm32f4_spi.h"
-#include "stm32f4_sdio.h"
+#include "delay.h"
+#include "flash.h"
+#include "i2c.h"
+#include "spi.h"
+#include "sdio.h"
 
 //Module
 #include "ak8975.h"

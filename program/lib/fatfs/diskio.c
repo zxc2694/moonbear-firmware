@@ -7,7 +7,7 @@
 /* storage control module to the FatFs module with a defined API.        */
 /*-----------------------------------------------------------------------*/
 #include "stm32f4_system.h"
-#include "stm32f4_sdio.h"
+#include "sdio.h"
 #include "diskio.h"
 
 /* Definitions of physical drive number for each media */

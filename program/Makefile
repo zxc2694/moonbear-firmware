@@ -88,9 +88,8 @@ SRC+=$(PROGRAM_STD_LIB)/string.c\
 
 #Major programs source code
 SRC+=$(PROGRAM_ALG)/*.c \
-		$(PROGRAM_DIR)/stm32f4_*.c \
+		$(PROGRAM_DIR)/*.c \
 		$(PROGRAM_MOD)/*.c \
-		$(PROGRAM_DIR)/stm32f4_sdio.c \
 		$(PROGRAM_SYS)/interrupt.c \
 		$(PROGRAM_SYS)/AHRS.c \
 		$(PROGRAM_SYS)/remote_control.c \
