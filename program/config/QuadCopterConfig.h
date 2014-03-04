@@ -45,6 +45,7 @@
 #include "stm32f4_flash.h"
 #include "stm32f4_i2c.h"
 #include "stm32f4_spi.h"
+#include "stm32f4_sdio.h"
 
 //Module
 #include "ak8975.h"
@@ -56,7 +57,6 @@
 #include "nrf24l01.h"
 #include "serial.h"
 #include "sensor.h"
-#include "stm32f4_sdio.h"
 
 //Shell
 #include "linenoise.h"
