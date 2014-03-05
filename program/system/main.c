@@ -64,9 +64,9 @@ void system_init(void)
 	PID_Roll.Ki = 0;//0.002f;
 	PID_Roll.Kd = 1.5f;
 
-	PID_Yaw.Kp = +5.0f;
-	PID_Yaw.Ki = +0.0f;
-	PID_Yaw.Kd = +15.0f;
+	PID_Yaw.Kp = +4.0f;
+	PID_Yaw.Ki = 0;
+	PID_Yaw.Kd = +1.5f;
 
 	Delay_10ms(10);
 
