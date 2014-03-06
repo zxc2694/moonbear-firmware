@@ -31,6 +31,7 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_attitude(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -41,6 +42,7 @@ enum SHELL_CMD_ID {
 	/*ps_ID,*/
 	sdinfo_ID,
 	sdsave_ID,
+	attitude_ID,
 	SHELL_CMD_CNT
 };
 
@@ -53,6 +55,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	/*CMD_DEF(ps, shell),*/
 	CMD_DEF(sdinfo, shell),
 	CMD_DEF(sdsave, shell),
+	CMD_DEF(attitude, shell),
 };
 
 /**** Shell task **********************************************************************/
@@ -161,5 +164,13 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 	}
 	else if(SDcondition == SD_ERSAVE){
 		printf("error!\n\r");
+	}
+}
+
+void shell_attitude(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	while(serial.getch() == 'q'){
+		printf("Pitch : %f\t\tRoll : %f\t\tYaw : %f\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
+		vTaskDelay(100);
 	}
 }
