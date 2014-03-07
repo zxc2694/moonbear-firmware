@@ -7,6 +7,7 @@
 #include "linenoise.h"
 #include "parser.h"
 
+#include "algorithm_pid.h"
 #include "module_rs232.h"
 #include "algorithm_quaternion.h"
 #include "sys_manager.h"
@@ -116,6 +117,7 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("ps \tShow the list of all tasks\n\r");
 	printf("sdinfo\tShow SD card informations.\n\r");
 	printf("sdsave\tSave PID informations in the SD card.\n\r");
+	printf("attitude\tRoll,Pitch,Yaw value.('z'=show angle; 'x'=show PID parameter; 'q'=quit)\n\r");
 
 }
 
@@ -169,8 +171,15 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 void shell_attitude(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
-	while(serial.getch() == 'q'){
-		printf("Pitch : %f\t\tRoll : %f\t\tYaw : %f\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
-		vTaskDelay(100);
+	while(1){
+		if(serial.getch() == 'z'){ 
+			printf("Pitch : %f\tRoll : %f\tYaw : %f\t\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
+			vTaskDelay(50);
+		}
+		else if(serial.getch() == 'x'){
+			printf("Pitch_Kp:%f  Pitch_Kd:%f  ,Roll_Kp:%f  Roll_Kd:%f  ,Yaw_Kp:%f  Yaw_Kd:%f \n\r", PID_Pitch.Kp, PID_Pitch.Kd, PID_Roll.Kp, PID_Roll.Kd, PID_Yaw.Kp, PID_Yaw.Kd);
+		}
+		else if(serial.getch() == 'q') 
+			break;
 	}
 }
