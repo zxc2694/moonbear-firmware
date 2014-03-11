@@ -157,6 +157,13 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 	}
 }
 
+/* The attitude command can help user observe Roll & Pitch & Yaw angle, kp & kd & ki and PWM input.*/
+/*===================================
+'z' = show roll & pitch & yaw angle
+'x' = show PID parameter
+'c' = show channel of PWM
+'q' = quit
+=====================================*/
 void shell_attitude(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	while(1){
