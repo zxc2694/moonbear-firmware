@@ -10,6 +10,7 @@
 #include "algorithm_pid.h"
 #include "module_rs232.h"
 #include "algorithm_quaternion.h"
+#include "QCopterFC_ctrl.h"
 #include "sys_manager.h"
 #include "stm32f4_sdio.h"
 
@@ -117,7 +118,7 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("ps \tShow the list of all tasks\n\r");
 	printf("sdinfo\tShow SD card informations.\n\r");
 	printf("sdsave\tSave PID informations in the SD card.\n\r");
-	printf("attitude\tRoll,Pitch,Yaw value.('z'=show angle; 'x'=show PID parameter; 'q'=quit)\n\r");
+	printf("attitude\t['z'=show angle;'x'=show PID parameter;'c'=show channel of PWM;'q'=quit]\n\r");
 
 }
 
@@ -178,6 +179,10 @@ void shell_attitude(char parameter[][MAX_CMD_LEN], int par_cnt)
 		}
 		else if(serial.getch() == 'x'){
 			printf("Pitch_Kp:%f  Pitch_Kd:%f  ,Roll_Kp:%f  Roll_Kd:%f  ,Yaw_Kp:%f  Yaw_Kd:%f \n\r", PID_Pitch.Kp, PID_Pitch.Kd, PID_Roll.Kp, PID_Roll.Kd, PID_Yaw.Kp, PID_Yaw.Kd);
+		}
+		else if(serial.getch() == 'c'){
+			printf("PWM1_CCR: %f\t,PWM2_CCR: %f\t,PWM3_CCR: %f\t,PWM4_CCR: %f\n\r",global_var[PWM1_CCR].param,global_var[PWM2_CCR].param,global_var[PWM3_CCR].param,global_var[PWM4_CCR].param);
+			vTaskDelay(50);
 		}
 		else if(serial.getch() == 'q') 
 			break;
