@@ -17,6 +17,7 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_attitude(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -27,6 +28,7 @@ enum SHELL_CMD_ID {
 	/*ps_ID,*/
 	sdinfo_ID,
 	sdsave_ID,
+	attitude_ID,
 	SHELL_CMD_CNT
 };
 
@@ -39,6 +41,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	/*CMD_DEF(ps, shell),*/
 	CMD_DEF(sdinfo, shell),
 	CMD_DEF(sdsave, shell),
+	CMD_DEF(attitude, shell),
 };
 
 /**** Shell task **********************************************************************/
@@ -103,7 +106,7 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	serial.printf("ps \tShow the list of all tasks\n\r");
 	serial.printf("sdinfo\tShow SD card informations.\n\r");
 	serial.printf("sdsave\tSave PID informations in the SD card.\n\r");
-
+	serial.printf("attitude\t['z'=show angle;'x'=show PID parameter;'c'=show channel of PWM;'q'=quit]\n\r");
 }
 
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
@@ -151,5 +154,24 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 	}
 	else if(SDcondition == SD_ERSAVE){
 		serial.printf("error!\n\r");
+	}
+}
+
+void shell_attitude(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	while(1){
+		if(serial.getc() == 'z'){ 
+			serial.printf("Pitch : %f\tRoll : %f\tYaw : %f\t\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
+			vTaskDelay(50);
+		}
+		else if(serial.getc() == 'x'){
+			serial.printf("Pitch_Kp:%f  Pitch_Kd:%f  ,Roll_Kp:%f  Roll_Kd:%f  ,Yaw_Kp:%f  Yaw_Kd:%f \n\r", PID_Pitch.Kp, PID_Pitch.Kd, PID_Roll.Kp, PID_Roll.Kd, PID_Yaw.Kp, PID_Yaw.Kd);
+		}
+		else if(serial.getc() == 'c'){
+			serial.printf("PWM1_CCR: %f\t,PWM2_CCR: %f\t,PWM3_CCR: %f\t,PWM4_CCR: %f\n\r",global_var[PWM1_CCR].param,global_var[PWM2_CCR].param,global_var[PWM3_CCR].param,global_var[PWM4_CCR].param);
+			vTaskDelay(50);
+		}
+		else if(serial.getc() == 'q') 
+			break;
 	}
 }
