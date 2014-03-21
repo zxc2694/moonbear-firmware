@@ -22,7 +22,7 @@ PROGRAM_SYS = ./system
 PROGRAM_FAT = ./lib/fatfs
 PROGRAM_SHELL = ./shell
 PROGRAM_DEBUG = ./debug
-PROGRAM_STD_LIB = ./lib/stdlib
+PROGRAM_COMMON = ./common
 _PROJECTFC_ = ./ProjectFC
 
 CFLAGS=-g -mlittle-endian -mthumb
@@ -83,8 +83,8 @@ SRC+=./lib/CMSIS/system_stm32f4xx.c \
 	$(ST_LIB)/src/stm32f4xx_sdio.c
 
 #C Standard Lib
-SRC+=$(PROGRAM_STD_LIB)/string.c\
-	$(PROGRAM_STD_LIB)/stdlib.c
+SRC+=$(PROGRAM_COMMON)/string.c\
+	$(PROGRAM_COMMON)/stdlib.c
 
 #Major programs source code
 SRC+=$(PROGRAM_ALG)/*.c \
@@ -112,7 +112,7 @@ INC_HEADERS =$(PROGRAM_ALG)/*.h \
 		$(PROGRAM_FAT)/*.h \
 		$(PROGRAM_SHELL)/*.h\
 		$(PROGRAM_DEBUG)/*.h \
-		$(PROGRAM_STD_LIB)/*.h\
+		$(PROGRAM_COMMON)/*.h\
 
 #FreeRTOS source code
 SRC+=$(FREERTOS_SRC)/croutine.c\
