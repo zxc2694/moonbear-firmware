@@ -13,6 +13,7 @@ void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_test(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_license(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -24,6 +25,7 @@ enum SHELL_CMD_ID {
 	test_ID,
 	sdinfo_ID,
 	sdsave_ID,
+	license_ID,
 	SHELL_CMD_CNT
 };
 
@@ -36,7 +38,8 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	/*CMD_DEF(ps, shell),*/
 	CMD_DEF(test, shell),
 	CMD_DEF(sdinfo, shell),
-	CMD_DEF(sdsave, shell)
+	CMD_DEF(sdsave, shell),
+	CMD_DEF(license, shell)
 };
 
 /**** Shell task **********************************************************************/
@@ -175,4 +178,23 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 		f_close(&file);
 		break;
 	}
+}
+
+void shell_license(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	serial.printf("Moon bear QuadCopter Project\n\r");
+
+	serial.printf("Copyright (c) 2014 - MIT License\n\r\n\r");
+
+	serial.printf("QCopterFC\n\r");
+	serial.printf("Wen-Hung Wang <Hom19910422@gmail.com>\n\r\n\r");
+
+	serial.printf("Linenoise\n\r");
+	serial.printf("Antirez <antirez@gmail.com>\n\r\n\r");
+
+	serial.printf("Contributors of Moon Bear team\n\r");
+	serial.printf("Da-Feng Huang <fantasyboris@gmail.com>\n\r");
+	serial.printf("Cheng-De Liu <zxc2694zxc2694@gmail.com>\n\r");
+	serial.printf("Cheng-Han Yang <poemofking@gmail.com>\n\r");
+	serial.printf("Shengwen Cheng <l1996812@gmail.com>\n\r");
 }
