@@ -14,7 +14,7 @@
 #define configDEBUG_PRINTF		0
 
 /* Set baudrate */
-#define Baudrate 57600
+#define Serial_Baudrate 57600
 
 /* Includes */
 //FreeRTOS

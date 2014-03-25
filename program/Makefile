@@ -27,7 +27,7 @@ _PROJECTFC_ = ./ProjectFC
 
 CFLAGS=-g -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
-CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=hard
+CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
 CFLAGS+=-ffreestanding -nostdlib -Wall
 
 #Flash

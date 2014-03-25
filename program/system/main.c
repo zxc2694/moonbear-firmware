@@ -40,7 +40,7 @@ void system_init(void)
 {
 	LED_Config();
 	KEY_Config();
-	Serial_Config();
+	Serial_Config(Serial_Baudrate);
 	Motor_Config();
 	PWM_Capture_Config();
 

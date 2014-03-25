@@ -14,7 +14,7 @@
   * @param  None
   * @retval None
   */	
-void Serial_Config(void) /* Tx:Pb10, Rx:Pb11 */
+void Serial_Config(int buadrate) /* Tx:Pb10, Rx:Pb11 */
 {
 	/* RCC Initialization */
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,  ENABLE);
@@ -35,7 +35,7 @@ void Serial_Config(void) /* Tx:Pb10, Rx:Pb11 */
 
 	/* USART3 Initialization */
 	USART_InitTypeDef USART_InitStruct = {
-		.USART_BaudRate = Baudrate,
+		.USART_BaudRate = buadrate,
 		.USART_WordLength = USART_WordLength_8b,
 		.USART_StopBits = USART_StopBits_1,
 		.USART_Parity = USART_Parity_No,
