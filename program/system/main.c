@@ -366,7 +366,10 @@ void nrf_sending_task()
 
 void error_handler_task()
 {
-	while (sys_status != SYSTEM_ERROR_SD || sys_status == SYSTEM_UNINITIALIZED);
+	while (sys_status != SYSTEM_ERROR_SD || sys_status == SYSTEM_UNINITIALIZED) {
+		if(sys_status == SYSTEM_INITIALIZED)
+			vTaskDelete(NULL);
+	}
 
 	/* Clear the screen */
 	serial.printf("\x1b[H\x1b[2J");
