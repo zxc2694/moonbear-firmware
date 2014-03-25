@@ -61,7 +61,7 @@ CFLAGS+=-I./module
 CFLAGS+=-I./lib/fatfs
 CFLAGS+=-I./shell
 CFLAGS+=-I./debug
-CFLAGS+=-I./stdlib
+CFLAGS+=-I./common
 
 LDFLAGS+=-lm -lc -lgcc
 
