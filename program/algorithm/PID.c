@@ -1,11 +1,32 @@
-/*=====================================================================================================*/
-/*=====================================================================================================*/
 #include "QuadCopterConfig.h"
-/*=====================================================================================================*/
-/*=====================================================================================================*/
-PID_Struct PID_Yaw;
-PID_Struct PID_Roll;
-PID_Struct PID_Pitch;
+
+PID_t PID_Yaw = {
+	.Kp = 0.0f, .Ki  = 0.0f, .Kd = 0.0f,
+	.Err0 = 0.0f, .Err1 = 0.0f, .Err2 = 0.0f,
+	.SumErr = 0.0f, .ZeroErr = 0.0f,
+	.KiMax = +400.0f, .KiMin = -400.0f,
+	.OutMax = +800.0f, .OutMin = -800.0f,
+	.Output = 0.0f
+};
+
+PID_t PID_Roll = {
+	.Kp = 0.0f, .Ki  = 0.0f, .Kd = 0.0f,
+	.Err0 = 0.0f, .Err1 = 0.0f, .Err2 = 0.0f,
+	.SumErr = 0.0f, .ZeroErr = 0.0f,
+	.KiMax = +400.0f, .KiMin = -400.0f,
+	.OutMax = +800.0f, .OutMin = -800.0f,
+	.Output = 0.0f
+};
+
+PID_t PID_Pitch = {
+	.Kp = 0.0f, .Ki  = 0.0f, .Kd = 0.0f,
+	.Err0 = 0.0f, .Err1 = 0.0f, .Err2 = 0.0f,
+	.SumErr = 0.0f, .ZeroErr = 0.0f,
+	.KiMax = +400.0f, .KiMin = -400.0f,
+	.OutMax = +800.0f, .OutMin = -800.0f,
+	.Output = 0.0f
+};
+
 /*=====================================================================================================*/
 /*=====================================================================================================*
 **函數 : PID_Init
@@ -15,7 +36,7 @@ PID_Struct PID_Pitch;
 **使用 : PID_Init(&PID);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void PID_Init(PID_Struct *PID)
+void PID_Init(PID_t *PID)
 {
 	PID->Kp      = 0.0f;
 	PID->Ki      = 0.0f;
@@ -41,7 +62,7 @@ void PID_Init(PID_Struct *PID)
 **使用 : PID_IncCal(&PID, CurrentVal)
 **=====================================================================================================*/
 /*=====================================================================================================*/
-float PID_IncCal(PID_Struct *PID, float CurrentVal)
+float PID_IncCal(PID_t *PID, float CurrentVal)
 {
 	float Value_Kp;	// 比例
 	float Value_Ki;	// 積分
@@ -73,7 +94,7 @@ float PID_IncCal(PID_Struct *PID, float CurrentVal)
 **使用 : PID_PosCal(&PID, CurrentVal)
 **=====================================================================================================*/
 /*=====================================================================================================*/
-float PID_PosCal(PID_Struct *PID, float CurrentVal)
+float PID_PosCal(PID_t *PID, float CurrentVal)
 {
 	float Value_Kp;	// 比例
 	float Value_Ki;	// 積分
@@ -117,7 +138,7 @@ float PID_PosCal(PID_Struct *PID, float CurrentVal)
 **使用 : PID_AHRS_Cal(&PID, Angle, Gyroscope);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-float PID_AHRS_Cal(PID_Struct *PID, float Angle, float Gyroscope)
+float PID_AHRS_Cal(PID_t *PID, float Angle, float Gyroscope)
 {
 	float Value_Kp;	// 比例
 	float Value_Ki;	// 積分
@@ -147,7 +168,8 @@ float PID_AHRS_Cal(PID_Struct *PID, float Angle, float Gyroscope)
 
 	return (-PID->Output);
 }
-float PID_AHRS_CalYaw(PID_Struct *PID, float Angle, float Gyroscope)
+
+float PID_AHRS_CalYaw(PID_t *PID, float Angle, float Gyroscope)
 {
 	float minErr = 0.0f;
 	float Value_Kp;	// 比例
@@ -189,5 +211,4 @@ float PID_AHRS_CalYaw(PID_Struct *PID, float Angle, float Gyroscope)
 
 	return (-PID->Output);
 }
-/*=====================================================================================================*/
-/*=====================================================================================================*/
+

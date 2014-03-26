@@ -1,7 +1,7 @@
 #include "string.h"
 #include "parser.h"
 
-static void commandIdentify(char *cmd_str, command_data *cd)
+static void cmdSpiltToken(char *cmd_str, command_data *cd)
 {
 	int i = 0, str_cnt = 0;
 
@@ -35,7 +35,7 @@ static void commandIdentify(char *cmd_str, command_data *cd)
 
 void commandExec(char *cmd_str, command_data *cd, command_list *list, int list_cnt)
 {
-	commandIdentify(cmd_str, cd);
+	cmdSpiltToken(cmd_str, cd);
 
 	int i;
 

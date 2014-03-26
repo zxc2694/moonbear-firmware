@@ -24,5 +24,7 @@ global_struct global_var[] = {
 
 };
 SYSTEM_STATUS sys_status = SYSTEM_UNINITIALIZED;
+SD_STATUS SD_status;
+
 xSemaphoreHandle serial_tx_wait_sem = NULL;
 xQueueHandle serial_rx_queue = NULL;

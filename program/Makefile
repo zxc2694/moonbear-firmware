@@ -19,13 +19,11 @@ PROGRAM_ALG = ./algorithm
 PROGRAM_DIR = ./driver
 PROGRAM_MOD = ./module
 PROGRAM_SYS = ./system
-PROGRAM_FAT = ./fatfs
+PROGRAM_FAT = ./lib/fatfs
 PROGRAM_SHELL = ./shell
-PROGRAM_STD_LIB = ./stdlib
+PROGRAM_DEBUG = ./debug
+PROGRAM_COMMON = ./common
 _PROJECTFC_ = ./ProjectFC
-
-TOOLCHAIN_PATH ?= /usr/local/csl/arm-2012.03/arm-none-eabi
-C_LIB=$(TOOLCHAIN_PATH)/lib/thumb2
 
 CFLAGS=-g -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
@@ -60,9 +58,10 @@ CFLAGS+=-I./system
 CFLAGS+=-I./algorithm
 CFLAGS+=-I./driver
 CFLAGS+=-I./module
-CFLAGS+=-I./fatfs
+CFLAGS+=-I./lib/fatfs
 CFLAGS+=-I./shell
-CFLAGS+=-I./stdlib
+CFLAGS+=-I./debug
+CFLAGS+=-I./common
 
 LDFLAGS+=-lm -lc -lgcc
 
@@ -84,24 +83,22 @@ SRC+=./lib/CMSIS/system_stm32f4xx.c \
 	$(ST_LIB)/src/stm32f4xx_sdio.c
 
 #C Standard Lib
-SRC+=$(PROGRAM_STD_LIB)/string.c\
-	$(PROGRAM_STD_LIB)/stdlib.c
+SRC+=$(PROGRAM_COMMON)/string.c\
+	$(PROGRAM_COMMON)/stdlib.c
 
 #Major programs source code
-SRC+=$(PROGRAM_ALG)/algorithm_*.c \
-		$(PROGRAM_DIR)/stm32f4_*.c \
+SRC+=$(PROGRAM_ALG)/*.c \
+		$(PROGRAM_DIR)/*.c \
 		$(PROGRAM_MOD)/*.c \
-		$(PROGRAM_MOD)/stm32f4_sdio.c \
-		$(PROGRAM_SYS)/QCopterFC_it.c \
-		$(PROGRAM_SYS)/QCopterFC_ahrs.c \
-		$(PROGRAM_SYS)/QCopterFC_ctrl.c \
-		$(PROGRAM_SYS)/sensor_correct.c \
+		$(PROGRAM_SYS)/interrupt.c \
+		$(PROGRAM_SYS)/AHRS.c \
+		$(PROGRAM_SYS)/remote_control.c \
+		$(PROGRAM_SYS)/IMU_correct.c \
 		$(PROGRAM_SYS)/main.c \
 		$(PROGRAM_SYS)/global.c \
 		lib/CMSIS/FastMathFunctions/arm_cos_f32.c \
 		lib/CMSIS/FastMathFunctions/arm_sin_f32.c \
-		test.c \
-		sdio.c \
+
 #Fatfs
 SRC+=$(PROGRAM_FAT)/diskio.c\
 	$(PROGRAM_FAT)/ff.c\
@@ -114,10 +111,8 @@ INC_HEADERS =$(PROGRAM_ALG)/*.h \
 		$(PROGRAM_SYS)/*.h \
 		$(PROGRAM_FAT)/*.h \
 		$(PROGRAM_SHELL)/*.h\
-		$(PROGRAM_STD_LIB)/*.h\
-		*.h
-
-
+		$(PROGRAM_DEBUG)/*.h \
+		$(PROGRAM_COMMON)/*.h\
 
 #FreeRTOS source code
 SRC+=$(FREERTOS_SRC)/croutine.c\
@@ -133,6 +128,9 @@ SRC+=$(PROGRAM_SHELL)/linenoise.c\
 	$(PROGRAM_SHELL)/shell.c\
 	$(PROGRAM_SHELL)/parser.c\
 	$(PROGRAM_SHELL)/status_monitor.c\
+
+#Debugger
+SRC+=$(PROGRAM_DEBUG)/test.c
 
 #STM32 startup file
 STARTUP=./lib/CMSIS/startup_stm32f4xx.s
@@ -156,6 +154,7 @@ $(EXECUTABLE):$(SRC) $(STARTUP_OBJ) ${INC_HEADERS}
 clean:
 	rm -rf $(EXECUTABLE)
 	rm -rf $(BIN_IMAGE)
+	rm -rf $(STARTUP_OBJ)
 
 #Make flash
 flash:
@@ -167,8 +166,8 @@ screen:
 	screen /dev/ttyUSB0 57600 &
 #======================================================================#
 openocd: flash
-	openocd -s /opt/openocd/share/openocd/scripts/
+	openocd -s /opt/openocd/share/openocd/scripts/ -f ./debug/openocd.cfg
 gdbauto:
-	arm-none-eabi-gdbtui -x openocd_gdb.gdb
+	arm-none-eabi-gdbtui -x ./debug/openocd_gdb.gdb
 
 .PHONY:all clean flash openocd gdbauto

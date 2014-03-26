@@ -4,7 +4,7 @@
 
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
-xSemaphoreHandle sdio_semaphore = NULL;
+
 volatile int16_t ACC_FIFO[3][256] = {{0}};
 volatile int16_t GYR_FIFO[3][256] = {{0}};
 volatile int16_t MAG_FIFO[3][256] = {{0}};
@@ -20,14 +20,14 @@ extern SYSTEM_STATUS sys_status;
 void vApplicationStackOverflowHook(xTaskHandle pxTask, signed char *pcTaskName)
 {
 	while(1) {
-		LED_R = ~LED_R;
+		LED_Toggle(LED_R);
 		vTaskDelay(200);
 	}
 }
 void vApplicationMallocFailedHook( void )
 {
 	while(1) {
-		LED_R = ~LED_R;
+		LED_Toggle(LED_R);
 		vTaskDelay(200);
 	}
 }
@@ -40,7 +40,7 @@ void system_init(void)
 {
 	LED_Config();
 	KEY_Config();
-	Serial_Config();
+	Serial_Config(Serial_Baudrate);
 	Motor_Config();
 	PWM_Capture_Config();
 
@@ -49,7 +49,7 @@ void system_init(void)
 	nRF24L01_Config();
 
 	//SD Config
-	if(SDIO_Config() != SD_OK)
+	if((SD_status = SD_Init()) != SD_OK)
 		sys_status = SYSTEM_ERROR_SD;
 
 	PID_Init(&PID_Yaw);
@@ -81,9 +81,9 @@ void system_init(void)
 	Delay_10ms(10);
 
 	/* Lock */
-	LED_R = 0;
-	LED_G = 1;
-	LED_B = 1;
+	SetLED(LED_R, DISABLE);
+	SetLED(LED_G, ENABLE);
+	SetLED(LED_B, ENABLE);
 
 	//Check if no error
 	if(sys_status != SYSTEM_ERROR_SD)
@@ -152,10 +152,10 @@ void correction_task()
 			sensor_correct = ERROR ;
 		}
 
-		LED_G = ~LED_G ;
+		LED_Toggle(LED_G);
 		vTaskDelay(200);
 	}
-	LED_G = 0;
+	SetLED(LED_G, DISABLE);
 	vTaskResume(FlightControl_Handle);
 	vTaskDelete(NULL);
 }
@@ -327,13 +327,13 @@ void check_task()
 	while (sys_status != SYSTEM_INITIALIZED);
 
 	while (remote_signal_check() == NO_SIGNAL);
-	LED_B = 0;
+	SetLED(LED_B, DISABLE);
 	vTaskResume(correction_task_handle);
 	while(sys_status != SYSTEM_FLIGHT_CONTROL);
 	vTaskDelay(2000);
-	LED_R = 1;
-	LED_G = 1;
-	LED_B = 1;
+	SetLED(LED_R, ENABLE);
+	SetLED(LED_G, ENABLE);
+	SetLED(LED_B, ENABLE);
 	vTaskDelete(NULL);
 
 }
@@ -366,12 +366,15 @@ void nrf_sending_task()
 
 void error_handler_task()
 {
-	while (sys_status != SYSTEM_ERROR_SD);
+	while (sys_status != SYSTEM_ERROR_SD || sys_status == SYSTEM_UNINITIALIZED) {
+		if(sys_status == SYSTEM_INITIALIZED)
+			vTaskDelete(NULL);
+	}
 
 	/* Clear the screen */
 	serial.printf("\x1b[H\x1b[2J");
 
-	if(SDstatus != SD_OK) {
+	if(SD_status != SD_OK) {
 		serial.printf("[System status]SD Initialized failed!\n\r");
 		serial.printf("Please Insert the SD card correctly then reboot the QuadCopter!");	
 	}
@@ -386,32 +389,25 @@ int main(void)
 
 	vSemaphoreCreateBinary(serial_tx_wait_sem);
 	serial_rx_queue = xQueueCreate(1, sizeof(serial_msg));
-	/*Create sdio run semaphore*/
-	sdio_semaphore = xSemaphoreCreateBinary();
-
+	
 	xTaskCreate(check_task,
 		    (signed portCHAR *) "Initial checking",
 		    512, NULL,
 		    tskIDLE_PRIORITY + 5, NULL);
 	xTaskCreate(correction_task,
-		    (signed portCHAR *) "Initial checking",
+		    (signed portCHAR *) "System correction",
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, &correction_task_handle);
-
-	xTaskCreate(sdio_task,
-	 	    (signed portCHAR *) "SD Handler",
-	 	    512, NULL,
-	 	    tskIDLE_PRIORITY + 6, NULL);
 
 	xTaskCreate(shell_task,
 		    (signed portCHAR *) "Shell",
 		    2048, NULL,
-		    tskIDLE_PRIORITY + 5, NULL);
+		    tskIDLE_PRIORITY + 7, NULL);
 
 #if configDEBUG_PRINTF
 
 	xTaskCreate(debug_print_task,
-		    (signed portCHAR *) "debug printf",
+		    (signed portCHAR *) "Debug printf",
 		    2048, NULL,
 		    tskIDLE_PRIORITY + 5, NULL);
 #endif
@@ -423,7 +419,7 @@ int main(void)
 		    tskIDLE_PRIORITY + 9, &FlightControl_Handle);
 #if configSTATUS_GUI
 	xTaskCreate(nrf_sending_task,
-	(signed portCHAR *) "NRF_SENDING",
+	(signed portCHAR *) "NRF Sending",
 	1024, NULL,
 	tskIDLE_PRIORITY + 5, NULL);
 #endif
@@ -431,7 +427,7 @@ int main(void)
         xTaskCreate(error_handler_task,
         (signed portCHAR *) "Error handler",
         512, NULL,
-        tskIDLE_PRIORITY + 5, NULL);
+        tskIDLE_PRIORITY + 7, NULL);
 
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
@@ -440,5 +436,4 @@ int main(void)
 
 	return 0;
 }
-/*=====================================================================================================*/
-/*=====================================================================================================*/
+

@@ -1,22 +1,20 @@
 #include <stddef.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "QuadCopterConfig.h"
 
-#define ReadBuf_Size 500
-extern sdio_task_handle;
-extern SD_STATUS SDstatus;
-extern SD_STATUS SDcondition;
-extern ReadBuf[ReadBuf_Size];
-extern xSemaphoreHandle sdio_semaphore;
 /* Shell Command handlers */
 void shell_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_test(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_license(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_display(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -25,8 +23,11 @@ enum SHELL_CMD_ID {
 	help_ID,
 	monitor_ID,
 	/*ps_ID,*/
+	test_ID,
 	sdinfo_ID,
 	sdsave_ID,
+	license_ID,
+	display_ID,
 	SHELL_CMD_CNT
 };
 
@@ -37,8 +38,11 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(help, shell),
 	CMD_DEF(monitor, shell),
 	/*CMD_DEF(ps, shell),*/
+	CMD_DEF(test, shell),
 	CMD_DEF(sdinfo, shell),
 	CMD_DEF(sdsave, shell),
+	CMD_DEF(license, shell),
+	CMD_DEF(display, shell),
 };
 
 /**** Shell task **********************************************************************/
@@ -61,6 +65,8 @@ void shell_task()
 	serial.printf("\x1b[H\x1b[2J");
 	/* Show the prompt messages */
 	serial.printf("[System status]Initialized successfully!\n\r");
+	serial.printf("QuadCopter Software Developing Shell\n\r");
+	serial.printf("Copyleft (MIT License) 2014 - Moon Bear Copter Team\n\r");
 
 	serial.printf("Please type \"help\" to get more informations\n\r");
 
@@ -103,7 +109,7 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	serial.printf("ps \tShow the list of all tasks\n\r");
 	serial.printf("sdinfo\tShow SD card informations.\n\r");
 	serial.printf("sdsave\tSave PID informations in the SD card.\n\r");
-
+	serial.printf("display\t['z'=show angle;'x'=show PID parameter;'c'=show channel of PWM;'q'=quit]\n\r");
 }
 
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
@@ -121,35 +127,103 @@ void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	serial.printf("-----SD Init Info-----\r\n");
-	serial.printf(" Capacity : ");
+	serial.printf("Capacity : ");
 	serial.printf("%d MB\r\n", (int)(SDCardInfo.CardCapacity >> 20));
-	serial.printf(" CardBlockSize : ");
+	serial.printf("CardBlockSize : ");
 	serial.printf("%d\r\n", SDCardInfo.CardBlockSize);
-	serial.printf(" CardType : ");
+	serial.printf("CardType : ");
 	serial.printf("%d\r\n", SDCardInfo.CardType);
-	serial.printf(" RCA : ");
+	serial.printf("RCA : ");
 	serial.printf("%d\r\n", SDCardInfo.RCA);
 	serial.printf("----------------------\r\n\r\n");
-	vTaskDelay(100);	
 }
 
+
+#define ReadBuf_Size 500
+#define WriteData_Size 500
+
+uint8_t ReadBuf[ReadBuf_Size] = {'\0'};
+char WriteData[WriteData_Size] = {EOF};
+
+/* TODO:Porting this command into the status monitor */
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
-	SDstatus = SD_UNREADY;
-	SDcondition == SD_UNSAVE;
-	xSemaphoreGive(sdio_semaphore);
-	while(SDstatus == SD_UNREADY);
-	vTaskDelay(200);
-	if(SDcondition == SD_SAVE){
-		serial.printf("Has been saved ! \n\r\n\r");
-		serial.printf("Read SD card ...... \n\r");
-		serial.printf("SD card content : \n\r");		
-		serial.printf("%s", ReadBuf);	
-	}
-	else if(SDcondition == SD_UNSAVE){
-		serial.printf("OK! not store!\n\r");
-	}
-	else if(SDcondition == SD_ERSAVE){
-		serial.printf("error!\n\r");
+	FATFS FatFs;
+	FRESULT res;
+	FILINFO finfo;
+	DIR dirs;
+	FIL file;		
+
+	char *confirm_ch = NULL;
+	confirm_ch = linenoise("Store all the PID settings? (y/n):");
+
+	while(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
+		uint32_t i = 0;
+		res = f_mount(&FatFs, "", 1);
+		res = f_opendir(&dirs, "0:/");
+		res = f_readdir(&dirs, &finfo);
+		res = f_open(&file, "SDCard_K.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+
+		sprintf(WriteData,"Pitch\n\r%f,%f,%f\n\rRoll\n\r%f,%f,%f\n\rYaw\n\r%f,%f,%f\n\r",
+			PID_Pitch.Kp, PID_Pitch.Ki, PID_Pitch.Kd,
+			PID_Roll.Kp, PID_Roll.Ki, PID_Roll.Kd,
+			PID_Yaw.Kp, PID_Yaw.Ki, PID_Yaw.Kd
+		);
+
+		res = f_write(&file, WriteData, strlen(WriteData), (UINT *)&i);
+
+		file.fptr = 0;
+		res = f_read(&file, ReadBuf, ReadBuf_Size, (UINT *)&i);
+		
+		/* Debug */
+		serial.printf("[Debug output]\n\r%s\n\r", ReadBuf);		
+
+		f_close(&file);
+		break;
 	}
 }
+
+void shell_license(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	serial.printf("Moon bear QuadCopter Project\n\r");
+
+	serial.printf("Copyright (c) 2014 - MIT License\n\r\n\r");
+
+	serial.printf("QCopterFC\n\r");
+	serial.printf("Wen-Hung Wang <Hom19910422@gmail.com>\n\r\n\r");
+
+	serial.printf("Linenoise\n\r");
+	serial.printf("Antirez <antirez@gmail.com>\n\r\n\r");
+
+	serial.printf("Contributors of Moon Bear team\n\r");
+	serial.printf("Da-Feng Huang <fantasyboris@gmail.com>\n\r");
+	serial.printf("Cheng-De Liu <zxc2694zxc2694@gmail.com>\n\r");
+	serial.printf("Cheng-Han Yang <poemofking@gmail.com>\n\r");
+	serial.printf("Shengwen Cheng <l1996812@gmail.com>\n\r");
+}
+/* The display command can help user observe Roll & Pitch & Yaw angle, kp & kd & ki and PWM input.*/
+/*===================================
+'z' = show roll & pitch & yaw angle
+'x' = show PID parameter
+'c' = show channel of PWM
+'q' = quit
+=====================================*/
+void shell_display(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	while(1){
+		if(serial.getc() == 'z'){ 
+			serial.printf("Pitch : %f\tRoll : %f\tYaw : %f\t\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
+			vTaskDelay(50);
+		}
+		else if(serial.getc() == 'x'){
+			serial.printf("Pitch_Kp:%f  Pitch_Kd:%f  ,Roll_Kp:%f  Roll_Kd:%f  ,Yaw_Kp:%f  Yaw_Kd:%f \n\r", PID_Pitch.Kp, PID_Pitch.Kd, PID_Roll.Kp, PID_Roll.Kd, PID_Yaw.Kp, PID_Yaw.Kd);
+		}
+		else if(serial.getc() == 'c'){
+			serial.printf("PWM1_CCR: %f\t,PWM2_CCR: %f\t,PWM3_CCR: %f\t,PWM4_CCR: %f\n\r",global_var[PWM1_CCR].param,global_var[PWM2_CCR].param,global_var[PWM3_CCR].param,global_var[PWM4_CCR].param);
+			vTaskDelay(50);
+		}
+		else if(serial.getc() == 'q') 
+			break;
+	}
+}
+

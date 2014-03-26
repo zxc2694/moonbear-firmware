@@ -7,14 +7,14 @@
 #define USE_WFLY_CONTROLLER		0
 
 /* Status report functions */
-#define configSTATUS_GUI		0
+#define configSTATUS_GUI		1
 #define configSTATUS_SHELL		1
 
 /* Debugging function */
 #define configDEBUG_PRINTF		0
 
 /* Set baudrate */
-#define Baudrate 57600
+#define Serial_Baudrate 57600
 
 /* Includes */
 //FreeRTOS
@@ -27,27 +27,27 @@
 #include "diskio.h"
 #include "ff.h"
 
+//Algorithm
+#include "PID.h"
+#include "moving_average.h"
+#include "quaternion.h"
+#include "_math.h"
+
 //System
 #include "main.h"
 #include "global.h"
 #include "std.h"
-#include "QCopterFC_ahrs.h"
-#include "QCopterFC_ctrl.h"
-#include "sensor_correct.h"
-
-//Algorithm
-#include "algorithm_pid.h"
-#include "algorithm_moveAve.h"
-#include "algorithm_quaternion.h"
-#include "algorithm_mathUnit.h"
+#include "AHRS.h"
+#include "remote_control.h"
+#include "IMU_correct.h"
 
 //Driver
 #include "stm32f4_system.h"
 #include "stm32f4xx_conf.h"
-#include "stm32f4_delay.h"
-#include "stm32f4_flash.h"
-#include "stm32f4_i2c.h"
-#include "stm32f4_spi.h"
+#include "delay.h"
+#include "flash.h"
+#include "i2c.h"
+#include "spi.h"
 #include "sdio.h"
 
 //Module
@@ -60,14 +60,13 @@
 #include "nrf24l01.h"
 #include "serial.h"
 #include "sensor.h"
-#include "stm32f4_sdio.h"
 
 //Shell
 #include "linenoise.h"
 #include "shell.h"
 #include "parser.h"
 
-//Unit test
+//Debugger
 #include "test.h"
 
 #endif
