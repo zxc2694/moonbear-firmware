@@ -23,7 +23,8 @@ extern PID_t PID_Yaw;
 extern PID_t PID_Roll;
 extern PID_t PID_Pitch;
 
-void PID_Init(PID_t *PID);
+void PID_Init(PID_t *PID, float Kp, float Ki, float Kd);
+
 float PID_IncCal(PID_t *, float);
 float PID_PosCal(PID_t *, float);
 float PID_AHRS_Cal(PID_t *, float, float);
