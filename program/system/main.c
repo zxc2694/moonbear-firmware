@@ -39,7 +39,6 @@ void vApplicationIdleHook(void)
 void system_init(void)
 {
 	LED_Config();
-	KEY_Config();
 	Serial_Config(Serial_Baudrate);
 	Motor_Config();
 	PWM_Capture_Config();
@@ -52,7 +51,7 @@ void system_init(void)
 	if((SD_status = SD_Init()) != SD_OK)
 		sys_status = SYSTEM_ERROR_SD;
 
-	PID_Init(&PID_Yaw, 4.0f, 0.0, 1.5);
+	PID_Init(&PID_Yaw, 4.0, 0.0, 1.5);
 	PID_Init(&PID_Roll, 4.0, 0.0, 1.5);
 	PID_Init(&PID_Pitch, 5.0, 0.0, 15.0);
 

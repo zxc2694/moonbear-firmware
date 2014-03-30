@@ -20,20 +20,6 @@ void LED_Config(void)
 	SetLED(LED_B, ENABLE);
 }
 
-void KEY_Config(void)
-{
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
-
-	GPIO_InitTypeDef GPIO_InitStruct = {
-		/* KEY PB2 */
-		.GPIO_Pin = GPIO_Pin_2,
-		.GPIO_Mode = GPIO_Mode_IN,
-		.GPIO_PuPd = GPIO_PuPd_NOPULL
-	};
-
-	GPIO_Init(GPIOB, &GPIO_InitStruct);
-}
-
 void SetLED(int LED, int state)
 {
 	PCO(LED) = state;

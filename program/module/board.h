@@ -12,7 +12,6 @@
 #define LED_B 13
 
 void LED_Config(void);
-void KEY_Config(void);
 
 void SetLED(int LED, int state);
 void LED_Toggle(int LED);
