@@ -91,10 +91,8 @@ SRC+=$(DRIVER)/delay.c \
 	$(DRIVER)/stm32f4_system.c
 
 CFLAGS+=-I$(MODULE)
-SRC+=$(MODULE)/ak8975.c \
-	$(MODULE)/board.c \
+SRC+=$(MODULE)/board.c \
 	$(MODULE)/motor.c \
-	$(MODULE)/mpu6050.c \
 	$(MODULE)/mpu9150.c \
 	$(MODULE)/ms5611.c \
 	$(MODULE)/nrf24l01.c \
