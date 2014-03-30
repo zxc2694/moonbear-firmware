@@ -143,11 +143,11 @@ $(BIN_IMAGE):$(EXECUTABLE)
 
 STARTUP_OBJ = startup_stm32f4xx.o
 
-$(STARTUP_OBJ): $(STARTUP) ${INCLUDE}
+$(STARTUP_OBJ): $(STARTUP)
 	@$(CC) $(CFLAGS) $^ -c $(STARTUP)
 	@echo '    CC $(STARTUP_OBJ)'
 
-$(EXECUTABLE):$(SRC) $(STARTUP_OBJ) ${INCLUDE}
+$(EXECUTABLE):$(SRC) $(STARTUP_OBJ)
 	@$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 	@echo '    CC $(EXECUTABLE)'
 
