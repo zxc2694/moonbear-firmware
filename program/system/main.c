@@ -51,9 +51,9 @@ void system_init(void)
 	if((SD_status = SD_Init()) != SD_OK)
 		sys_status = SYSTEM_ERROR_SD;
 
-	PID_Init(&PID_Yaw, 4.0, 0.0, 1.5);
+	PID_Init(&PID_Pitch, 4.0, 0.0, 1.5);
 	PID_Init(&PID_Roll, 4.0, 0.0, 1.5);
-	PID_Init(&PID_Pitch, 5.0, 0.0, 15.0);
+	PID_Init(&PID_Yaw, 5.0, 0.0, 15.0);
 
 	Delay_10ms(10);
 
