@@ -13,7 +13,7 @@ OBJCOPY=arm-none-eabi-objcopy
 
 CFLAGS=-g -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
-CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
+CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=hard
 CFLAGS+=-ffreestanding -nostdlib -Wall
 CFLAGS+=-Wl,-T,stm32_flash.ld
 
