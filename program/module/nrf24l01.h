@@ -90,6 +90,10 @@ typedef struct nrf_package{
 	int16_t gyro_x, gyro_y, gyro_z;
 
 } nrf_package;
+
+void nrf_send_package(uint8_t* buf);
+void nrf_generate_package( nrf_package* package, uint8_t* buf);
+
 /*====================================================================================================*/
 /*====================================================================================================*/
 #endif
