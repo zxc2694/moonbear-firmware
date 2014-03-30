@@ -2,6 +2,7 @@
 PROJECT=QuadrotorFlightControl
 EXECUTABLE=$(PROJECT).elf
 BIN_IMAGE=$(PROJECT).bin
+
 #============================================================================#
 
 #Cross Compiler
@@ -12,7 +13,7 @@ OBJCOPY=arm-none-eabi-objcopy
 
 CFLAGS=-g -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
-CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=hard
+CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
 CFLAGS+=-ffreestanding -nostdlib -Wall
 CFLAGS+=-Wl,-T,stm32_flash.ld
 
@@ -27,7 +28,9 @@ CFLAGS+= \
 LDFLAGS+=-lm -lc -lgcc
 
 ARCH=CM4F
+
 #============================================================================#
+
 CMSIS=./lib/CMSIS
 
 ST=./lib/STM32F4xx_StdPeriph_Driver
@@ -43,16 +46,19 @@ MODULE=./module
 SYSTEM=./system
 SHELL_=./shell
 DEBUG=./debug
+
 #============================================================================#
 
-#INCLUDE+=./
+CFLAGS+=-I./
 
-#INCLUDE+=$(CMSIS)
-SRC+=$(CMSIS)/system_stm32f4xx.c
+CFLAGS+=-I$(CMSIS)
+SRC+=$(CMSIS)/system_stm32f4xx.c \
+	$(CMSIS)/FastMathFunctions/arm_cos_f32.c \
+	$(CMSIS)/FastMathFunctions/arm_sin_f32.c
 
 STARTUP=./lib/CMSIS/startup_stm32f4xx.s
 
-INCLUDE+=$(ST)/inc
+CFLAGS+=-I$(ST)/inc
 SRC+=./lib/CMSIS/system_stm32f4xx.c \
         $(ST)/src/misc.c \
         $(ST)/src/stm32f4xx_rcc.c \
@@ -65,18 +71,18 @@ SRC+=./lib/CMSIS/system_stm32f4xx.c \
         $(ST)/src/stm32f4xx_i2c.c \
         $(ST)/src/stm32f4xx_sdio.c
 
-INCLUDE+=$(CONFIG)
+CFLAGS+=-I$(CONFIG)
 
-INCLUDE+=$(COMMON)
+CFLAGS+=-I$(COMMON)
 SRC+=$(COMMON)/stdlib.c \
 	$(COMMON)/string.c
 
-INCLUDE+=$(ALGORITHM)
+CFLAGS+=-I$(ALGORITHM)
 SRC+=$(ALGORITHM)/moving_average.c \
 	$(ALGORITHM)/PID.c \
 	$(ALGORITHM)/quaternion.c
 
-INCLUDE+=$(DRIVER)
+CFLAGS+=-I$(DRIVER)
 SRC+=$(DRIVER)/delay.c \
 	$(DRIVER)/flash.c \
 	$(DRIVER)/i2c.c \
@@ -84,7 +90,7 @@ SRC+=$(DRIVER)/delay.c \
 	$(DRIVER)/spi.c \
 	$(DRIVER)/stm32f4_system.c
 
-INCLUDE+=$(MODULE)
+CFLAGS+=-I$(MODULE)
 SRC+=$(MODULE)/ak8975.c \
 	$(MODULE)/board.c \
 	$(MODULE)/motor.c \
@@ -95,7 +101,7 @@ SRC+=$(MODULE)/ak8975.c \
 	$(MODULE)/sensor.c \
 	$(MODULE)/serial.c
 
-INCLDUE+=$(SYSTEM)
+CFLAGS+=-I$(SYSTEM)
 SRC+=$(SYSTEM)/AHRS.c \
 	$(SYSTEM)/global.c \
 	$(SYSTEM)/IMU_correct.c \
@@ -103,17 +109,17 @@ SRC+=$(SYSTEM)/AHRS.c \
 	$(SYSTEM)/main.c \
 	$(SYSTEM)/remote_control.c
 
-INCLUDE+=$(SHELL_)
+CFLAGS+=-I$(SHELL_)
 SRC+=$(SHELL_)/linenoise.c \
 	$(SHELL_)/parser.c \
 	$(SHELL_)/shell.c \
 	$(SHELL_)/status_monitor.c
 
-INCLUDE+=$(DEBUG)
+CFLAGS+=-I$(DEBUG)
 SRC+=$(DEBUG)/test.c
 
-INCLUDE+=$(FREERTOS)/Source/include \
-	$(FREERTOS)/Source/portable/GCC/ARM_$(ARCH)
+CFLAGS+=-I$(FREERTOS)/Source/include \
+	-I$(FREERTOS)/Source/portable/GCC/ARM_$(ARCH)
 SRC+=$(FREERTOS)/Source/croutine.c \
 	$(FREERTOS)/Source/list.c \
 	$(FREERTOS)/Source/queue.c \
@@ -122,35 +128,36 @@ SRC+=$(FREERTOS)/Source/croutine.c \
 	$(FREERTOS)/Source/portable/MemMang/heap_4.c \
 	$(FREERTOS)/Source/portable/GCC/ARM_$(ARCH)/port.c \
 
-INCLUDE+=$(FATFS)
+CFLAGS+=-I$(FATFS)
 SRC+=$(FATFS)/diskio.c \
 	$(FATFS)/ff.c \
 	$(FATFS)/syscall.c \
 	$(FATFS)/unicode.c \
 
-include $(INCLUDE)
-CFLAGS+=${-I wildcard $(INCLUDE)}
 #============================================================================#
 
 #Make all
 all:$(BIN_IMAGE)
 
 $(BIN_IMAGE):$(EXECUTABLE)
-	$(OBJCOPY) -O binary $^ $@
+	@$(OBJCOPY) -O binary $^ $@
+	@echo '    OBJCOPY $(BIN_IMAGE)'
 
 STARTUP_OBJ = startup_stm32f4xx.o
 
 $(STARTUP_OBJ): $(STARTUP) ${INCLUDE}
-	$(CC) $(CFLAGS) $^ -c $(STARTUP)
+	@$(CC) $(CFLAGS) $^ -c $(STARTUP)
+	@echo '    CC $(STARTUP_OBJ)'
 
 $(EXECUTABLE):$(SRC) $(STARTUP_OBJ) ${INCLUDE}
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	@$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	@echo '    CC $(EXECUTABLE)'
 
 #Make clean
 clean:
+	rm -rf $(STARTUP_OBJ)
 	rm -rf $(EXECUTABLE)
 	rm -rf $(BIN_IMAGE)
-	rm -rf $(STARTUP_OBJ)
 
 #Make flash
 flash:
@@ -163,6 +170,7 @@ openocd: flash
 #Make gdbauto
 gdbauto:
 	arm-none-eabi-gdbtui -x ./debug/openocd_gdb.gdb
+
 #============================================================================#
 
 .PHONY:all clean flash openocd gdbauto
