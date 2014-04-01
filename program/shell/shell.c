@@ -120,7 +120,8 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("ps \tShow the list of all tasks\n\r");
 	printf("sdinfo\tShow SD card informations.\n\r");
 	printf("sdsave\tSave PID informations in the SD card.\n\r");
-	printf("attitude\t['z'=show angle;'x'=show PID parameter;'c'=show channel of PWM;'q'=quit]\n\r");
+	printf("attitude\t'z'=attitude angle;'x'=PID parameter;'c'=Channel of PWM;'q'=quit\n\r");
+	printf("gui\tSupport real time display by python.\n\r");
 
 }
 
