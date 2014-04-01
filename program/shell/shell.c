@@ -34,7 +34,7 @@ void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_attitude(char parameter[][MAX_CMD_LEN], int par_cnt);
-
+void shell_gui(char parameter[][MAX_CMD_LEN], int par_cnt);
 /* The identifier of the command */
 enum SHELL_CMD_ID {
 	unknown_cmd_ID,
@@ -45,6 +45,7 @@ enum SHELL_CMD_ID {
 	sdinfo_ID,
 	sdsave_ID,
 	attitude_ID,
+	gui_ID,
 	SHELL_CMD_CNT
 };
 
@@ -58,6 +59,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(sdinfo, shell),
 	CMD_DEF(sdsave, shell),
 	CMD_DEF(attitude, shell),
+	CMD_DEF(gui, shell),
 };
 
 /**** Shell task **********************************************************************/
@@ -186,5 +188,13 @@ void shell_attitude(char parameter[][MAX_CMD_LEN], int par_cnt)
 		}
 		else if(serial.getch() == 'q') 
 			break;
+	}
+}
+//Support real time to display GUI by python.
+void shell_gui(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	while(1){
+		printf("%f %f %f\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
+		vTaskDelay(10);
 	}
 }
