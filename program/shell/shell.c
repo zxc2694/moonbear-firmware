@@ -149,7 +149,7 @@ char WriteData[WriteData_Size] = {EOF};
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	FATFS FatFs;
-	FRESULT res;
+	//FRESULT res;
 	FILINFO finfo;
 	DIR dirs;
 	FIL file;		
@@ -159,10 +159,10 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 	while(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
 		uint32_t i = 0;
-		res = f_mount(&FatFs, "", 1);
-		res = f_opendir(&dirs, "0:/");
-		res = f_readdir(&dirs, &finfo);
-		res = f_open(&file, "SDCard_K.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+		f_mount(&FatFs, "", 1);
+		f_opendir(&dirs, "0:/");
+		f_readdir(&dirs, &finfo);
+		f_open(&file, "SDCard_K.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
 
 		sprintf(WriteData,"Pitch\n\r%f,%f,%f\n\rRoll\n\r%f,%f,%f\n\rYaw\n\r%f,%f,%f\n\r",
 			PID_Pitch.Kp, PID_Pitch.Ki, PID_Pitch.Kd,
@@ -170,10 +170,10 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 			PID_Yaw.Kp, PID_Yaw.Ki, PID_Yaw.Kd
 		);
 
-		res = f_write(&file, WriteData, strlen(WriteData), (UINT *)&i);
+		f_write(&file, WriteData, strlen(WriteData), (UINT *)&i);
 
 		file.fptr = 0;
-		res = f_read(&file, ReadBuf, ReadBuf_Size, (UINT *)&i);
+		f_read(&file, ReadBuf, ReadBuf_Size, (UINT *)&i);
 		
 		/* Debug */
 		serial.printf("[Debug output]\n\r%s\n\r", ReadBuf);		

@@ -51,10 +51,8 @@
 #include "sdio.h"
 
 //Module
-#include "ak8975.h"
 #include "board.h"
 #include "motor.h"
-#include "mpu6050.h"
 #include "mpu9150.h"
 #include "ms5611.h"
 #include "nrf24l01.h"

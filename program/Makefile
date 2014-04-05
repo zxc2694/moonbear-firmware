@@ -1,173 +1,174 @@
 #Output files
-EXECUTABLE=QuadrotorFlightControl.elf
-BIN_IMAGE=QuadrotorFlightControl.bin
-#======================================================================#
+PROJECT=QuadrotorFlightControl
+EXECUTABLE=$(PROJECT).elf
+BIN_IMAGE=$(PROJECT).bin
+
+#============================================================================#
 
 #Cross Compiler
 CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
 
-#FreeRTOS
-ARCH=CM4F
-FREERTOS_SRC=./lib/FreeRTOS/Source
-FREERTOS_INC=./lib/FreeRTOS/Source/include
-FREERTOS_PORT_INC=./lib/FreeRTOS/Source/portable/GCC/ARM_$(ARCH)
-
-ST_LIB = ./lib/STM32F4xx_StdPeriph_Driver
-PROGRAM_CONFIG = ./config
-PROGRAM_ALG = ./algorithm
-PROGRAM_DIR = ./driver
-PROGRAM_MOD = ./module
-PROGRAM_SYS = ./system
-PROGRAM_FAT = ./lib/fatfs
-PROGRAM_SHELL = ./shell
-PROGRAM_DEBUG = ./debug
-PROGRAM_COMMON = ./common
-_PROJECTFC_ = ./ProjectFC
+#============================================================================#
 
 CFLAGS=-g -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
-CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
+CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=hard
 CFLAGS+=-ffreestanding -nostdlib -Wall
-
-#Flash
 CFLAGS+=-Wl,-T,stm32_flash.ld
 
-CFLAGS+=-I./
-
-#STM32 CMSIS
 CFLAGS+= \
-	-D STM32F40XX \
-	-D USE_STDPERIPH_DRIVER \
-	-D __FPU_PRESENT=1 \
-	-D ARM_MATH_CM4
-	# __FPU_USED=1
-	#__CC_ARM
-CFLAGS+=-I./lib/CMSIS
-
-#FreeRTOS including
-CFLAGS+=-I$(FREERTOS_INC)
-CFLAGS+=-I$(FREERTOS_PORT_INC)
-
-#STM32F4xx Peripherys including
-CFLAGS+=-I./lib/STM32F4xx_StdPeriph_Driver/inc
-
-#Major programs including
-CFLAGS+=-I./config
-CFLAGS+=-I./system
-CFLAGS+=-I./algorithm
-CFLAGS+=-I./driver
-CFLAGS+=-I./module
-CFLAGS+=-I./lib/fatfs
-CFLAGS+=-I./shell
-CFLAGS+=-I./debug
-CFLAGS+=-I./common
+        -D STM32F40XX \
+        -D USE_STDPERIPH_DRIVER \
+        -D __FPU_PRESENT=1 \
+        -D ARM_MATH_CM4
+        # __FPU_USED=1
+        #__CC_ARM
 
 LDFLAGS+=-lm -lc -lgcc
 
-#STM32 CMSIS
-SRC=$(wildcard ./lib/CMSIS/*.c)
+ARCH=CM4F
 
-#STM32F4xx Peripherys source code
-#SRC+=$(wildcard ./lib/STM32F4xx_StdPeriph_Driver/src/*.c)
-SRC+=./lib/CMSIS/system_stm32f4xx.c \
-	$(ST_LIB)/src/misc.c \
-	$(ST_LIB)/src/stm32f4xx_rcc.c \
-	$(ST_LIB)/src/stm32f4xx_dma.c \
-	$(ST_LIB)/src/stm32f4xx_flash.c \
-	$(ST_LIB)/src/stm32f4xx_gpio.c \
-	$(ST_LIB)/src/stm32f4xx_usart.c \
-	$(ST_LIB)/src/stm32f4xx_tim.c\
-	$(ST_LIB)/src/stm32f4xx_spi.c\
-	$(ST_LIB)/src/stm32f4xx_i2c.c\
-	$(ST_LIB)/src/stm32f4xx_sdio.c
+#============================================================================#
 
-#C Standard Lib
-SRC+=$(PROGRAM_COMMON)/string.c\
-	$(PROGRAM_COMMON)/stdlib.c
+CMSIS=./lib/CMSIS
 
-#Major programs source code
-SRC+=$(PROGRAM_ALG)/*.c \
-		$(PROGRAM_DIR)/*.c \
-		$(PROGRAM_MOD)/*.c \
-		$(PROGRAM_SYS)/interrupt.c \
-		$(PROGRAM_SYS)/AHRS.c \
-		$(PROGRAM_SYS)/remote_control.c \
-		$(PROGRAM_SYS)/IMU_correct.c \
-		$(PROGRAM_SYS)/main.c \
-		$(PROGRAM_SYS)/global.c \
-		lib/CMSIS/FastMathFunctions/arm_cos_f32.c \
-		lib/CMSIS/FastMathFunctions/arm_sin_f32.c \
+ST=./lib/STM32F4xx_StdPeriph_Driver
 
-#Fatfs
-SRC+=$(PROGRAM_FAT)/diskio.c\
-	$(PROGRAM_FAT)/ff.c\
-	$(PROGRAM_FAT)/syscall.c\
-	$(PROGRAM_FAT)/unicode.c
+FREERTOS=./lib/FreeRTOS
+FATFS=./lib/fatfs
 
-INC_HEADERS =$(PROGRAM_ALG)/*.h \
-		$(PROGRAM_DIR)/*.h \
-		$(PROGRAM_MOD)/*.h \
-		$(PROGRAM_SYS)/*.h \
-		$(PROGRAM_FAT)/*.h \
-		$(PROGRAM_SHELL)/*.h\
-		$(PROGRAM_DEBUG)/*.h \
-		$(PROGRAM_COMMON)/*.h\
+CONFIG=./config
+COMMON=./common
+ALGORITHM=./algorithm
+DRIVER=./driver
+MODULE=./module
+SYSTEM=./system
+SHELL_=./shell
+DEBUG=./debug
 
-#FreeRTOS source code
-SRC+=$(FREERTOS_SRC)/croutine.c\
-	$(FREERTOS_SRC)/list.c\
-	$(FREERTOS_SRC)/queue.c\
-	$(FREERTOS_SRC)/tasks.c\
-	$(FREERTOS_SRC)/timers.c\
-	$(FREERTOS_SRC)/portable/MemMang/heap_4.c\
-	$(FREERTOS_SRC)/portable/GCC/ARM_$(ARCH)/port.c\
+#============================================================================#
 
-#Shell and linenoise
-SRC+=$(PROGRAM_SHELL)/linenoise.c\
-	$(PROGRAM_SHELL)/shell.c\
-	$(PROGRAM_SHELL)/parser.c\
-	$(PROGRAM_SHELL)/status_monitor.c\
+CFLAGS+=-I./
 
-#Debugger
-SRC+=$(PROGRAM_DEBUG)/test.c
+CFLAGS+=-I$(CMSIS)
+SRC+=$(CMSIS)/system_stm32f4xx.c \
+	$(CMSIS)/FastMathFunctions/arm_cos_f32.c \
+	$(CMSIS)/FastMathFunctions/arm_sin_f32.c
 
-#STM32 startup file
 STARTUP=./lib/CMSIS/startup_stm32f4xx.s
-#======================================================================#
+
+CFLAGS+=-I$(ST)/inc
+SRC+=./lib/CMSIS/system_stm32f4xx.c \
+        $(ST)/src/misc.c \
+        $(ST)/src/stm32f4xx_rcc.c \
+        $(ST)/src/stm32f4xx_dma.c \
+        $(ST)/src/stm32f4xx_flash.c \
+        $(ST)/src/stm32f4xx_gpio.c \
+        $(ST)/src/stm32f4xx_usart.c \
+        $(ST)/src/stm32f4xx_tim.c \
+        $(ST)/src/stm32f4xx_spi.c \
+        $(ST)/src/stm32f4xx_i2c.c \
+        $(ST)/src/stm32f4xx_sdio.c
+
+CFLAGS+=-I$(CONFIG)
+
+CFLAGS+=-I$(COMMON)
+SRC+=$(COMMON)/stdlib.c \
+	$(COMMON)/string.c
+
+CFLAGS+=-I$(ALGORITHM)
+SRC+=$(ALGORITHM)/moving_average.c \
+	$(ALGORITHM)/PID.c \
+	$(ALGORITHM)/quaternion.c
+
+CFLAGS+=-I$(DRIVER)
+SRC+=$(DRIVER)/delay.c \
+	$(DRIVER)/flash.c \
+	$(DRIVER)/i2c.c \
+	$(DRIVER)/sdio.c \
+	$(DRIVER)/spi.c \
+	$(DRIVER)/stm32f4_system.c
+
+CFLAGS+=-I$(MODULE)
+SRC+=$(MODULE)/board.c \
+	$(MODULE)/motor.c \
+	$(MODULE)/mpu9150.c \
+	$(MODULE)/ms5611.c \
+	$(MODULE)/nrf24l01.c \
+	$(MODULE)/sensor.c \
+	$(MODULE)/serial.c
+
+CFLAGS+=-I$(SYSTEM)
+SRC+=$(SYSTEM)/AHRS.c \
+	$(SYSTEM)/global.c \
+	$(SYSTEM)/IMU_correct.c \
+	$(SYSTEM)/interrupt.c \
+	$(SYSTEM)/main.c \
+	$(SYSTEM)/remote_control.c
+
+CFLAGS+=-I$(SHELL_)
+SRC+=$(SHELL_)/linenoise.c \
+	$(SHELL_)/parser.c \
+	$(SHELL_)/shell.c \
+	$(SHELL_)/status_monitor.c
+
+CFLAGS+=-I$(DEBUG)
+SRC+=$(DEBUG)/test.c
+
+CFLAGS+=-I$(FREERTOS)/Source/include \
+	-I$(FREERTOS)/Source/portable/GCC/ARM_$(ARCH)
+SRC+=$(FREERTOS)/Source/croutine.c \
+	$(FREERTOS)/Source/list.c \
+	$(FREERTOS)/Source/queue.c \
+	$(FREERTOS)/Source/tasks.c \
+	$(FREERTOS)/Source/timers.c \
+	$(FREERTOS)/Source/portable/MemMang/heap_4.c \
+	$(FREERTOS)/Source/portable/GCC/ARM_$(ARCH)/port.c \
+
+CFLAGS+=-I$(FATFS)
+SRC+=$(FATFS)/diskio.c \
+	$(FATFS)/ff.c \
+	$(FATFS)/syscall.c \
+	$(FATFS)/unicode.c \
+
+#============================================================================#
 
 #Make all
 all:$(BIN_IMAGE)
 
 $(BIN_IMAGE):$(EXECUTABLE)
-	$(OBJCOPY) -O binary $^ $@
+	@$(OBJCOPY) -O binary $^ $@
+	@echo '    OBJCOPY $(BIN_IMAGE)'
 
 STARTUP_OBJ = startup_stm32f4xx.o
 
-$(STARTUP_OBJ): $(STARTUP) 
-	$(CC) $(CFLAGS) $^ -c $(STARTUP)
+$(STARTUP_OBJ): $(STARTUP)
+	@$(CC) $(CFLAGS) $^ -c $(STARTUP)
+	@echo '    CC $(STARTUP_OBJ)'
 
-$(EXECUTABLE):$(SRC) $(STARTUP_OBJ) ${INC_HEADERS}
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+$(EXECUTABLE):$(SRC) $(STARTUP_OBJ)
+	@$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	@echo '    CC $(EXECUTABLE)'
 
 #Make clean
 clean:
+	rm -rf $(STARTUP_OBJ)
 	rm -rf $(EXECUTABLE)
 	rm -rf $(BIN_IMAGE)
-	rm -rf $(STARTUP_OBJ)
 
 #Make flash
 flash:
 	st-flash write $(BIN_IMAGE) 0x8000000
 
-#Make screen
-screen:
-	sudo su
-	screen /dev/ttyUSB0 57600 &
-#======================================================================#
+#Make openocd
 openocd: flash
 	openocd -s /opt/openocd/share/openocd/scripts/ -f ./debug/openocd.cfg
+
+#Make gdbauto
 gdbauto:
 	arm-none-eabi-gdbtui -x ./debug/openocd_gdb.gdb
+
+#============================================================================#
 
 .PHONY:all clean flash openocd gdbauto

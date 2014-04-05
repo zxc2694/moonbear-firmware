@@ -39,7 +39,6 @@ void vApplicationIdleHook(void)
 void system_init(void)
 {
 	LED_Config();
-	KEY_Config();
 	Serial_Config(Serial_Baudrate);
 	Motor_Config();
 	PWM_Capture_Config();
@@ -52,21 +51,9 @@ void system_init(void)
 	if((SD_status = SD_Init()) != SD_OK)
 		sys_status = SYSTEM_ERROR_SD;
 
-	PID_Init(&PID_Yaw);
-	PID_Init(&PID_Roll);
-	PID_Init(&PID_Pitch);
-
-	PID_Pitch.Kp = +4.0f;
-	PID_Pitch.Ki = 0;//0.002f;
-	PID_Pitch.Kd = +1.5f;
-
-	PID_Roll.Kp = +4.0f;
-	PID_Roll.Ki = 0;//0.002f;
-	PID_Roll.Kd = 1.5f;
-
-	PID_Yaw.Kp = +5.0f;
-	PID_Yaw.Ki = +0.0f;
-	PID_Yaw.Kd = +15.0f;
+	PID_Init(&PID_Pitch, 4.0, 0.0, 1.5);
+	PID_Init(&PID_Roll, 4.0, 0.0, 1.5);
+	PID_Init(&PID_Yaw, 5.0, 0.0, 15.0);
 
 	Delay_10ms(10);
 

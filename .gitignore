@@ -7,4 +7,5 @@ cscope*
 *.swp
 *.swn
 *.swo
+*.gch
 *.*~
