@@ -20,7 +20,7 @@ class AnalogData:
 	def __init__(self, maxLen):
 		self.ax = deque([0.0]*maxLen)
 		self.ay = deque([0.0]*maxLen)
-		self.az = deque([0.0]*maxLen)
+#		self.az = deque([0.0]*maxLen)
 		self.maxLen = maxLen
  
 # ring buffer
@@ -33,10 +33,10 @@ class AnalogData:
  
 #Add new data
 	def add(self, data):      
-		assert(len(data) == 3)
+		assert(len(data) == 2)
 		self.addToBuf(self.ax, data[0])
 		self.addToBuf(self.ay, data[1])
-		self.addToBuf(self.az, data[2])
+#		self.addToBuf(self.az, data[2])
 # plot class
 class AnalogPlot:
 # constr
@@ -45,14 +45,14 @@ class AnalogPlot:
 		plt.ion()
 		self.axline, = plt.plot(analogData.ax)
 		self.ayline, = plt.plot(analogData.ay)
-		self.azline, = plt.plot(analogData.az)
+	#	self.azline, = plt.plot(analogData.az)
 		plt.ylim([-90, 90]) # Vertical axis scale.
  
 # update plot
 	def update(self, analogData):
 		self.axline.set_ydata(analogData.ax)
 		self.ayline.set_ydata(analogData.ay)
-		self.azline.set_ydata(analogData.az)
+	#	self.azline.set_ydata(analogData.az)
 		plt.draw()
  
 def main():
@@ -78,8 +78,8 @@ def main():
 		try:
 			line = ser.readline()
 			data = [float(val) for val in line.split()]
-			print data[0] , data[1] , data[2] #Show three data on the terminal
-			if(len(data) == 3):
+			print data[0] , data[1]# , data[2] #Show three data on the terminal
+			if(len(data) == 2):
 				analogData.add(data)
 				analogPlot.update(analogData)
 		except KeyboardInterrupt:
