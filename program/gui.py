@@ -43,8 +43,12 @@ class AnalogPlot:
 	def __init__(self, analogData):
 # set plot to animated
 		plt.ion()
-		self.axline, = plt.plot(analogData.ax)
-		self.ayline, = plt.plot(analogData.ay)
+		self.axline, = plt.plot(analogData.ax,label="Pitch",color="red")
+		self.ayline, = plt.plot(analogData.ay,label="Roll",color="blue")
+		plt.xlabel("Time")
+		plt.ylabel("Angle(-90~+90)")
+		plt.title("Quadcopter attitude")
+		plt.legend()		#Show label figure.
 	#	self.azline, = plt.plot(analogData.az)
 		plt.ylim([-90, 90]) # Vertical axis scale.
  
