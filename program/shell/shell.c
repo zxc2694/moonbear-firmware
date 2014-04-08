@@ -195,7 +195,7 @@ void shell_attitude(char parameter[][MAX_CMD_LEN], int par_cnt)
 void shell_gui(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	while(1){
-		printf("%f %f %f\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
+		printf("%f %f\n\r", AngE.Pitch, AngE.Roll);
 		vTaskDelay(10);
 	}
 }
