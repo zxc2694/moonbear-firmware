@@ -168,7 +168,7 @@ openocd: flash
 
 #Make gdbauto
 gdbauto:
-	arm-none-eabi-gdbtui -x ./debug/openocd_gdb.gdb
+	arm-none-eabi-gdb -tui -x ./debug/openocd_gdb.gdb
 
 #============================================================================#
 
