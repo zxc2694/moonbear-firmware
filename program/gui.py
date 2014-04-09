@@ -61,6 +61,7 @@ class AnalogPlot:
 		plt.title("Quadcopter attitude")
 		plt.legend()		#Show label figure.
 		plt.ylim([-90, 90]) # Vertical axis scale.
+		plt.grid()
 
 
 		plt.subplot(212)
@@ -73,6 +74,7 @@ class AnalogPlot:
 		plt.ylabel("PWM")
 		plt.legend()		
 		plt.ylim([0, 2100]) 
+		plt.grid()
  
 # update plot
 	def update(self, analogData):
