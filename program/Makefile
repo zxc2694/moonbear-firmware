@@ -111,7 +111,8 @@ CFLAGS+=-I$(SHELL_)
 SRC+=$(SHELL_)/linenoise.c \
 	$(SHELL_)/parser.c \
 	$(SHELL_)/shell.c \
-	$(SHELL_)/status_monitor.c
+	$(SHELL_)/status_monitor.c \
+	$(SHELL_)/watch.c
 
 CFLAGS+=-I$(DEBUG)
 SRC+=$(DEBUG)/test.c

@@ -15,6 +15,7 @@ void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_license(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_display(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -28,6 +29,7 @@ enum SHELL_CMD_ID {
 	sdsave_ID,
 	license_ID,
 	display_ID,
+	watch_ID,
 	SHELL_CMD_CNT
 };
 
@@ -43,6 +45,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(sdsave, shell),
 	CMD_DEF(license, shell),
 	CMD_DEF(display, shell),
+	CMD_DEF(watch, shell)
 };
 
 /**** Shell task **********************************************************************/

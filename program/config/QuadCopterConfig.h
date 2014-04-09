@@ -60,6 +60,7 @@
 #include "linenoise.h"
 #include "shell.h"
 #include "parser.h"
+#include "watch.h"
 
 //Debugger
 #include "test.h"
