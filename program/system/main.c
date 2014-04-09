@@ -91,7 +91,7 @@ void correction_task()
 
 			static uint8_t BaroCnt = 0;
 
-
+#ifdef Use_Barometer
 			/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
 			MPU9150_Read(IMU_Buf);
 
@@ -102,6 +102,7 @@ void correction_task()
 				MS5611_Read(&Baro, MS5611_D1_OSR_4096);
 				BaroCnt = 0;
 			}
+#endif
 
 			Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
 			Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
@@ -165,10 +166,8 @@ void flightControl_task()
 		int16_t Exp_Thr = 0, Exp_Pitch = 0, Exp_Roll = 0, Exp_Yaw = 0;
 		uint8_t safety = 0;
 
-
+#ifdef Use_Barometer
 		static uint8_t BaroCnt = 0;
-
-
 
 		/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
 		MPU9150_Read(IMU_Buf);
@@ -180,7 +179,7 @@ void flightControl_task()
 			MS5611_Read(&Baro, MS5611_D1_OSR_4096);
 			BaroCnt = 0;
 		}
-
+#endif
 		Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
 		Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
 		Acc.Z  = (s16)((IMU_Buf[4]  << 8) | IMU_Buf[5]);
