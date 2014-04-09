@@ -20,7 +20,11 @@ class AnalogData:
 	def __init__(self, maxLen):
 		self.ax = deque([0.0]*maxLen)
 		self.ay = deque([0.0]*maxLen)
-#		self.az = deque([0.0]*maxLen)
+
+		self.m1 = deque([0.0]*maxLen)
+		self.m2 = deque([0.0]*maxLen)
+		self.m3 = deque([0.0]*maxLen)
+		self.m4 = deque([0.0]*maxLen)		
 		self.maxLen = maxLen
  
 # ring buffer
@@ -33,31 +37,54 @@ class AnalogData:
  
 #Add new data
 	def add(self, data):      
-		assert(len(data) == 2)
+		assert(len(data) == 6)
 		self.addToBuf(self.ax, data[0])
 		self.addToBuf(self.ay, data[1])
-#		self.addToBuf(self.az, data[2])
+
+		self.addToBuf(self.m1, data[2])
+		self.addToBuf(self.m2, data[3])
+		self.addToBuf(self.m3, data[4])
+		self.addToBuf(self.m4, data[5])
+#		self.addToBuf(self.ay, data[1])
 # plot class
 class AnalogPlot:
 # constr
 	def __init__(self, analogData):
 # set plot to animated
 		plt.ion()
+		plt.figure(figsize=(9,8))
+		plt.subplot(211)
 		self.axline, = plt.plot(analogData.ax,label="Pitch",color="red")
 		self.ayline, = plt.plot(analogData.ay,label="Roll",color="blue")
 		plt.xlabel("Time")
 		plt.ylabel("Angle(-90~+90)")
 		plt.title("Quadcopter attitude")
 		plt.legend()		#Show label figure.
-	#	self.azline, = plt.plot(analogData.az)
 		plt.ylim([-90, 90]) # Vertical axis scale.
+
+
+		plt.subplot(212)
+		self.m1line, = plt.plot(analogData.m1,label="motor1",color="red")
+		self.m2line, = plt.plot(analogData.m2,label="motor2",color="orange")
+		self.m3line, = plt.plot(analogData.m3,label="motor3",color="green")
+		self.m4line, = plt.plot(analogData.m4,label="motor4",color="blue")
+
+		plt.xlabel("Time")
+		plt.ylabel("PWM")
+		plt.legend()		
+		plt.ylim([0, 2100]) 
  
 # update plot
 	def update(self, analogData):
 		self.axline.set_ydata(analogData.ax)
 		self.ayline.set_ydata(analogData.ay)
-	#	self.azline.set_ydata(analogData.az)
 		plt.draw()
+
+		self.m1line.set_ydata(analogData.m1)
+		self.m2line.set_ydata(analogData.m2)
+		self.m3line.set_ydata(analogData.m3)
+		self.m4line.set_ydata(analogData.m4)
+		#plt.draw()
  
 def main():
 # expects 1 arg - serial port string
@@ -82,8 +109,8 @@ def main():
 		try:
 			line = ser.readline()
 			data = [float(val) for val in line.split()]
-			print data[0] , data[1]# , data[2] #Show three data on the terminal
-			if(len(data) == 2):
+			print data[0] , data[1] , data[2] , data[3] , data[4] , data[5]
+			if(len(data) == 6):
 				analogData.add(data)
 				analogPlot.update(analogData)
 		except KeyboardInterrupt:
