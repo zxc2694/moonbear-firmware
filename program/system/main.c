@@ -356,32 +356,38 @@ int main(void)
 
 	vSemaphoreCreateBinary(serial_tx_wait_sem);
 	serial_rx_queue = xQueueCreate(1, sizeof(serial_msg));
-	
-	xTaskCreate(check_task,
-		    (signed portCHAR *) "Initial checking",
-		    512, NULL,
-		    tskIDLE_PRIORITY + 5, NULL);
-	xTaskCreate(correction_task,
-		    (signed portCHAR *) "System correction",
-		    4096, NULL,
-		    tskIDLE_PRIORITY + 9, &correction_task_handle);
 
-	xTaskCreate(shell_task,
-		    (signed portCHAR *) "Shell",
-		    2048, NULL,
-		    tskIDLE_PRIORITY + 7, NULL);
+	/* IMU Initialization, Attitude Correction Flight Control */	
+	xTaskCreate(check_task,
+		(signed portCHAR *) "Initial checking",
+		512, NULL,
+		tskIDLE_PRIORITY + 5, NULL);
+	xTaskCreate(correction_task,
+		(signed portCHAR *) "System correction",
+		4096, NULL,
+		tskIDLE_PRIORITY + 9, &correction_task_handle);
 
 	xTaskCreate(flightControl_task,
-		    (signed portCHAR *) "Flight control",
-		    4096, NULL,
-		    tskIDLE_PRIORITY + 9, &FlightControl_Handle);
+		(signed portCHAR *) "Flight control",
+		4096, NULL,
+		tskIDLE_PRIORITY + 9, &FlightControl_Handle);
+
+	/* QuadCopter Developing Shell, Ground Station Software */
+	xTaskCreate(shell_task,
+		(signed portCHAR *) "Shell",
+		2048, NULL,
+		tskIDLE_PRIORITY + 7, NULL);
+
 #if configSTATUS_GUI
 	xTaskCreate(nrf_sending_task,
-	(signed portCHAR *) "NRF Sending",
-	1024, NULL,
-	tskIDLE_PRIORITY + 5, NULL);
+		(signed portCHAR *) "NRF Sending",
+		1024, NULL,
+		tskIDLE_PRIORITY + 5, NULL);
 #endif
 
+	/* Shell command handling task */
+
+	/* System rrror handler*/
         xTaskCreate(error_handler_task,
         (signed portCHAR *) "Error handler",
         512, NULL,
