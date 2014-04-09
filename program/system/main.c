@@ -289,25 +289,6 @@ void flightControl_task()
 	}
 }
 
-void debug_print_task()
-{
-	//Waiting for system finish initialize
-	while (sys_status == SYSTEM_UNINITIALIZED);
-
-	/* Show the Initialization message */
-	serial.printf("[System status]Initialized successfully!\n\r");
-
-	while (1) {
-
-		serial.printf("you are calling printf!\r\n");
-
-
-
-
-		vTaskDelay(100);
-	}
-}
-
 void check_task()
 {
 	//Waiting for system finish initialize
@@ -390,15 +371,6 @@ int main(void)
 		    (signed portCHAR *) "Shell",
 		    2048, NULL,
 		    tskIDLE_PRIORITY + 7, NULL);
-
-#if configDEBUG_PRINTF
-
-	xTaskCreate(debug_print_task,
-		    (signed portCHAR *) "Debug printf",
-		    2048, NULL,
-		    tskIDLE_PRIORITY + 5, NULL);
-#endif
-
 
 	xTaskCreate(flightControl_task,
 		    (signed portCHAR *) "Flight control",
