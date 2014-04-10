@@ -91,10 +91,10 @@ void correction_task()
 
 			static uint8_t BaroCnt = 0;
 
-#ifdef Use_Barometer
 			/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
 			MPU9150_Read(IMU_Buf);
 
+#ifdef Use_Barometer
 			/* 100Hz, Read Barometer */
 			BaroCnt++;
 
@@ -166,12 +166,12 @@ void flightControl_task()
 		int16_t Exp_Thr = 0, Exp_Pitch = 0, Exp_Roll = 0, Exp_Yaw = 0;
 		uint8_t safety = 0;
 
-#ifdef Use_Barometer
 		static uint8_t BaroCnt = 0;
 
 		/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
 		MPU9150_Read(IMU_Buf);
 
+#ifdef Use_Barometer
 		/* 100Hz, Read Barometer */
 		BaroCnt++;
 
