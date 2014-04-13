@@ -12,6 +12,7 @@
 #include "algorithm_quaternion.h"
 #include "QCopterFC_ctrl.h"
 #include "sys_manager.h"
+#include "module_motor.h" 
 #include "stm32f4_sdio.h"
 
 #include "FreeRTOS.h"
@@ -195,7 +196,9 @@ void shell_attitude(char parameter[][MAX_CMD_LEN], int par_cnt)
 void shell_gui(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	while(1){
-		printf("%f %f\n\r", AngE.Pitch, AngE.Roll);
+		printf("%f %f %d %d %d %d\n\r", AngE.Pitch, AngE.Roll, PWM_Motor1, PWM_Motor2, PWM_Motor3, PWM_Motor4);
+		//printf("%f %f %d %d %d %d\n\r", AngE.Pitch, AngE.Roll, global_var[MOTOR1].param, global_var[MOTOR2].param, global_var[MOTOR3].param, global_var[MOTOR4].param);
+		
 		vTaskDelay(10);
 	}
 }
