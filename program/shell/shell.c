@@ -15,6 +15,7 @@ void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_license(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_display(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_gui(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -28,6 +29,7 @@ enum SHELL_CMD_ID {
 	sdsave_ID,
 	license_ID,
 	display_ID,
+	gui_ID,
 	SHELL_CMD_CNT
 };
 
@@ -43,6 +45,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(sdsave, shell),
 	CMD_DEF(license, shell),
 	CMD_DEF(display, shell),
+	CMD_DEF(gui, shell),
 };
 
 /**** Shell task **********************************************************************/
@@ -110,6 +113,8 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	serial.printf("sdinfo\tShow SD card informations.\n\r");
 	serial.printf("sdsave\tSave PID informations in the SD card.\n\r");
 	serial.printf("display\t['z'=show angle;'x'=show PID parameter;'c'=show channel of PWM;'q'=quit]\n\r");
+	serial.printf("gui\tSupport real time display by python.\n\r");
+
 }
 
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
@@ -226,4 +231,11 @@ void shell_display(char parameter[][MAX_CMD_LEN], int par_cnt)
 			break;
 	}
 }
-
+//Support real time to display GUI by python.
+void shell_gui(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	while(1){
+		printf("%f %f %f\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
+		vTaskDelay(50);
+	}
+}
