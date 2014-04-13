@@ -91,10 +91,10 @@ void correction_task()
 
 			static uint8_t BaroCnt = 0;
 
-
 			/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
 			MPU9150_Read(IMU_Buf);
 
+#ifdef Use_Barometer
 			/* 100Hz, Read Barometer */
 			BaroCnt++;
 
@@ -102,6 +102,7 @@ void correction_task()
 				MS5611_Read(&Baro, MS5611_D1_OSR_4096);
 				BaroCnt = 0;
 			}
+#endif
 
 			Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
 			Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
@@ -165,14 +166,12 @@ void flightControl_task()
 		int16_t Exp_Thr = 0, Exp_Pitch = 0, Exp_Roll = 0, Exp_Yaw = 0;
 		uint8_t safety = 0;
 
-
 		static uint8_t BaroCnt = 0;
-
-
 
 		/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
 		MPU9150_Read(IMU_Buf);
 
+#ifdef Use_Barometer
 		/* 100Hz, Read Barometer */
 		BaroCnt++;
 
@@ -180,7 +179,7 @@ void flightControl_task()
 			MS5611_Read(&Baro, MS5611_D1_OSR_4096);
 			BaroCnt = 0;
 		}
-
+#endif
 		Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
 		Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
 		Acc.Z  = (s16)((IMU_Buf[4]  << 8) | IMU_Buf[5]);
@@ -289,25 +288,6 @@ void flightControl_task()
 	}
 }
 
-void debug_print_task()
-{
-	//Waiting for system finish initialize
-	while (sys_status == SYSTEM_UNINITIALIZED);
-
-	/* Show the Initialization message */
-	serial.printf("[System status]Initialized successfully!\n\r");
-
-	while (1) {
-
-		serial.printf("you are calling printf!\r\n");
-
-
-
-
-		vTaskDelay(100);
-	}
-}
-
 void check_task()
 {
 	//Waiting for system finish initialize
@@ -376,41 +356,38 @@ int main(void)
 
 	vSemaphoreCreateBinary(serial_tx_wait_sem);
 	serial_rx_queue = xQueueCreate(1, sizeof(serial_msg));
-	
+
+	/* IMU Initialization, Attitude Correction Flight Control */	
 	xTaskCreate(check_task,
-		    (signed portCHAR *) "Initial checking",
-		    512, NULL,
-		    tskIDLE_PRIORITY + 5, NULL);
+		(signed portCHAR *) "Initial checking",
+		512, NULL,
+		tskIDLE_PRIORITY + 5, NULL);
 	xTaskCreate(correction_task,
-		    (signed portCHAR *) "System correction",
-		    4096, NULL,
-		    tskIDLE_PRIORITY + 9, &correction_task_handle);
-
-	xTaskCreate(shell_task,
-		    (signed portCHAR *) "Shell",
-		    2048, NULL,
-		    tskIDLE_PRIORITY + 7, NULL);
-
-#if configDEBUG_PRINTF
-
-	xTaskCreate(debug_print_task,
-		    (signed portCHAR *) "Debug printf",
-		    2048, NULL,
-		    tskIDLE_PRIORITY + 5, NULL);
-#endif
-
+		(signed portCHAR *) "System correction",
+		4096, NULL,
+		tskIDLE_PRIORITY + 9, &correction_task_handle);
 
 	xTaskCreate(flightControl_task,
-		    (signed portCHAR *) "Flight control",
-		    4096, NULL,
-		    tskIDLE_PRIORITY + 9, &FlightControl_Handle);
+		(signed portCHAR *) "Flight control",
+		4096, NULL,
+		tskIDLE_PRIORITY + 9, &FlightControl_Handle);
+
+	/* QuadCopter Developing Shell, Ground Station Software */
+	xTaskCreate(shell_task,
+		(signed portCHAR *) "Shell",
+		2048, NULL,
+		tskIDLE_PRIORITY + 7, NULL);
+
 #if configSTATUS_GUI
 	xTaskCreate(nrf_sending_task,
-	(signed portCHAR *) "NRF Sending",
-	1024, NULL,
-	tskIDLE_PRIORITY + 5, NULL);
+		(signed portCHAR *) "NRF Sending",
+		1024, NULL,
+		tskIDLE_PRIORITY + 5, NULL);
 #endif
 
+	/* Shell command handling task */
+
+	/* System rrror handler*/
         xTaskCreate(error_handler_task,
         (signed portCHAR *) "Error handler",
         512, NULL,
