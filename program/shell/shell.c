@@ -235,7 +235,8 @@ void shell_display(char parameter[][MAX_CMD_LEN], int par_cnt)
 void shell_gui(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	while(1){
-		printf("%f %f %f\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
+		serial.printf("%f %f %d %d %d %d\n\r", AngE.Pitch, AngE.Roll, PWM_Motor1, PWM_Motor2, PWM_Motor3, PWM_Motor4);
+		//serial.printf("%f %f %d %d %d %d\n\r", AngE.Pitch, AngE.Roll, global_var[MOTOR1].param, global_var[MOTOR2].param, global_var[MOTOR3].param, global_var[MOTOR4].param);
 		vTaskDelay(50);
 	}
 }
