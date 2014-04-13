@@ -4,6 +4,7 @@
 
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
+xTaskHandle watch_task_handle = NULL;
 
 volatile int16_t ACC_FIFO[3][256] = {{0}};
 volatile int16_t GYR_FIFO[3][256] = {{0}};
@@ -386,8 +387,12 @@ int main(void)
 #endif
 
 	/* Shell command handling task */
+	xTaskCreate(watch_task,
+		(signed portCHAR *) "Watch",
+		1024, NULL,
+		tskIDLE_PRIORITY + 7, &watch_task_handle);
 
-	/* System rrror handler*/
+	/* System error handler*/
         xTaskCreate(error_handler_task,
         (signed portCHAR *) "Error handler",
         512, NULL,
@@ -395,6 +400,7 @@ int main(void)
 
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);
+	vTaskSuspend(watch_task_handle);
 
 	vTaskStartScheduler();
 

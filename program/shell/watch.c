@@ -4,9 +4,31 @@
 
 #include "QuadCopterConfig.h"
 
+extern xTaskHandle watch_task_handle;
+
+char (*watch_arguments)[MAX_CMD_LEN];
+int watch_arg_cnt;
+
+void watch_gui()
+{
+	while(1) {
+		serial.printf("%f %f %f %f %f %f\n\r",
+			AngE.Pitch, AngE.Roll,
+			global_var[MOTOR1].param, global_var[MOTOR2].param,
+			global_var[MOTOR3].param, global_var[MOTOR4].param
+		);
+
+		vTaskDelay(20);
+	}
+}
+
 void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
+	watch_arguments = parameter;
+	watch_arg_cnt = par_cnt;	
+
 	/* Enable the watch task */
+	vTaskResume(watch_task_handle);
 
 	/* Waiting for interruption signal */
 	while(1) {
@@ -15,7 +37,7 @@ void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 		//Get the interrupt signal
 		if(signal == NULL) {
 			//Disable the task
-			
+			vTaskSuspend(watch_task_handle);	
 
 			//Exit
 			break;
@@ -25,4 +47,9 @@ void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 void watch_task()
 {
+	while(1) {
+		if(strcmp(watch_arguments[1], "-gui")) {
+			watch_gui();
+		}
+	}
 }
