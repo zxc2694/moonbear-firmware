@@ -275,6 +275,10 @@ void flightControl_task()
 
 
 			if (safety == ENGINE_OFF) {
+				global_var[MOTOR1].param = PWM_MOTOR_MIN;
+				global_var[MOTOR2].param = PWM_MOTOR_MIN;
+				global_var[MOTOR3].param = PWM_MOTOR_MIN;
+				global_var[MOTOR4].param = PWM_MOTOR_MIN;
 				Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
 			} else {
