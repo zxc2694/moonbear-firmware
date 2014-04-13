@@ -234,8 +234,13 @@ void shell_display(char parameter[][MAX_CMD_LEN], int par_cnt)
 //Support real time to display GUI by python.
 void shell_gui(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
-	while(1){
-		printf("%f %f %f\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
+	while(1) {
+		serial.printf("%f %f %f %f %f %f\n\r", 
+			AngE.Pitch, AngE.Roll, 
+			global_var[MOTOR1].param, global_var[MOTOR2].param,
+			global_var[MOTOR3].param, global_var[MOTOR4].param
+		);
+		
 		vTaskDelay(50);
 	}
 }
