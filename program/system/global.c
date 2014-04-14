@@ -1,6 +1,6 @@
 #include "QuadCopterConfig.h"
 
-global_struct global_var[] = {
+global_t global_var[] = {
 	[PWM1_CCR] = {.name = "PWM1", .value = 0},
 	[PWM2_CCR] = {.name = "PWM2", .value = 0},
 	[PWM3_CCR] = {.name = "PWM3", .value = 0},

@@ -49,16 +49,16 @@ typedef __IO enum {
 } SD_STATUS;
 
 
-typedef struct global_struct {
+typedef struct global_t {
 	char *name;
 	__IO float value;
-} global_struct;
+} global_t;
 
 typedef struct {
 	char ch;
 } serial_msg;
 
-global_struct global_var[GLOABAL_PARAM_COUNT];
+global_t global_var[GLOABAL_PARAM_COUNT];
 
 extern SYSTEM_STATUS sys_status;
 extern SD_STATUS SD_status;
