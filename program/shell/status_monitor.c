@@ -166,9 +166,9 @@ void print_error_msg(char *error_msg)
 
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
-	int last_rc_exp_pitch = global_var[RC_EXP_PITCH].param;
-	int last_rc_exp_roll = global_var[RC_EXP_ROLL].param;
-	int last_rc_exp_yaw = global_var[RC_EXP_YAW].param;
+	int last_rc_exp_pitch = global_var[RC_EXP_PITCH].value;
+	int last_rc_exp_roll = global_var[RC_EXP_ROLL].value;
+	int last_rc_exp_yaw = global_var[RC_EXP_YAW].value;
 
 	while(1) {	
 		linenoiseSetCompletionCallback(monitor_linenoise_completion);
@@ -195,13 +195,13 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 		serial.printf("--------------------------------------------------------------\n\r");
 
 		serial.printf("RC Messages\tCurrent\tLast\n\r");
-		serial.printf("Pitch(expect)\t%f\t%f\n\r", global_var[RC_EXP_PITCH].param, last_rc_exp_pitch);
-		serial.printf("Roll(expect)\t%f\t%f\n\r", global_var[RC_EXP_ROLL].param, last_rc_exp_roll);
-		serial.printf("Yaw(expect)\t%f\t%f\n\r", global_var[RC_EXP_YAW].param, last_rc_exp_yaw);	
+		serial.printf("Pitch(expect)\t%f\t%f\n\r", global_var[RC_EXP_PITCH].value, last_rc_exp_pitch);
+		serial.printf("Roll(expect)\t%f\t%f\n\r", global_var[RC_EXP_ROLL].value, last_rc_exp_roll);
+		serial.printf("Yaw(expect)\t%f\t%f\n\r", global_var[RC_EXP_YAW].value, last_rc_exp_yaw);	
 
-		serial.printf("Throttle\t%d\n\r", global_var[RC_EXP_THR].param);
+		serial.printf("Throttle\t%d\n\r", global_var[RC_EXP_THR].value);
 
- 		if(global_var[PWM5_CCR].param > (MAX_PWM5_INPUT + MIN_PWM5_INPUT) / 2)
+ 		if(global_var[PWM5_CCR].value > (MAX_PWM5_INPUT + MIN_PWM5_INPUT) / 2)
 			serial.printf("Engine\t\t%s\n\r", "Off");
 		else
 			serial.printf("Engine\t\t%s\n\r", "On");
@@ -262,9 +262,9 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt)
 			break;
 
 		/* Update the record of RC expect attitudes */
-		last_rc_exp_pitch = global_var[RC_EXP_PITCH].param;
-		last_rc_exp_roll = global_var[RC_EXP_ROLL].param;
-		last_rc_exp_yaw = global_var[RC_EXP_YAW].param;
+		last_rc_exp_pitch = global_var[RC_EXP_PITCH].value;
+		last_rc_exp_roll = global_var[RC_EXP_ROLL].value;
+		last_rc_exp_yaw = global_var[RC_EXP_YAW].value;
 
 	}
 

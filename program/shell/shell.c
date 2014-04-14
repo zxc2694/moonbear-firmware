@@ -229,10 +229,10 @@ void shell_display(char parameter[][MAX_CMD_LEN], int par_cnt)
 		}
 		else if(serial.getc() == 'c'){
 			serial.printf("PWM1_CCR: %f\t,PWM2_CCR: %f\t,PWM3_CCR: %f\t,PWM4_CCR: %f\n\r",
-				global_var[PWM1_CCR].param,
-				global_var[PWM2_CCR].param,
-				global_var[PWM3_CCR].param,
-				global_var[PWM4_CCR].param
+				global_var[PWM1_CCR].value,
+				global_var[PWM2_CCR].value,
+				global_var[PWM3_CCR].value,
+				global_var[PWM4_CCR].value
 			);
 			vTaskDelay(50);
 		}

@@ -230,16 +230,16 @@ void flightControl_task()
 
 			/* Get Attitude Angle */
 			AHRS_Update();
-			global_var[TRUE_ROLL].param = AngE.Roll;
-			global_var[TRUE_PITCH].param = AngE.Pitch;
-			global_var[TRUE_YAW].param = AngE.Yaw;
+			global_var[TRUE_ROLL].value = AngE.Roll;
+			global_var[TRUE_PITCH].value = AngE.Pitch;
+			global_var[TRUE_YAW].value = AngE.Yaw;
 
 			/*Get RC Control*/
 			Update_RC_Control(&Exp_Roll, &Exp_Pitch, &Exp_Yaw, &Exp_Thr, &safety);
-			global_var[RC_EXP_THR].param  = Exp_Thr;
-			global_var[RC_EXP_ROLL].param = Exp_Roll;
-			global_var[RC_EXP_PITCH].param = Exp_Pitch;
-			global_var[RC_EXP_YAW].param = Exp_Yaw;
+			global_var[RC_EXP_THR].value  = Exp_Thr;
+			global_var[RC_EXP_ROLL].value = Exp_Roll;
+			global_var[RC_EXP_PITCH].value = Exp_Pitch;
+			global_var[RC_EXP_YAW].value = Exp_Yaw;
 			/* Get ZeroErr */
 			PID_Pitch.ZeroErr = (float)((s16)Exp_Pitch);
 			PID_Roll.ZeroErr  = (float)((s16)Exp_Roll);
@@ -252,9 +252,9 @@ void flightControl_task()
 			Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ) + 3 * (s16)Exp_Yaw;
 			Thr   = (s16)Exp_Thr;
 
-			global_var[PID_ROLL].param = Roll;
-			global_var[PID_PITCH].param = Pitch;
-			global_var[PID_YAW].param = Yaw;
+			global_var[PID_ROLL].value = Roll;
+			global_var[PID_PITCH].value = Pitch;
+			global_var[PID_YAW].value = Yaw;
 
 
 			/* Motor Ctrl */
@@ -263,10 +263,10 @@ void flightControl_task()
 			Final_M3 = Thr - Pitch + Roll - Yaw;
 			Final_M4 = Thr - Pitch - Roll + Yaw;
 
-			global_var[MOTOR1].param = Final_M1;
-			global_var[MOTOR2].param = Final_M2;
-			global_var[MOTOR3].param = Final_M3;
-			global_var[MOTOR4].param = Final_M4;
+			global_var[MOTOR1].value = Final_M1;
+			global_var[MOTOR2].value = Final_M2;
+			global_var[MOTOR3].value = Final_M3;
+			global_var[MOTOR4].value = Final_M4;
 
 			Bound(Final_M1, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
 			Bound(Final_M2, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
@@ -275,10 +275,10 @@ void flightControl_task()
 
 
 			if (safety == ENGINE_OFF) {
-				global_var[MOTOR1].param = PWM_MOTOR_MIN;
-				global_var[MOTOR2].param = PWM_MOTOR_MIN;
-				global_var[MOTOR3].param = PWM_MOTOR_MIN;
-				global_var[MOTOR4].param = PWM_MOTOR_MIN;
+				global_var[MOTOR1].value = PWM_MOTOR_MIN;
+				global_var[MOTOR2].value = PWM_MOTOR_MIN;
+				global_var[MOTOR3].value = PWM_MOTOR_MIN;
+				global_var[MOTOR4].value = PWM_MOTOR_MIN;
 				Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
 			} else {
@@ -320,9 +320,9 @@ void nrf_sending_task()
 
 	nRF_TX_Mode();
 	while(1){
-		package.roll = (int16_t)global_var[TRUE_ROLL].param*100;
-		package.pitch  = (int16_t)global_var[TRUE_PITCH].param*100;
-		package.yaw = (int16_t)global_var[TRUE_YAW].param*100;
+		package.roll = (int16_t)global_var[TRUE_ROLL].value*100;
+		package.pitch  = (int16_t)global_var[TRUE_PITCH].value*100;
+		package.yaw = (int16_t)global_var[TRUE_YAW].value*100;
 		package.acc_x = Acc.X;
 		package.acc_y = Acc.Y;
 		package.acc_z = Acc.Z;

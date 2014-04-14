@@ -50,10 +50,8 @@ typedef __IO enum {
 
 
 typedef struct global_struct {
-
-	char *param_name;
-	__IO float param;
-
+	char *name;
+	__IO float value;
 } global_struct;
 
 typedef struct {
