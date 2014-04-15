@@ -27,8 +27,8 @@ global_t global_var[] = {
 	[PID_YAW] = {.name = "PID.yaw"}
 };
 
-SYSTEM_STATUS sys_status = SYSTEM_UNINITIALIZED;
-SD_STATUS SD_status;
+status_t sys_status = SYSTEM_UNINITIALIZED;
+status_t SD_status;
 
 xSemaphoreHandle serial_tx_wait_sem = NULL;
 xQueueHandle serial_rx_queue = NULL;

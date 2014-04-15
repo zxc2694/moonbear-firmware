@@ -44,14 +44,15 @@ typedef __IO enum {
 	SD_ERSAVE
 } SD_STATUS;
 
+typedef int status_t;
+
+typedef float pwm_t;
+typedef float attitude_t;
 
 typedef struct global_t {
 	char *name;
 	__IO float value;
 } global_t;
-
-typedef float pwm_t;
-typedef float attitude_t;
 
 typedef struct {
 	char ch;
@@ -59,8 +60,8 @@ typedef struct {
 
 global_t global_var[GLOABAL_PARAM_COUNT];
 
-extern SYSTEM_STATUS sys_status;
-extern SD_STATUS SD_status;
+extern status_t sys_status;
+extern status_t SD_status;
 
 extern xSemaphoreHandle serial_tx_wait_sem;
 extern xQueueHandle serial_rx_queue;

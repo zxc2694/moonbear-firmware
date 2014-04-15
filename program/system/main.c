@@ -16,7 +16,7 @@ volatile uint32_t Correction_Time = 0;
 
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 
-extern SYSTEM_STATUS sys_status;
+extern status_t sys_status;
 
 void vApplicationStackOverflowHook(xTaskHandle pxTask, signed char *pcTaskName)
 {
