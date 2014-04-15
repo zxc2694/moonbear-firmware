@@ -1,6 +1,6 @@
 #include "QuadCopterConfig.h"
 
-global_t global_var[] = {
+global_t variable[] = {
 	[PWM1_CCR] = {.name = "PWM1"},
 	[PWM2_CCR] = {.name = "PWM2"},
 	[PWM3_CCR] = {.name = "PWM3"},
@@ -28,7 +28,7 @@ global_t global_var[] = {
 };
 
 system_t system = {
-	.variable = global_var,
+	.variable = variable,
 	.status = SYSTEM_UNINITIALIZED
 };
 

@@ -14,8 +14,8 @@ void watch_gui()
 	while(1) {
 		serial.printf("%f %f %f %f %f %f\n\r",
 			AngE.Pitch, AngE.Roll,
-			global_var[MOTOR1].value, global_var[MOTOR2].value,
-			global_var[MOTOR3].value, global_var[MOTOR4].value
+			system.variable[MOTOR1].value, system.variable[MOTOR2].value,
+			system.variable[MOTOR3].value, system.variable[MOTOR4].value
 		);
 
 		vTaskDelay(20);

@@ -63,7 +63,9 @@ typedef struct {
 	char ch;
 } serial_msg;
 
-global_t global_var[GLOABAL_PARAM_COUNT];
+global_t variable[GLOABAL_PARAM_COUNT];
+
+extern system_t system;
 
 extern status_t sys_status;
 extern status_t SD_status;
