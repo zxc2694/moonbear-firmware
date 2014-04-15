@@ -24,6 +24,7 @@ global_t variable[] = {
 	[TRUE_YAW] = {.name = "IMU.yaw"},
 
 	[PID_PITCH] = {.name = "PID.pitch"},
+	[PID_ROLL] = {.name = "PID.roll"},
 	[PID_YAW] = {.name = "PID.yaw"}
 };
 
