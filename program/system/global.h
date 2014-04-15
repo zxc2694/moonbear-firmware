@@ -49,10 +49,15 @@ typedef int status_t;
 typedef float pwm_t;
 typedef float attitude_t;
 
-typedef struct global_t {
+typedef struct  {
 	char *name;
 	__IO float value;
 } global_t;
+
+typedef struct {
+	global_t *variable;
+	status_t status;	
+} system_t;
 
 typedef struct {
 	char ch;

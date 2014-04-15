@@ -27,6 +27,11 @@ global_t global_var[] = {
 	[PID_YAW] = {.name = "PID.yaw"}
 };
 
+system_t system = {
+	.variable = global_var,
+	.status = SYSTEM_UNINITIALIZED
+};
+
 status_t sys_status = SYSTEM_UNINITIALIZED;
 status_t SD_status;
 
