@@ -29,6 +29,7 @@ global_t variable[] = {
 
 system_t system = {
 	.variable = variable,
+	.var_count = SYS_VAR_CNT,
 	.status = SYSTEM_UNINITIALIZED
 };
 

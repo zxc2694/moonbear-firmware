@@ -24,7 +24,7 @@ enum {
 	MOTOR2,
 	MOTOR3,
 	MOTOR4,
-	GLOABAL_PARAM_COUNT
+	SYS_VAR_CNT
 };
 
 typedef __IO enum {
@@ -56,6 +56,7 @@ typedef struct  {
 
 typedef struct {
 	global_t *variable;
+	int var_count;
 	status_t status;	
 } system_t;
 
@@ -63,7 +64,7 @@ typedef struct {
 	char ch;
 } serial_msg;
 
-global_t variable[GLOABAL_PARAM_COUNT];
+global_t variable[SYS_VAR_CNT];
 
 extern system_t system;
 
