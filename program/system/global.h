@@ -67,7 +67,6 @@ global_t variable[GLOABAL_PARAM_COUNT];
 
 extern system_t system;
 
-extern status_t sys_status;
 extern status_t SD_status;
 
 extern xSemaphoreHandle serial_tx_wait_sem;

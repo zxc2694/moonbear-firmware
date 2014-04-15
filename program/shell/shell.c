@@ -62,7 +62,7 @@ void shell_linenoise_completion(const char *buf, linenoiseCompletions *lc)
 void shell_task()
 {
 	//Waiting for system finish initialize
-        while (sys_status != SYSTEM_INITIALIZED);
+        while (system.status != SYSTEM_INITIALIZED);
 
 	/* Clear the screen */
 	serial.printf("\x1b[H\x1b[2J");

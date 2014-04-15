@@ -32,7 +32,6 @@ system_t system = {
 	.status = SYSTEM_UNINITIALIZED
 };
 
-status_t sys_status = SYSTEM_UNINITIALIZED;
 status_t SD_status;
 
 xSemaphoreHandle serial_tx_wait_sem = NULL;

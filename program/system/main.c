@@ -16,8 +16,6 @@ volatile uint32_t Correction_Time = 0;
 
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 
-extern status_t sys_status;
-
 void vApplicationStackOverflowHook(xTaskHandle pxTask, signed char *pcTaskName)
 {
 	while(1) {
@@ -50,7 +48,7 @@ void system_init(void)
 
 	//SD Config
 	if((SD_status = SD_Init()) != SD_OK)
-		sys_status = SYSTEM_ERROR_SD;
+		system.status = SYSTEM_ERROR_SD;
 
 	PID_Init(&PID_Pitch, 4.0, 0.0, 1.5);
 	PID_Init(&PID_Roll, 4.0, 0.0, 1.5);
@@ -74,8 +72,8 @@ void system_init(void)
 	SetLED(LED_B, ENABLE);
 
 	//Check if no error
-	if(sys_status != SYSTEM_ERROR_SD)
-		sys_status = SYSTEM_INITIALIZED;
+	if(system.status != SYSTEM_ERROR_SD)
+		system.status = SYSTEM_INITIALIZED;
 
 }
 
@@ -83,7 +81,7 @@ void correction_task()
 {
 	ErrorStatus sensor_correct = ERROR;
 
-	while (sys_status == SYSTEM_UNINITIALIZED);
+	while (system.status == SYSTEM_UNINITIALIZED);
 
 	while ( sensor_correct == ERROR ) {
 
@@ -152,8 +150,8 @@ void correction_task()
 void flightControl_task()
 {
 	//Waiting for system finish initialize
-	while (sys_status != SYSTEM_INITIALIZED);
-	sys_status = SYSTEM_FLIGHT_CONTROL;
+	while (system.status != SYSTEM_INITIALIZED);
+	system.status = SYSTEM_FLIGHT_CONTROL;
 	while (1) {
 		GPIO_ToggleBits(GPIOC, GPIO_Pin_7);
 		uint8_t IMU_Buf[20] = {0};
@@ -296,12 +294,12 @@ void flightControl_task()
 void check_task()
 {
 	//Waiting for system finish initialize
-	while (sys_status != SYSTEM_INITIALIZED);
+	while (system.status != SYSTEM_INITIALIZED);
 
 	while (remote_signal_check() == NO_SIGNAL);
 	SetLED(LED_B, DISABLE);
 	vTaskResume(correction_task_handle);
-	while(sys_status != SYSTEM_FLIGHT_CONTROL);
+	while(system.status != SYSTEM_FLIGHT_CONTROL);
 	vTaskDelay(2000);
 	SetLED(LED_R, ENABLE);
 	SetLED(LED_G, ENABLE);
@@ -316,7 +314,7 @@ void nrf_sending_task()
 	nrf_package package;
 
 	//Waiting for system finish initialize
-	while (sys_status == SYSTEM_UNINITIALIZED);
+	while (system.status == SYSTEM_UNINITIALIZED);
 
 	nRF_TX_Mode();
 	while(1){
@@ -338,8 +336,8 @@ void nrf_sending_task()
 
 void error_handler_task()
 {
-	while (sys_status != SYSTEM_ERROR_SD || sys_status == SYSTEM_UNINITIALIZED) {
-		if(sys_status == SYSTEM_INITIALIZED)
+	while (system.status != SYSTEM_ERROR_SD || system.status == SYSTEM_UNINITIALIZED) {
+		if(system.status == SYSTEM_INITIALIZED)
 			vTaskDelete(NULL);
 	}
 
