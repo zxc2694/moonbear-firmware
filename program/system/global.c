@@ -1,31 +1,30 @@
 #include "QuadCopterConfig.h"
 
 global_t global_var[] = {
-	[PWM1_CCR] = {.name = "PWM1", .value = 0},
-	[PWM2_CCR] = {.name = "PWM2", .value = 0},
-	[PWM3_CCR] = {.name = "PWM3", .value = 0},
-	[PWM4_CCR] = {.name = "PWM4", .value = 0},
-	[PWM5_CCR] = {.name = "PWM5", .value = 0},
+	[PWM1_CCR] = {.name = "PWM1"},
+	[PWM2_CCR] = {.name = "PWM2"},
+	[PWM3_CCR] = {.name = "PWM3"},
+	[PWM4_CCR] = {.name = "PWM4"},
+	[PWM5_CCR] = {.name = "PWM5"},
 
-	[RC_EXP_PITCH] = {.name = "RC.pitch", .value = 0},
-	[RC_EXP_ROLL] = {.name = "RC.roll", .value = 0},
-	[RC_EXP_YAW] = {.name = "RC.yaw", .value = 0},
-	[RC_EXP_THR] = {.name = "RC.throttle", .value = 0},
+	[MOTOR1] = {.name = "motor1"},
+	[MOTOR2] = {.name = "motor2"},
+	[MOTOR3] = {.name = "motor3"},
+	[MOTOR4] = {.name = "motor4"},
 
-	[TRUE_PITCH] = {.name = "IMU.yaw", .value = 0},
-	[TRUE_ROLL] = {.name = "IMU.roll", .value = 0},
-	[TRUE_YAW] = {.name = "IMU.yaw", .value = 0},
+	[NO_RC_SIGNAL_MSG] = {.name = "RC.status"},
 
-	[PID_ROLL] = {.name = "PID.roll", .value = 0},
-	[PID_PITCH] = {.name = "PID.pitch", .value = 0},
-	[PID_YAW] = {.name = "PID.yaw", .value = 0},
+	[RC_EXP_PITCH] = {.name = "RC.pitch"},
+	[RC_EXP_ROLL] = {.name = "RC.roll"},
+	[RC_EXP_YAW] = {.name = "RC.yaw"},
+	[RC_EXP_THR] = {.name = "RC.throttle"},
 
-	[NO_RC_SIGNAL_MSG] = {.name = "RC.status", .value = 0},
+	[TRUE_PITCH] = {.name = "IMU.yaw"},
+	[TRUE_ROLL] = {.name = "IMU.roll"},
+	[TRUE_YAW] = {.name = "IMU.yaw"},
 
-	[MOTOR1] = {.name = "motor1", .value = 0},
-	[MOTOR2] = {.name = "motor2", .value = 0},
-	[MOTOR3] = {.name = "motor3", .value = 0},
-	[MOTOR4] = {.name = "motor4", .value = 0}
+	[PID_PITCH] = {.name = "PID.pitch"},
+	[PID_YAW] = {.name = "PID.yaw"}
 };
 
 SYSTEM_STATUS sys_status = SYSTEM_UNINITIALIZED;
