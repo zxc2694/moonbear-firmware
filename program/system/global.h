@@ -1,12 +1,7 @@
 #ifndef __SYS_MANAGER_H
 #define __SYS_MANAGER_H
 
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "semphr.h"
-
-#include "stm32f4xx.h"
+#include "QuadCopterConfig.h"
 
 enum {
 	PWM1_CCR = 0,
@@ -31,6 +26,7 @@ enum {
 	MOTOR4,
 	GLOABAL_PARAM_COUNT
 };
+
 typedef __IO enum {
 	SYSTEM_UNINITIALIZED,
 	SYSTEM_INITIALIZED,
@@ -53,6 +49,9 @@ typedef struct global_t {
 	char *name;
 	__IO float value;
 } global_t;
+
+typedef float pwm_t;
+typedef float attitude_t;
 
 typedef struct {
 	char ch;
