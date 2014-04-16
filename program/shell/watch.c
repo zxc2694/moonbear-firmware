@@ -87,7 +87,7 @@ void watch_task()
 		int i;
 		for(i = 0; i < watch_arg_cnt; i++) {
 			find_var = find_variable(watch_arguments[i]);
-			serial.printf("%s : %d\n\r", watch_arguments[i], find_var->value);
+			serial.printf("%s : %f\n\r", watch_arguments[i], find_var->value);
 		}
 
 		serial.printf("<Delay 1 sec ...>\n\r");
