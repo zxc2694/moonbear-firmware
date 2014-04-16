@@ -9,6 +9,11 @@ extern xTaskHandle watch_task_handle;
 char (*watch_arguments)[MAX_CMD_LEN];
 int watch_arg_cnt;
 
+/**
+  * @brief  Search the variable by name in the system variables
+  * @param  name (pointer of char)
+  * @retval pointer of finded variable
+  */
 global_t *find_variable(char *name) {
 	int i;
 	for(i = 0; i < system.var_count; i++) {
@@ -20,6 +25,11 @@ global_t *find_variable(char *name) {
 	return 0;
 }
 
+/**
+  * @brief  GUI Plotting mode of watch command
+  * @param  None
+  * @retval None
+  */
 void watch_gui()
 {
 	while(1) {
@@ -33,6 +43,11 @@ void watch_gui()
 	}
 }
 
+/**
+  * @brief  watch command handler
+  * @param  None
+  * @retval None
+  */
 void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	watch_arguments = parameter;
@@ -74,23 +89,30 @@ void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 	}
 }
 
+/**
+  * @brief  watch command (Shell) handling task
+  * @param  None
+  * @retval None
+  */
 void watch_task()
 {
 	global_t *find_var;
 
 	while(1) {
+		/* GUI Plotting mode */
 		if(strcmp(watch_arguments[0], "-gui") == 0) {
 			watch_gui();
 			continue;
 		}
 
+		/* Data watching mode */
 		int i;
 		for(i = 0; i < watch_arg_cnt; i++) {
 			find_var = find_variable(watch_arguments[i]);
 			serial.printf("%s : %f\n\r", watch_arguments[i], find_var->value);
 		}
 
-		serial.printf("<Delay 1 sec ...>\n\r");
+		serial.printf("\n\r");
 
 		vTaskDelay(1000);
 	}
