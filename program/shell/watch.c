@@ -4,6 +4,12 @@
 
 #include "QuadCopterConfig.h"
 
+enum {
+	TASK_RUNNING,
+	TASK_INTERRUPT
+};
+
+status_t task_status;
 extern xTaskHandle watch_task_handle;
 
 char (*watch_arguments)[MAX_CMD_LEN];
@@ -39,6 +45,9 @@ void watch_gui()
 			system.variable[MOTOR3].value, system.variable[MOTOR4].value
 		);
 
+		if(task_status == TASK_INTERRUPT)
+			break;
+
 		vTaskDelay(20);
 	}
 }
@@ -72,6 +81,7 @@ void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 	serial.printf("Refresh time: 1.0s\n\r");
 
 	/* Enable the watch task */
+	task_status = TASK_RUNNING;
 	vTaskResume(watch_task_handle);
 
 	/* Waiting for interruption signal */
@@ -81,7 +91,7 @@ void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 		//Get the interrupt signal
 		if(signal == NULL) {
 			//Disable the task
-			vTaskSuspend(watch_task_handle);	
+			task_status = TASK_INTERRUPT;
 
 			//Exit
 			break;
@@ -108,6 +118,11 @@ void watch_task()
 		/* Data watching mode */
 		int i;
 		for(i = 0; i < watch_arg_cnt; i++) {
+			if(task_status == TASK_INTERRUPT) {
+				vTaskSuspend(0);
+				break;
+			}
+				
 			find_var = find_variable(watch_arguments[i]);
 			serial.printf("%s : %f\n\r", watch_arguments[i], find_var->value);
 		}
