@@ -10,9 +10,11 @@ enum {
 	TASK_INTERRUPT
 };
 
+/* Watch task related variable */
 status_t task_status;
 extern xTaskHandle watch_task_handle;
 
+/* The arguments of the shell */
 char (*watch_arguments)[MAX_CMD_LEN];
 int watch_arg_cnt;
 
@@ -46,9 +48,19 @@ void watch_gui()
 	);
 }
 
+/**
+  * @brief  Data printing mode of watch command
+  * @param  None
+  * @retval None
+  */
 void watch_data()
 {
 	global_t *find_var;
+
+	/* Clear the screen */
+	serial.puts("\x1b[H\x1b[2J");
+
+	serial.printf("Refresh time: 1.0s\n\r");
 
 	int i;
 	for(i = 0; i < watch_arg_cnt; i++) {
@@ -87,10 +99,6 @@ void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 		}
 	}
 
-	/* Prompt if it is not enabled as gui plotting mode */
-	if(strcmp(watch_arguments[0], "-gui") != 0)
-		serial.printf("Refresh time: 1.0s\n\r");
-
 	/* Enable the watch task */
 	task_status = TASK_RUNNING;
 	vTaskResume(watch_task_handle);
@@ -106,7 +114,10 @@ void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 			/* Synchronization, Waiting for the task stop signal */
 			while(task_status != TASK_STOP);
-			
+		
+			/* Clear the screen */
+			serial.puts("\x1b[H\x1b[2J");
+
 			break; //Exit
 		}
 	}
