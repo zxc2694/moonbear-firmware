@@ -6,6 +6,7 @@
 
 enum {
 	TASK_RUNNING,
+	TASK_STOP,
 	TASK_INTERRUPT
 };
 
@@ -38,17 +39,26 @@ global_t *find_variable(char *name) {
   */
 void watch_gui()
 {
-	while(1) {
-		serial.printf("%f %f %f %f %f %f\n\r",
-			AngE.Pitch, AngE.Roll,
-			system.variable[MOTOR1].value, system.variable[MOTOR2].value,
-			system.variable[MOTOR3].value, system.variable[MOTOR4].value
-		);
+	serial.printf("\n\r%f %f %f %f %f %f",
+		AngE.Pitch, AngE.Roll,
+		system.variable[MOTOR1].value, system.variable[MOTOR2].value,
+		system.variable[MOTOR3].value, system.variable[MOTOR4].value
+	);
+}
 
-		if(task_status == TASK_INTERRUPT)
+void watch_data()
+{
+	global_t *find_var;
+
+	int i;
+	for(i = 0; i < watch_arg_cnt; i++) {
+		if(task_status == TASK_INTERRUPT) {
+			vTaskSuspend(0);
 			break;
-
-		vTaskDelay(20);
+		}
+			
+		find_var = find_variable(watch_arguments[i]);
+		serial.printf("\n\r%s : %f", watch_arguments[i], find_var->value);
 	}
 }
 
@@ -77,8 +87,9 @@ void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 		}
 	}
 
-	/* Prompt */
-	serial.printf("Refresh time: 1.0s\n\r");
+	/* Prompt if it is not enabled as gui plotting mode */
+	if(strcmp(watch_arguments[0], "-gui") != 0)
+		serial.printf("Refresh time: 1.0s\n\r");
 
 	/* Enable the watch task */
 	task_status = TASK_RUNNING;
@@ -93,8 +104,10 @@ void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 			//Disable the task
 			task_status = TASK_INTERRUPT;
 
-			//Exit
-			break;
+			/* Synchronization, Waiting for the task stop signal */
+			while(task_status != TASK_STOP);
+			
+			break; //Exit
 		}
 	}
 }
@@ -106,29 +119,27 @@ void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
   */
 void watch_task()
 {
-	global_t *find_var;
-
+	int delay_time;
 	while(1) {
 		/* GUI Plotting mode */
 		if(strcmp(watch_arguments[0], "-gui") == 0) {
 			watch_gui();
-			continue;
-		}
-
-		/* Data watching mode */
-		int i;
-		for(i = 0; i < watch_arg_cnt; i++) {
-			if(task_status == TASK_INTERRUPT) {
-				vTaskSuspend(0);
-				break;
-			}
-				
-			find_var = find_variable(watch_arguments[i]);
-			serial.printf("%s : %f\n\r", watch_arguments[i], find_var->value);
+			delay_time = 50;
+		} else {
+		/* Data printing mode */
+			watch_data();
+			delay_time = 1000;
 		}
 
 		serial.printf("\n\r");
 
-		vTaskDelay(1000);
+		/* Capture the interrupt signal form the Shell */
+		if(task_status == TASK_INTERRUPT) {
+			task_status = TASK_STOP; //Stop signal
+			vTaskSuspend(0);
+		}
+
+		/* Delay, depending on the mode and the setting */
+		vTaskDelay(delay_time);
 	}
 }
