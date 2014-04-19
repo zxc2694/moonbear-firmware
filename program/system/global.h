@@ -1,12 +1,7 @@
 #ifndef __SYS_MANAGER_H
 #define __SYS_MANAGER_H
 
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "semphr.h"
-
-#include "stm32f4xx.h"
+#include "QuadCopterConfig.h"
 
 enum {
 	PWM1_CCR = 0,
@@ -29,8 +24,9 @@ enum {
 	MOTOR2,
 	MOTOR3,
 	MOTOR4,
-	GLOABAL_PARAM_COUNT
+	SYS_VAR_CNT
 };
+
 typedef __IO enum {
 	SYSTEM_UNINITIALIZED,
 	SYSTEM_INITIALIZED,
@@ -48,22 +44,31 @@ typedef __IO enum {
 	SD_ERSAVE
 } SD_STATUS;
 
+typedef int status_t;
 
-typedef struct global_struct {
+typedef float pwm_t;
+typedef float attitude_t;
 
-	char *param_name;
-	__IO float param;
+typedef struct  {
+	char *name;
+	__IO float value;
+} global_t;
 
-} global_struct;
+typedef struct {
+	global_t *variable;
+	int var_count;
+	status_t status;	
+} system_t;
 
 typedef struct {
 	char ch;
 } serial_msg;
 
-global_struct global_var[GLOABAL_PARAM_COUNT];
+global_t variable[SYS_VAR_CNT];
 
-extern SYSTEM_STATUS sys_status;
-extern SD_STATUS SD_status;
+extern system_t system;
+
+extern status_t SD_status;
 
 extern xSemaphoreHandle serial_tx_wait_sem;
 extern xQueueHandle serial_rx_queue;

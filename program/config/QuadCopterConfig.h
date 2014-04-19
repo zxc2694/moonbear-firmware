@@ -10,9 +10,6 @@
 #define configSTATUS_GUI		1
 #define configSTATUS_SHELL		1
 
-/* Debugging function */
-#define configDEBUG_PRINTF		0
-
 /* Set baudrate */
 #define Serial_Baudrate 57600
 
@@ -63,6 +60,7 @@
 #include "linenoise.h"
 #include "shell.h"
 #include "parser.h"
+#include "watch.h"
 
 //Debugger
 #include "test.h"
