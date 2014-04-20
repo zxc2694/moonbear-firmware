@@ -73,6 +73,26 @@ void Motor_Config(void)
 	PWM_Motor4 = PWM_MOTOR_MIN;
 }
 
+void Motor_Control(u16 motor1, u16 motor2, u16 motor3, u16 motor4)
+{
+	if (motor1 > PWM_MOTOR_MAX)      motor1 = PWM_MOTOR_MAX;
+	else if (motor1 < PWM_MOTOR_MIN) motor1 = PWM_MOTOR_MIN;
+
+	if (motor2 > PWM_MOTOR_MAX)      motor2 = PWM_MOTOR_MAX;
+	else if (motor2 < PWM_MOTOR_MIN) motor2 = PWM_MOTOR_MIN;
+
+	if (motor3 > PWM_MOTOR_MAX)      motor3 = PWM_MOTOR_MAX;
+	else if (motor3 < PWM_MOTOR_MIN) motor3 = PWM_MOTOR_MIN;
+
+	if (motor4 > PWM_MOTOR_MAX)      motor4 = PWM_MOTOR_MAX;
+	else if (motor4 < PWM_MOTOR_MIN) motor4 = PWM_MOTOR_MIN;
+
+	PWM_Motor1 = motor1;
+	PWM_Motor2 = motor2;
+	PWM_Motor3 = motor3;
+	PWM_Motor4 = motor4;
+}
+
 void PWM_Capture_Config()
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -156,25 +176,5 @@ void PWM_Capture_Config()
 	TIM_ITConfig(TIM2, TIM_IT_CC3, ENABLE);
 	TIM_ITConfig(TIM4, TIM_IT_CC1, ENABLE);
 	TIM_ITConfig(TIM4, TIM_IT_CC2, ENABLE);
-}
-
-void Motor_Control(u16 Motor1, u16 Motor2, u16 Motor3, u16 Motor4)
-{
-	if (Motor1 > PWM_MOTOR_MAX)      Motor1 = PWM_MOTOR_MAX;
-	else if (Motor1 < PWM_MOTOR_MIN) Motor1 = PWM_MOTOR_MIN;
-
-	if (Motor2 > PWM_MOTOR_MAX)      Motor2 = PWM_MOTOR_MAX;
-	else if (Motor2 < PWM_MOTOR_MIN) Motor2 = PWM_MOTOR_MIN;
-
-	if (Motor3 > PWM_MOTOR_MAX)      Motor3 = PWM_MOTOR_MAX;
-	else if (Motor3 < PWM_MOTOR_MIN) Motor3 = PWM_MOTOR_MIN;
-
-	if (Motor4 > PWM_MOTOR_MAX)      Motor4 = PWM_MOTOR_MAX;
-	else if (Motor4 < PWM_MOTOR_MIN) Motor4 = PWM_MOTOR_MIN;
-
-	PWM_Motor1 = Motor1;
-	PWM_Motor2 = Motor2;
-	PWM_Motor3 = Motor3;
-	PWM_Motor4 = Motor4;
 }
 
