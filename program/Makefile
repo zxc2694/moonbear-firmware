@@ -88,7 +88,6 @@ SRC+=$(DRIVER)/delay.c \
 	$(DRIVER)/i2c.c \
 	$(DRIVER)/sdio.c \
 	$(DRIVER)/spi.c \
-	$(DRIVER)/stm32f4_system.c
 
 CFLAGS+=-I$(MODULE)
 SRC+=$(MODULE)/board.c \
