@@ -105,7 +105,8 @@ SRC+=$(SYSTEM)/AHRS.c \
 	$(SYSTEM)/IMU_correct.c \
 	$(SYSTEM)/interrupt.c \
 	$(SYSTEM)/main.c \
-	$(SYSTEM)/remote_control.c
+	$(SYSTEM)/remote_control.c\
+	$(SYSTEM)/communication.c
 
 CFLAGS+=-I$(SHELL_)
 SRC+=$(SHELL_)/linenoise.c \
