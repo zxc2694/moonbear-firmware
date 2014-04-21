@@ -91,7 +91,7 @@ SRC+=$(DRIVER)/delay.c \
 	$(DRIVER)/stm32f4_system.c
 
 CFLAGS+=-I$(MODULE)
-SRC+=$(MODULE)/board.c \
+SRC+=$(MODULE)/led.c \
 	$(MODULE)/motor.c \
 	$(MODULE)/mpu9150.c \
 	$(MODULE)/ms5611.c \
