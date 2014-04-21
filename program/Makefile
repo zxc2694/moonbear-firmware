@@ -8,6 +8,7 @@ BIN_IMAGE=$(PROJECT).bin
 #Cross Compiler
 CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
+GDB=arm-none-eabi-gdb
 
 #============================================================================#
 
@@ -166,9 +167,16 @@ flash:
 openocd: flash
 	openocd -s /opt/openocd/share/openocd/scripts/ -f ./debug/openocd.cfg
 
+#Make cgdb
+cgdb:
+	cgdb -d $(GDB) -x ./debug/openocd_gdb.gdb
+
+#Make gdbtui
+gdbtui:
+	$(GDB) -tui -x ./debug/openocd_gdb.gdb
+
 #Make gdbauto
-gdbauto:
-	arm-none-eabi-gdb -tui -x ./debug/openocd_gdb.gdb
+gdbauto: cgdb
 
 #============================================================================#
 
