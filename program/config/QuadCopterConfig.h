@@ -37,6 +37,7 @@
 #include "AHRS.h"
 #include "remote_control.h"
 #include "IMU_correct.h"
+#include "communication.h"
 
 //Driver
 #include "stm32f4_system.h"
