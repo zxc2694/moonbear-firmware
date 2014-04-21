@@ -60,6 +60,30 @@ void Serial_Config(int buadrate) /* Tx:Pb10, Rx:Pb11 */
 	NVIC_Init(&NVIC_InitStruct);
 }
 
+void USART3_IRQHandler()
+{
+	long lHigherPriorityTaskWoken = pdFALSE;
+
+	serial_msg rx_msg;
+
+	if (USART_GetITStatus(USART3, USART_IT_TXE) != RESET) {
+		xSemaphoreGiveFromISR(serial_tx_wait_sem, &lHigherPriorityTaskWoken);
+
+		USART_ITConfig(USART3, USART_IT_TXE, DISABLE);
+
+	} else if (USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) {
+		rx_msg.ch = USART_ReceiveData(USART3);
+
+		if (!xQueueSendToBackFromISR(serial_rx_queue, &rx_msg, &lHigherPriorityTaskWoken))
+			portEND_SWITCHING_ISR(lHigherPriorityTaskWoken);
+
+	} else {
+		while (1);
+	}
+
+	portEND_SWITCHING_ISR(lHigherPriorityTaskWoken);
+}
+
 /* Serial Structure ----------------------------------------------------------*/
 
 /* Serial structure */
