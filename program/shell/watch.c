@@ -147,7 +147,7 @@ void watch_task()
 		/* Capture the interrupt signal form the Shell */
 		if(task_status == TASK_INTERRUPT) {
 			task_status = TASK_STOP; //Stop signal
-			vTaskSuspend(0);
+			vTaskSuspend(NULL);
 		}
 
 		/* Delay, depending on the mode and the setting */
