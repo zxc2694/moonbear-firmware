@@ -16,6 +16,7 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_license(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_display(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_gui_test(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -30,6 +31,7 @@ enum SHELL_CMD_ID {
 	license_ID,
 	display_ID,
 	watch_ID,
+	gui_test_ID,
 	SHELL_CMD_CNT
 };
 
@@ -45,6 +47,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(sdsave, shell),
 	CMD_DEF(license, shell),
 	CMD_DEF(display, shell),
+	CMD_DEF(gui_test, shell),
 	CMD_DEF(watch, shell)
 };
 
@@ -238,6 +241,27 @@ void shell_display(char parameter[][MAX_CMD_LEN], int par_cnt)
 		}
 		else if(serial.getc() == 'q') 
 			break;
+	}
+}
+
+void shell_gui_test(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	char buf[17] = {'\0'};
+	IMU_package package;
+
+	while(1) {
+		package.roll = (int16_t)system.variable[TRUE_ROLL].value*100;
+		package.pitch  = (int16_t)system.variable[TRUE_PITCH].value*100;
+		package.yaw = (int16_t)system.variable[TRUE_YAW].value*100;
+		package.acc_x = Acc.X;
+		package.acc_y = Acc.Y;
+		package.acc_z = Acc.Z;
+		package.gyro_x = Gyr.X;
+		package.gyro_y = Gyr.Y;
+		package.gyro_z = Gyr.Z;
+
+		generate_package(&package, (uint8_t*)buf);
+		send_package((uint8_t *)buf);		
 	}
 }
 
