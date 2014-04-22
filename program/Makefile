@@ -177,4 +177,4 @@ gdbauto: cgdb
 
 #============================================================================#
 
-.PHONY:all clean flash openocd gdbauto
+.PHONY:all clean flash openocd gdbauto gdbtui cgdb
