@@ -49,3 +49,7 @@ Linenoise hotkeys
 TODO
 ======================
 * Filter improvement
+* Height control implementation
+* Position control
+* Speed controll
+* GPS navigation and auto-pilot
