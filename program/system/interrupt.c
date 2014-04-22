@@ -43,9 +43,9 @@ void TIM2_IRQHandler(void)
 			current[0] =  TIM_GetCapture1(TIM2);
 
 			if (current[0] > pwm3_previous_value)
-				global_var[PWM3_CCR].param =  current[0] - pwm3_previous_value;
+				system.variable[PWM3_CCR].value =  current[0] - pwm3_previous_value;
 			else if (current[0] < pwm3_previous_value)
-				global_var[PWM3_CCR].param = 0xFFFF - pwm3_previous_value + current[0] ;
+				system.variable[PWM3_CCR].value = 0xFFFF - pwm3_previous_value + current[0] ;
 
 			pwm3_is_rising = 1;
 		}
@@ -74,9 +74,9 @@ void TIM2_IRQHandler(void)
 			current[1] =  TIM_GetCapture2(TIM2);
 
 			if (current[1] > pwm4_previous_value)
-				global_var[PWM4_CCR].param =  current[1] - pwm4_previous_value;
+				system.variable[PWM4_CCR].value =  current[1] - pwm4_previous_value;
 			else if (current[1] < pwm4_previous_value)
-				global_var[PWM4_CCR].param = 0xFFFF - pwm4_previous_value + current[1] ;
+				system.variable[PWM4_CCR].value = 0xFFFF - pwm4_previous_value + current[1] ;
 
 			pwm4_is_rising = 1;
 
@@ -106,9 +106,9 @@ void TIM2_IRQHandler(void)
 			current[2] =  TIM_GetCapture3(TIM2);
 
 			if (current[2] > pwm5_previous_value)
-				global_var[PWM5_CCR].param =  current[2] - pwm5_previous_value;
+				system.variable[PWM5_CCR].value =  current[2] - pwm5_previous_value;
 			else if (current[2] < pwm5_previous_value)
-				global_var[PWM5_CCR].param = 0xFFFF - pwm5_previous_value + current[2] ;
+				system.variable[PWM5_CCR].value = 0xFFFF - pwm5_previous_value + current[2] ;
 
 			pwm5_is_rising = 1;
 
@@ -145,9 +145,9 @@ void TIM4_IRQHandler(void)
 			current[0] =  TIM_GetCapture1(TIM4);
 
 			if (current[0] > pwm1_previous_value)
-				global_var[PWM1_CCR].param =  current[0] - pwm1_previous_value;
+				system.variable[PWM1_CCR].value =  current[0] - pwm1_previous_value;
 			else if (current[0] < pwm1_previous_value)
-				global_var[PWM1_CCR].param = 0xFFFF - pwm1_previous_value + current[0] ;
+				system.variable[PWM1_CCR].value = 0xFFFF - pwm1_previous_value + current[0] ;
 
 			pwm1_is_rising = 1;
 		}
@@ -176,9 +176,9 @@ void TIM4_IRQHandler(void)
 			current[1] =  TIM_GetCapture2(TIM4);
 
 			if (current[1] > pwm2_previous_value)
-				global_var[PWM2_CCR].param =  current[1] - pwm2_previous_value;
+				system.variable[PWM2_CCR].value =  current[1] - pwm2_previous_value;
 			else if (current[1] < pwm2_previous_value)
-				global_var[PWM2_CCR].param = 0xFFFF - pwm2_previous_value + current[1] ;
+				system.variable[PWM2_CCR].value = 0xFFFF - pwm2_previous_value + current[1] ;
 
 			pwm2_is_rising = 1;
 
