@@ -43,7 +43,6 @@ CONFIG=./config
 COMMON=./common
 ALGORITHM=./algorithm
 DRIVER=./driver
-MODULE=./module
 SYSTEM=./system
 SHELL_=./shell
 DEBUG=./debug
@@ -89,16 +88,13 @@ SRC+=$(DRIVER)/delay.c \
 	$(DRIVER)/i2c.c \
 	$(DRIVER)/sdio.c \
 	$(DRIVER)/spi.c \
-	$(DRIVER)/stm32f4_system.c
-
-CFLAGS+=-I$(MODULE)
-SRC+=$(MODULE)/board.c \
-	$(MODULE)/motor.c \
-	$(MODULE)/mpu9150.c \
-	$(MODULE)/ms5611.c \
-	$(MODULE)/nrf24l01.c \
-	$(MODULE)/sensor.c \
-	$(MODULE)/serial.c
+	$(DRIVER)/board.c \
+	$(DRIVER)/motor.c \
+	$(DRIVER)/mpu9150.c \
+	$(DRIVER)/ms5611.c \
+	$(DRIVER)/nrf24l01.c \
+	$(DRIVER)/sensor.c \
+	$(DRIVER)/serial.c
 
 CFLAGS+=-I$(SYSTEM)
 SRC+=$(SYSTEM)/AHRS.c \
