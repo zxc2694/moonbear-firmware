@@ -9,12 +9,10 @@ void shell_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
-void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_test(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_license(char parameter[][MAX_CMD_LEN], int par_cnt);
-void shell_display(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
@@ -23,12 +21,10 @@ enum SHELL_CMD_ID {
 	clear_ID,
 	help_ID,
 	monitor_ID,
-	/*ps_ID,*/
 	test_ID,
 	sdinfo_ID,
 	sdsave_ID,
 	license_ID,
-	display_ID,
 	watch_ID,
 	SHELL_CMD_CNT
 };
@@ -39,12 +35,10 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(clear, shell),
 	CMD_DEF(help, shell),
 	CMD_DEF(monitor, shell),
-	/*CMD_DEF(ps, shell),*/
 	CMD_DEF(test, shell),
 	CMD_DEF(sdinfo, shell),
 	CMD_DEF(sdsave, shell),
 	CMD_DEF(license, shell),
-	CMD_DEF(display, shell),
 	CMD_DEF(watch, shell)
 };
 
@@ -109,22 +103,8 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	serial.printf("clear  \tClear the screan\n\r");
 	serial.printf("help \tShow the list of all commands\n\r");
 	serial.printf("monitor The QuadCopter Status monitor\n\r");
-	serial.printf("ps \tShow the list of all tasks\n\r");
 	serial.printf("sdinfo\tShow SD card informations.\n\r");
 	serial.printf("sdsave\tSave PID informations in the SD card.\n\r");
-	serial.printf("display\t['z'=show angle;'x'=show PID parameter;'c'=show channel of PWM;'q'=quit]\n\r");
-}
-
-void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
-{
-	signed char buf[256] = {'\0'};
-
-	vTaskList(buf);
-
-	//TODO:replace the hardcode by using sserial.printf()
-	serial.printf("\n\rName          State   Priority  Stack Num\n\r");
-	serial.printf("*****************************************\n\r");
-	serial.printf("%s\n\r", buf);
 }
 
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
@@ -203,41 +183,5 @@ void shell_license(char parameter[][MAX_CMD_LEN], int par_cnt)
 	serial.printf("Cheng-De Liu <zxc2694zxc2694@gmail.com>\n\r");
 	serial.printf("Cheng-Han Yang <poemofking@gmail.com>\n\r");
 	serial.printf("Shengwen Cheng <l1996812@gmail.com>\n\r");
-}
-/* The display command can help user observe Roll & Pitch & Yaw angle, kp & kd & ki and PWM input.*/
-/*===================================
-'z' = show roll & pitch & yaw angle
-'x' = show PID parameter
-'c' = show channel of PWM
-'q' = quit
-=====================================*/
-void shell_display(char parameter[][MAX_CMD_LEN], int par_cnt)
-{
-	while(1){
-		if(serial.getc() == 'z'){ 
-			serial.printf("Pitch : %f\tRoll : %f\tYaw : %f\t\n\r", 
-				AngE.Pitch, AngE.Roll, AngE.Yaw
-			);
-			vTaskDelay(50);
-		}
-		else if(serial.getc() == 'x'){
-			serial.printf("Pitch_Kp:%f  Pitch_Kd:%f  ,Roll_Kp:%f  Roll_Kd:%f  ,Yaw_Kp:%f  Yaw_Kd:%f \n\r",
-				PID_Pitch.Kp, PID_Pitch.Kd, 
-				PID_Roll.Kp, PID_Roll.Kd, 
-				PID_Yaw.Kp, PID_Yaw.Kd
-			);
-		}
-		else if(serial.getc() == 'c'){
-			serial.printf("PWM1_CCR: %f\t,PWM2_CCR: %f\t,PWM3_CCR: %f\t,PWM4_CCR: %f\n\r",
-				system.variable[PWM1_CCR].value,
-				system.variable[PWM2_CCR].value,
-				system.variable[PWM3_CCR].value,
-				system.variable[PWM4_CCR].value
-			);
-			vTaskDelay(50);
-		}
-		else if(serial.getc() == 'q') 
-			break;
-	}
 }
 
