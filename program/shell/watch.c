@@ -64,11 +64,6 @@ void watch_data()
 
 	int i;
 	for(i = 0; i < watch_arg_cnt; i++) {
-		if(task_status == TASK_INTERRUPT) {
-			vTaskSuspend(0);
-			break;
-		}
-			
 		find_var = find_variable(watch_arguments[i]);
 		serial.printf("\n\r%s : %f", watch_arguments[i], find_var->value);
 	}
