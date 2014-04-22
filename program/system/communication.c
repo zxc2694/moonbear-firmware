@@ -19,7 +19,8 @@ void generate_package(IMU_package *package, uint8_t *buf)
 void send_package(uint8_t *buf)
 {
 	int i = 0;
-	while(buf[i] != '\0') {
+
+	while (buf[i] != '\0') {
 		serial.putc(buf[i]);
 		i++;
 	}

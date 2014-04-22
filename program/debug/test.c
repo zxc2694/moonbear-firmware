@@ -21,8 +21,9 @@ char function_list[FUNCTION_CNT][MAX_FUNC_LEN] = {
 void Func_Call_Handler(char *func_name)
 {
 	int i;
-	for(i = 0; i < FUNCTION_CNT; i++) {
-		if(strcmp(func_name, "func_example") == 0) {
+
+	for (i = 0; i < FUNCTION_CNT; i++) {
+		if (strcmp(func_name, "func_example") == 0) {
 			int retval = func_example();
 			serial.printf("Function name:%s\n\r", func_name);
 			serial.printf("Argument:None\n\r");
@@ -37,22 +38,25 @@ void Func_Call_Handler(char *func_name)
 
 void shell_test(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
-	switch(par_cnt) {
-	  case 0:
+	switch (par_cnt) {
+	case 0:
 		serial.printf("type command \"test [function name]\" to call the function.\n\r");
 		serial.printf("Software testing function:\n\r");
-		
+
 		int i;
-		for(i = 0; i < FUNCTION_CNT; i++) {
+
+		for (i = 0; i < FUNCTION_CNT; i++) {
 			serial.printf("[%d]%s\n\r", i + 1, function_list[i]);
 		}
 
 		break;
-	  case 1:
+
+	case 1:
 		Func_Call_Handler(parameter[0]);
 
 		break;
-	  default:
+
+	default:
 		break;
 	}
 }
@@ -61,6 +65,6 @@ void shell_test(char parameter[][MAX_CMD_LEN], int par_cnt)
 int func_example()
 {
 	serial.printf("This words is calling by the func_example!\n\r");
-	
+
 	return 100;
 }

@@ -18,14 +18,14 @@ Sensor_Mode SensorMode = Mode_GyrCorrect;
 
 void vApplicationStackOverflowHook(xTaskHandle pxTask, signed char *pcTaskName)
 {
-	while(1) {
+	while (1) {
 		LED_Toggle(LED_R);
 		vTaskDelay(200);
 	}
 }
-void vApplicationMallocFailedHook( void )
+void vApplicationMallocFailedHook(void)
 {
-	while(1) {
+	while (1) {
 		LED_Toggle(LED_R);
 		vTaskDelay(200);
 	}
@@ -47,7 +47,7 @@ void system_init(void)
 	nRF24L01_Config();
 
 	//SD Config
-	if((SD_status = SD_Init()) != SD_OK)
+	if ((SD_status = SD_Init()) != SD_OK)
 		system.status = SYSTEM_ERROR_SD;
 
 	PID_Init(&PID_Pitch, 4.0, 0.0, 1.5);
@@ -59,10 +59,10 @@ void system_init(void)
 	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
 	/* nRF Check */
-	while ( nRF_Check()== ERROR );
+	while (nRF_Check() == ERROR);
 
 	/* Sensor Init */
-	while(Sensor_Init() == ERROR);
+	while (Sensor_Init() == ERROR);
 
 	Delay_10ms(10);
 
@@ -72,7 +72,7 @@ void system_init(void)
 	SetLED(LED_B, ENABLE);
 
 	//Check if no error
-	if(system.status != SYSTEM_ERROR_SD)
+	if (system.status != SYSTEM_ERROR_SD)
 		system.status = SYSTEM_INITIALIZED;
 
 }
@@ -83,7 +83,7 @@ void correction_task()
 
 	while (system.status == SYSTEM_UNINITIALIZED);
 
-	while ( sensor_correct == ERROR ) {
+	while (sensor_correct == ERROR) {
 
 		while (SensorMode != Mode_Algorithm) {
 			uint8_t IMU_Buf[20] = {0};
@@ -101,6 +101,7 @@ void correction_task()
 				MS5611_Read(&Baro, MS5611_D1_OSR_4096);
 				BaroCnt = 0;
 			}
+
 #endif
 
 			Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
@@ -130,11 +131,11 @@ void correction_task()
 			vTaskDelay(2);
 		}
 
-		if( (AngE.Roll < 0.1) && (AngE.Pitch < 0.1) && (NumQ.q0<1)
-		     && (NumQ.q1<1) && (NumQ.q2<1) && (NumQ.q3<1) ) {
-			sensor_correct = SUCCESS ; 
-		}
-		else {
+		if ((AngE.Roll < 0.1) && (AngE.Pitch < 0.1) && (NumQ.q0 < 1)
+		    && (NumQ.q1 < 1) && (NumQ.q2 < 1) && (NumQ.q3 < 1)) {
+			sensor_correct = SUCCESS ;
+
+		} else {
 			SensorMode = Mode_GyrCorrect;
 			sensor_correct = ERROR ;
 		}
@@ -142,6 +143,7 @@ void correction_task()
 		LED_Toggle(LED_G);
 		vTaskDelay(200);
 	}
+
 	SetLED(LED_G, DISABLE);
 	vTaskResume(FlightControl_Handle);
 	vTaskDelete(NULL);
@@ -151,7 +153,9 @@ void flightControl_task()
 {
 	//Waiting for system finish initialize
 	while (system.status != SYSTEM_INITIALIZED);
+
 	system.status = SYSTEM_FLIGHT_CONTROL;
+
 	while (1) {
 		GPIO_ToggleBits(GPIOC, GPIO_Pin_7);
 		uint8_t IMU_Buf[20] = {0};
@@ -178,6 +182,7 @@ void flightControl_task()
 			MS5611_Read(&Baro, MS5611_D1_OSR_4096);
 			BaroCnt = 0;
 		}
+
 #endif
 		Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
 		Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
@@ -297,9 +302,12 @@ void check_task()
 	while (system.status != SYSTEM_INITIALIZED);
 
 	while (remote_signal_check() == NO_SIGNAL);
+
 	SetLED(LED_B, DISABLE);
 	vTaskResume(correction_task_handle);
-	while(system.status != SYSTEM_FLIGHT_CONTROL);
+
+	while (system.status != SYSTEM_FLIGHT_CONTROL);
+
 	vTaskDelay(2000);
 	SetLED(LED_R, ENABLE);
 	SetLED(LED_G, ENABLE);
@@ -310,17 +318,18 @@ void check_task()
 
 void nrf_sending_task()
 {
-	char buf[128]={0};
+	char buf[128] = {0};
 	nrf_package package;
 
 	//Waiting for system finish initialize
 	while (system.status == SYSTEM_UNINITIALIZED);
 
 	nRF_TX_Mode();
-	while(1){
-		package.roll = (int16_t)system.variable[TRUE_ROLL].value*100;
-		package.pitch  = (int16_t)system.variable[TRUE_PITCH].value*100;
-		package.yaw = (int16_t)system.variable[TRUE_YAW].value*100;
+
+	while (1) {
+		package.roll = (int16_t)system.variable[TRUE_ROLL].value * 100;
+		package.pitch  = (int16_t)system.variable[TRUE_PITCH].value * 100;
+		package.yaw = (int16_t)system.variable[TRUE_YAW].value * 100;
 		package.acc_x = Acc.X;
 		package.acc_y = Acc.Y;
 		package.acc_z = Acc.Z;
@@ -328,8 +337,8 @@ void nrf_sending_task()
 		package.gyro_y = Gyr.Y;
 		package.gyro_z = Gyr.Z;
 
-		nrf_generate_package( &package, (uint8_t* )buf);
-		nrf_send_package( (uint8_t* )buf );
+		nrf_generate_package(&package, (uint8_t *)buf);
+		nrf_send_package((uint8_t *)buf);
 	}
 
 }
@@ -337,19 +346,19 @@ void nrf_sending_task()
 void error_handler_task()
 {
 	while (system.status != SYSTEM_ERROR_SD || system.status == SYSTEM_UNINITIALIZED) {
-		if(system.status == SYSTEM_INITIALIZED)
+		if (system.status == SYSTEM_INITIALIZED)
 			vTaskDelete(NULL);
 	}
 
 	/* Clear the screen */
 	serial.printf("\x1b[H\x1b[2J");
 
-	if(SD_status != SD_OK) {
+	if (SD_status != SD_OK) {
 		serial.printf("[System status]SD Initialized failed!\n\r");
-		serial.printf("Please Insert the SD card correctly then reboot the QuadCopter!");	
+		serial.printf("Please Insert the SD card correctly then reboot the QuadCopter!");
 	}
 
-	while(1);
+	while (1);
 }
 
 int main(void)
@@ -360,45 +369,45 @@ int main(void)
 	vSemaphoreCreateBinary(serial_tx_wait_sem);
 	serial_rx_queue = xQueueCreate(1, sizeof(serial_msg));
 
-	/* IMU Initialization, Attitude Correction Flight Control */	
+	/* IMU Initialization, Attitude Correction Flight Control */
 	xTaskCreate(check_task,
-		(signed portCHAR *) "Initial checking",
-		512, NULL,
-		tskIDLE_PRIORITY + 5, NULL);
+		    (signed portCHAR *) "Initial checking",
+		    512, NULL,
+		    tskIDLE_PRIORITY + 5, NULL);
 	xTaskCreate(correction_task,
-		(signed portCHAR *) "System correction",
-		4096, NULL,
-		tskIDLE_PRIORITY + 9, &correction_task_handle);
+		    (signed portCHAR *) "System correction",
+		    4096, NULL,
+		    tskIDLE_PRIORITY + 9, &correction_task_handle);
 
 	xTaskCreate(flightControl_task,
-		(signed portCHAR *) "Flight control",
-		4096, NULL,
-		tskIDLE_PRIORITY + 9, &FlightControl_Handle);
+		    (signed portCHAR *) "Flight control",
+		    4096, NULL,
+		    tskIDLE_PRIORITY + 9, &FlightControl_Handle);
 
 	/* QuadCopter Developing Shell, Ground Station Software */
 	xTaskCreate(shell_task,
-		(signed portCHAR *) "Shell",
-		2048, NULL,
-		tskIDLE_PRIORITY + 7, NULL);
+		    (signed portCHAR *) "Shell",
+		    2048, NULL,
+		    tskIDLE_PRIORITY + 7, NULL);
 
 #if configSTATUS_GUI
 	xTaskCreate(nrf_sending_task,
-		(signed portCHAR *) "NRF Sending",
-		1024, NULL,
-		tskIDLE_PRIORITY + 5, NULL);
+		    (signed portCHAR *) "NRF Sending",
+		    1024, NULL,
+		    tskIDLE_PRIORITY + 5, NULL);
 #endif
 
 	/* Shell command handling task */
 	xTaskCreate(watch_task,
-		(signed portCHAR *) "Watch",
-		1024, NULL,
-		tskIDLE_PRIORITY + 7, &watch_task_handle);
+		    (signed portCHAR *) "Watch",
+		    1024, NULL,
+		    tskIDLE_PRIORITY + 7, &watch_task_handle);
 
 	/* System error handler*/
-        xTaskCreate(error_handler_task,
-        (signed portCHAR *) "Error handler",
-        512, NULL,
-        tskIDLE_PRIORITY + 7, NULL);
+	xTaskCreate(error_handler_task,
+		    (signed portCHAR *) "Error handler",
+		    512, NULL,
+		    tskIDLE_PRIORITY + 7, NULL);
 
 	vTaskSuspend(FlightControl_Handle);
 	vTaskSuspend(correction_task_handle);

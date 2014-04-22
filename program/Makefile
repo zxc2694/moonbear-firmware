@@ -174,7 +174,9 @@ gdbtui:
 
 #Make gdbauto
 gdbauto: cgdb
-
+#automatically formate
+astyle: 
+	astyle -r --exclude=lib  *.c *.h
 #============================================================================#
 
-.PHONY:all clean flash openocd gdbauto gdbtui cgdb
+.PHONY:all clean flash openocd gdbauto gdbtui cgdb astyle

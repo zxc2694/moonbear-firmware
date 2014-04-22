@@ -13,7 +13,7 @@
   * @brief  USART3 Serial port initialization
   * @param  None
   * @retval None
-  */	
+  */
 void Serial_Config(int buadrate) /* Tx:Pb10, Rx:Pb11 */
 {
 	/* RCC Initialization */
@@ -31,7 +31,7 @@ void Serial_Config(int buadrate) /* Tx:Pb10, Rx:Pb11 */
 
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource10, GPIO_AF_USART3);
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource11, GPIO_AF_USART3);
-	GPIO_Init(GPIOB, &GPIO_InitStruct);		
+	GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 	/* USART3 Initialization */
 	USART_InitTypeDef USART_InitStruct = {
@@ -49,7 +49,7 @@ void Serial_Config(int buadrate) /* Tx:Pb10, Rx:Pb11 */
 
 	/* NVIC Initialization */
 	USART_ITConfig(USART3, USART_IT_TXE, DISABLE);
-        USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
+	USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
 
 	NVIC_InitTypeDef NVIC_InitStruct = {
 		.NVIC_IRQChannel = USART3_IRQn,
@@ -118,7 +118,7 @@ char getc_base(void)
   */
 void putc_base(char str)
 {
-	while(!xSemaphoreTake(serial_tx_wait_sem, portMAX_DELAY));
+	while (!xSemaphoreTake(serial_tx_wait_sem, portMAX_DELAY));
 
 	USART_SendData(USART3, (uint16_t)str);
 	USART_ITConfig(USART3, USART_IT_TXE, ENABLE);
@@ -131,10 +131,10 @@ void putc_base(char str)
   * @retval None
   */
 int gets_base(void)
-{   
-        char str;
+{
+	char str;
 	str = serial.getc();
-	serial.printf("%c",str);
+	serial.printf("%c", str);
 	return 1;
 }
 
@@ -145,9 +145,10 @@ int gets_base(void)
   * @retval None
   */
 int puts_base(const char *msg)
-{   
-	for(; *msg; msg++)
+{
+	for (; *msg; msg++)
 		serial.putc(*msg);
+
 	return 1;
 }
 

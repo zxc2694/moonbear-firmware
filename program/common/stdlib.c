@@ -19,14 +19,14 @@ void free(void *p)
 
 void *realloc(void *ptr, size_t len)
 {
-        void *new_ptr;
-        new_ptr = (void*)pvPortMalloc(len);
+	void *new_ptr;
+	new_ptr = (void *)pvPortMalloc(len);
 
-        if(new_ptr) {
-                memcpy(new_ptr, ptr, len);
-                vPortFree(ptr);
-                return new_ptr;
-        }
+	if (new_ptr) {
+		memcpy(new_ptr, ptr, len);
+		vPortFree(ptr);
+		return new_ptr;
+	}
 
 	return NULL;
 }
@@ -185,26 +185,27 @@ double atof(const char *s)
 {
 	int sign = 1;
 	int i = 0;
-	for( i=0; isspace((unsigned char)s[i]); i++ );
-	
-	sign = (s[i] == '-')? -1:1;
-	
-	if( s[i] == '+' || s[i] == '-' )
+
+	for (i = 0; isspace((unsigned char)s[i]); i++);
+
+	sign = (s[i] == '-') ? -1 : 1;
+
+	if (s[i] == '+' || s[i] == '-')
 		i++;
-		
+
 	double num = 0.0;
 	double pow = 1.0;
+
 	//integer
-	for( ;isdigit((unsigned char)s[i]); i++ )
-		num = num*10 + (s[i]-'0');
-		
-	for( i++; isdigit((unsigned char)s[i]); i++ )
-	{
-		num = num*10 + (s[i]-'0');
+	for (; isdigit((unsigned char)s[i]); i++)
+		num = num * 10 + (s[i] - '0');
+
+	for (i++; isdigit((unsigned char)s[i]); i++) {
+		num = num * 10 + (s[i] - '0');
 		pow *= 10;
 	}
-	
-	return sign * (num/pow);
+
+	return sign * (num / pow);
 }
 
 int sprintf(char *str, const char *format, ...)

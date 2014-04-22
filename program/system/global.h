@@ -38,7 +38,7 @@ typedef __IO enum {
 
 typedef __IO enum {
 	SD_READY = 0,
-	SD_UNREADY, 
+	SD_UNREADY,
 	SD_SAVE,
 	SD_UNSAVE,
 	SD_ERSAVE
@@ -54,7 +54,7 @@ typedef struct  {
 typedef struct {
 	global_t *variable;
 	int var_count;
-	status_t status;	
+	status_t status;
 } system_t;
 
 global_t variable[SYS_VAR_CNT];

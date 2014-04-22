@@ -62,6 +62,7 @@ RC_State remote_signal_check()
 	    (system.variable[PWM3_CCR].value < MAX_PWM_INPUT)) {
 
 		rc_state |= GET_SIGNAL;
+
 	} else {
 		rc_state |= NO_SIGNAL;
 	}
@@ -71,6 +72,7 @@ RC_State remote_signal_check()
 	    (system.variable[PWM1_CCR].value < MAX_PWM_INPUT)) {
 
 		rc_state |= GET_SIGNAL;
+
 	} else {
 
 		rc_state |= NO_SIGNAL;
@@ -81,6 +83,7 @@ RC_State remote_signal_check()
 	    (system.variable[PWM2_CCR].value < MAX_PWM_INPUT)) {
 
 		rc_state |= GET_SIGNAL;
+
 	} else {
 
 		rc_state |= NO_SIGNAL;
@@ -91,6 +94,7 @@ RC_State remote_signal_check()
 	    (system.variable[PWM4_CCR].value < MAX_PWM_INPUT)) {
 
 		rc_state |= GET_SIGNAL;
+
 	} else {
 
 		rc_state |= NO_SIGNAL;

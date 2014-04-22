@@ -287,65 +287,69 @@ u8 nRF_Rx_Data(u8 *RxBuf)
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-void nRF_send_msg(uint8_t* str)
-{	
-	uint8_t str_len = strlen( (const char *)str);
-	uint8_t send_times = str_len/RX_PLOAD_WIDTH + 1 ;
-	uint8_t buf[RX_PLOAD_WIDTH]={0};
-	uint8_t* ptr = str;
+void nRF_send_msg(uint8_t *str)
+{
+	uint8_t str_len = strlen((const char *)str);
+	uint8_t send_times = str_len / RX_PLOAD_WIDTH + 1 ;
+	uint8_t buf[RX_PLOAD_WIDTH] = {0};
+	uint8_t *ptr = str;
 	uint8_t Sta;
-	while(send_times >= 1){
-		if (send_times>1){
 
-			strncpy( (char *)buf, (const char *)ptr, RX_PLOAD_WIDTH);
+	while (send_times >= 1) {
+		if (send_times > 1) {
+
+			strncpy((char *)buf, (const char *)ptr, RX_PLOAD_WIDTH);
+
 		} else {
 
-			memset( buf, 0, RX_PLOAD_WIDTH);
-			strncpy( (char *)buf, (const char *)ptr, 
-				str_len % RX_PLOAD_WIDTH );
+			memset(buf, 0, RX_PLOAD_WIDTH);
+			strncpy((char *)buf, (const char *)ptr,
+				str_len % RX_PLOAD_WIDTH);
 		}
 
 		do {
 
-	  		Sta = nRF_Tx_Data( (uint8_t*)buf);
-	  		
+			Sta = nRF_Tx_Data((uint8_t *)buf);
+
 
 		} while (Sta == MAX_RT);
+
 		send_times --;
 		ptr += 32;
 	}
 }
-void nrf_send_package(uint8_t* buf)
+void nrf_send_package(uint8_t *buf)
 {
 	uint8_t Sta;
+
 	do {
 
-	  	Sta = nRF_Tx_Data( (uint8_t*)buf);
-	  		
+		Sta = nRF_Tx_Data((uint8_t *)buf);
+
 	} while (Sta == MAX_RT);
 }
-void nrf_generate_package( nrf_package* package, uint8_t* buf)
+void nrf_generate_package(nrf_package *package, uint8_t *buf)
 {
 	int16_t roll, pitch, yaw, acc_x, acc_y, acc_z, gyro_x,
 		gyro_y, gyro_z;
-	memcpy( &buf[0], &( (package->roll) ), sizeof(int16_t));
-	memcpy( &buf[2], &( (package->pitch) ), sizeof(int16_t));
-	memcpy( &buf[4], &( (package->yaw) ), sizeof(int16_t));
-	memcpy( &buf[6], &( (package->acc_x) ), sizeof(int16_t));
-	memcpy( &buf[8], &( (package->acc_y) ), sizeof(int16_t));
-	memcpy( &buf[10], &( (package->acc_z) ), sizeof(int16_t));
-	memcpy( &buf[12], &( (package->gyro_x) ), sizeof(int16_t));
-	memcpy( &buf[14], &( (package->gyro_y) ), sizeof(int16_t));
-	memcpy( &buf[16], &( (package->gyro_z) ), sizeof(int16_t));
+	memcpy(&buf[0], &((package->roll)), sizeof(int16_t));
+	memcpy(&buf[2], &((package->pitch)), sizeof(int16_t));
+	memcpy(&buf[4], &((package->yaw)), sizeof(int16_t));
+	memcpy(&buf[6], &((package->acc_x)), sizeof(int16_t));
+	memcpy(&buf[8], &((package->acc_y)), sizeof(int16_t));
+	memcpy(&buf[10], &((package->acc_z)), sizeof(int16_t));
+	memcpy(&buf[12], &((package->gyro_x)), sizeof(int16_t));
+	memcpy(&buf[14], &((package->gyro_y)), sizeof(int16_t));
+	memcpy(&buf[16], &((package->gyro_z)), sizeof(int16_t));
 
-	memcpy( &roll, &buf[0], sizeof(int16_t));
-	memcpy( &pitch, &buf[2], sizeof(int16_t));
-	memcpy( &yaw, &buf[4], sizeof(int16_t));
-	memcpy( &acc_x, &buf[6], sizeof(int16_t));
-	memcpy( &acc_y, &buf[8], sizeof(int16_t));
-	memcpy( &acc_z, &buf[10], sizeof(int16_t));
-	memcpy( &gyro_x, &buf[12], sizeof(int16_t));
-	memcpy( &gyro_y, &buf[14], sizeof(int16_t));
-	memcpy( &gyro_z, &buf[16], sizeof(int16_t));
+	memcpy(&roll, &buf[0], sizeof(int16_t));
+	memcpy(&pitch, &buf[2], sizeof(int16_t));
+	memcpy(&yaw, &buf[4], sizeof(int16_t));
+	memcpy(&acc_x, &buf[6], sizeof(int16_t));
+	memcpy(&acc_y, &buf[8], sizeof(int16_t));
+	memcpy(&acc_z, &buf[10], sizeof(int16_t));
+	memcpy(&gyro_x, &buf[12], sizeof(int16_t));
+	memcpy(&gyro_y, &buf[14], sizeof(int16_t));
+	memcpy(&gyro_z, &buf[16], sizeof(int16_t));
 
 }
