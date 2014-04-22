@@ -57,10 +57,6 @@ typedef struct {
 	status_t status;	
 } system_t;
 
-typedef struct {
-	char ch;
-} serial_msg;
-
 global_t variable[SYS_VAR_CNT];
 
 extern system_t system;

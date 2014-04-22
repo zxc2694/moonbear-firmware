@@ -8,6 +8,7 @@ BIN_IMAGE=$(PROJECT).bin
 #Cross Compiler
 CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
+GDB=arm-none-eabi-gdb
 
 #============================================================================#
 
@@ -42,7 +43,6 @@ CONFIG=./config
 COMMON=./common
 ALGORITHM=./algorithm
 DRIVER=./driver
-MODULE=./module
 SYSTEM=./system
 SHELL_=./shell
 DEBUG=./debug
@@ -88,16 +88,13 @@ SRC+=$(DRIVER)/delay.c \
 	$(DRIVER)/i2c.c \
 	$(DRIVER)/sdio.c \
 	$(DRIVER)/spi.c \
-	$(DRIVER)/stm32f4_system.c
-
-CFLAGS+=-I$(MODULE)
-SRC+=$(MODULE)/board.c \
-	$(MODULE)/motor.c \
-	$(MODULE)/mpu9150.c \
-	$(MODULE)/ms5611.c \
-	$(MODULE)/nrf24l01.c \
-	$(MODULE)/sensor.c \
-	$(MODULE)/serial.c
+	$(DRIVER)/motor.c \
+	$(DRIVER)/mpu9150.c \
+	$(DRIVER)/ms5611.c \
+	$(DRIVER)/nrf24l01.c \
+	$(DRIVER)/sensor.c \
+	$(DRIVER)/serial.c \
+	$(DRIVER)/led.c 
 
 CFLAGS+=-I$(SYSTEM)
 SRC+=$(SYSTEM)/AHRS.c \
@@ -105,7 +102,8 @@ SRC+=$(SYSTEM)/AHRS.c \
 	$(SYSTEM)/IMU_correct.c \
 	$(SYSTEM)/interrupt.c \
 	$(SYSTEM)/main.c \
-	$(SYSTEM)/remote_control.c
+	$(SYSTEM)/remote_control.c\
+	$(SYSTEM)/communication.c
 
 CFLAGS+=-I$(SHELL_)
 SRC+=$(SHELL_)/linenoise.c \
@@ -166,9 +164,16 @@ flash:
 openocd: flash
 	openocd -s /opt/openocd/share/openocd/scripts/ -f ./debug/openocd.cfg
 
+#Make cgdb
+cgdb:
+	cgdb -d $(GDB) -x ./debug/openocd_gdb.gdb
+
+#Make gdbtui
+gdbtui:
+	$(GDB) -tui -x ./debug/openocd_gdb.gdb
+
 #Make gdbauto
-gdbauto:
-	arm-none-eabi-gdb -tui -x ./debug/openocd_gdb.gdb
+gdbauto: cgdb
 
 #============================================================================#
 

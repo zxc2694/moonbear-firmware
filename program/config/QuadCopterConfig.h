@@ -37,6 +37,7 @@
 #include "AHRS.h"
 #include "remote_control.h"
 #include "IMU_correct.h"
+#include "communication.h"
 
 //Driver
 #include "stm32f4_system.h"
@@ -46,9 +47,7 @@
 #include "i2c.h"
 #include "spi.h"
 #include "sdio.h"
-
-//Module
-#include "board.h"
+#include "led.h"
 #include "motor.h"
 #include "mpu9150.h"
 #include "ms5611.h"
