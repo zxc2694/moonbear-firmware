@@ -19,7 +19,7 @@ global_t variable[] = {
 	[RC_EXP_YAW] = {.name = "RC.yaw"},
 	[RC_EXP_THR] = {.name = "RC.throttle"},
 
-	[TRUE_PITCH] = {.name = "IMU.yaw"},
+	[TRUE_PITCH] = {.name = "IMU.pitch"},
 	[TRUE_ROLL] = {.name = "IMU.roll"},
 	[TRUE_YAW] = {.name = "IMU.yaw"},
 
