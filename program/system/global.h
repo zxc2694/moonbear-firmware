@@ -46,9 +46,6 @@ typedef __IO enum {
 
 typedef int status_t;
 
-typedef float pwm_t;
-typedef float attitude_t;
-
 typedef struct  {
 	char *name;
 	__IO float value;
