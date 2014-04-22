@@ -59,7 +59,7 @@ void shell_linenoise_completion(const char *buf, linenoiseCompletions *lc)
 void shell_task()
 {
 	//Waiting for system finish initialize
-        while (system.status != SYSTEM_INITIALIZED);
+	while (system.status != SYSTEM_INITIALIZED);
 
 	/* Clear the screen */
 	serial.printf("\x1b[H\x1b[2J");
@@ -76,8 +76,8 @@ void shell_task()
 		command_data shell_cd = {.par_cnt = 0};
 
 		char *shell_str = linenoise("Quadcopter Shell > ");
-		
-		if(shell_str == NULL)
+
+		if (shell_str == NULL)
 			continue;
 
 		commandExec(shell_str, &shell_cd, shellCmd_list, SHELL_CMD_CNT);
@@ -138,31 +138,31 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 	//FRESULT res;
 	FILINFO finfo;
 	DIR dirs;
-	FIL file;		
+	FIL file;
 
 	char *confirm_ch = NULL;
 	confirm_ch = linenoise("Store all the PID settings? (y/n):");
 
-	while(strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
+	while (strcmp(confirm_ch, "y") == 0 || strcmp(confirm_ch, "Y") == 0) {
 		uint32_t i = 0;
 		f_mount(&FatFs, "", 1);
 		f_opendir(&dirs, "0:/");
 		f_readdir(&dirs, &finfo);
 		f_open(&file, "SDCard_K.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
 
-		sprintf(WriteData,"Pitch\n\r%f,%f,%f\n\rRoll\n\r%f,%f,%f\n\rYaw\n\r%f,%f,%f\n\r",
+		sprintf(WriteData, "Pitch\n\r%f,%f,%f\n\rRoll\n\r%f,%f,%f\n\rYaw\n\r%f,%f,%f\n\r",
 			PID_Pitch.Kp, PID_Pitch.Ki, PID_Pitch.Kd,
 			PID_Roll.Kp, PID_Roll.Ki, PID_Roll.Kd,
 			PID_Yaw.Kp, PID_Yaw.Ki, PID_Yaw.Kd
-		);
+		       );
 
 		f_write(&file, WriteData, strlen(WriteData), (UINT *)&i);
 
 		file.fptr = 0;
 		f_read(&file, ReadBuf, ReadBuf_Size, (UINT *)&i);
-		
+
 		/* Debug */
-		serial.printf("[Debug output]\n\r%s\n\r", ReadBuf);		
+		serial.printf("[Debug output]\n\r%s\n\r", ReadBuf);
 
 		f_close(&file);
 		break;
@@ -193,10 +193,10 @@ void shell_gui_test(char parameter[][MAX_CMD_LEN], int par_cnt)
 	char buf[17] = {'\0'};
 	IMU_package package;
 
-	while(1) {
-		package.roll = (int16_t)system.variable[TRUE_ROLL].value*100;
-		package.pitch  = (int16_t)system.variable[TRUE_PITCH].value*100;
-		package.yaw = (int16_t)system.variable[TRUE_YAW].value*100;
+	while (1) {
+		package.roll = (int16_t)system.variable[TRUE_ROLL].value * 100;
+		package.pitch  = (int16_t)system.variable[TRUE_PITCH].value * 100;
+		package.yaw = (int16_t)system.variable[TRUE_YAW].value * 100;
 		package.acc_x = Acc.X;
 		package.acc_y = Acc.Y;
 		package.acc_z = Acc.Z;
@@ -204,8 +204,8 @@ void shell_gui_test(char parameter[][MAX_CMD_LEN], int par_cnt)
 		package.gyro_y = Gyr.Y;
 		package.gyro_z = Gyr.Z;
 
-		generate_package(&package, (uint8_t*)buf);
-		send_package((uint8_t *)buf);		
+		generate_package(&package, (uint8_t *)buf);
+		send_package((uint8_t *)buf);
 	}
 }
 

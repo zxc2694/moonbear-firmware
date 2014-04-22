@@ -2,7 +2,7 @@
 #define __MODULE_RS232_H
 
 typedef struct {
-        char ch;
+	char ch;
 } serial_msg;
 
 typedef struct {

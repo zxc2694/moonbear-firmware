@@ -78,12 +78,12 @@ void nRF_TX_Mode(void);
 u8 nRF_Check(void);
 u8 nRF_Tx_Data(u8 *);
 u8 nRF_Rx_Data(u8 *);
-void nRF_send_msg(uint8_t* str);
+void nRF_send_msg(uint8_t *str);
 /*====================================================================================================*/
 /*====================================================================================================*/
 extern u8 TxBuf[SendTimes][TxBufSize];
 extern u8 RxBuf[ReadTimes][RxBufSize];
-typedef struct nrf_package{
+typedef struct nrf_package {
 
 	int16_t roll, pitch, yaw;
 	int16_t acc_x, acc_y, acc_z;
@@ -91,8 +91,8 @@ typedef struct nrf_package{
 
 } nrf_package;
 
-void nrf_send_package(uint8_t* buf);
-void nrf_generate_package( nrf_package* package, uint8_t* buf);
+void nrf_send_package(uint8_t *buf);
+void nrf_generate_package(nrf_package *package, uint8_t *buf);
 
 /*====================================================================================================*/
 /*====================================================================================================*/
