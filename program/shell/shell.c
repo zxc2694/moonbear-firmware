@@ -26,6 +26,7 @@ extern SD_STATUS SDstatus;
 extern SD_STATUS SDcondition;
 extern ReadBuf[ReadBuf_Size];
 extern xSemaphoreHandle sdio_semaphore;
+extern SYSTEM_STATUS set_PWM_Motors;
 /* Shell Command handlers */
 void shell_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
@@ -34,7 +35,7 @@ void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
-void shell_attitude(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_gui(char parameter[][MAX_CMD_LEN], int par_cnt);
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -45,7 +46,7 @@ enum SHELL_CMD_ID {
 	/*ps_ID,*/
 	sdinfo_ID,
 	sdsave_ID,
-	attitude_ID,
+	watch_ID,
 	gui_ID,
 	SHELL_CMD_CNT
 };
@@ -59,7 +60,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	/*CMD_DEF(ps, shell),*/
 	CMD_DEF(sdinfo, shell),
 	CMD_DEF(sdsave, shell),
-	CMD_DEF(attitude, shell),
+	CMD_DEF(watch, shell),
 	CMD_DEF(gui, shell),
 };
 
@@ -121,7 +122,7 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("ps \tShow the list of all tasks\n\r");
 	printf("sdinfo\tShow SD card informations.\n\r");
 	printf("sdsave\tSave PID informations in the SD card.\n\r");
-	printf("attitude\t'z'=attitude angle;'x'=PID parameter;'c'=Channel of PWM;'q'=quit\n\r");
+	printf("watch\t'z'=watch angle;'x'=PID parameter;'c'=Channel of PWM;'q'=quit\n\r");
 	printf("gui\tSupport real time display by python.\n\r");
 
 }
@@ -174,20 +175,47 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 	}
 }
 
-void shell_attitude(char parameter[][MAX_CMD_LEN], int par_cnt)
+void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	while(1){
 		if(serial.getch() == 'z'){ 
-			printf("Pitch : %f\tRoll : %f\tYaw : %f\t\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
+			printf("Pitch : %f\tRoll : %f\tYaw : %f\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
 			vTaskDelay(50);
 		}
 		else if(serial.getch() == 'x'){
-			printf("Pitch_Kp:%f  Pitch_Kd:%f  ,Roll_Kp:%f  Roll_Kd:%f  ,Yaw_Kp:%f  Yaw_Kd:%f \n\r", PID_Pitch.Kp, PID_Pitch.Kd, PID_Roll.Kp, PID_Roll.Kd, PID_Yaw.Kp, PID_Yaw.Kd);
+			printf("MOTOR: %f  %f  %f  %f\n\r",global_var[MOTOR1].param, global_var[MOTOR2].param, global_var[MOTOR3].param, global_var[MOTOR4].param);
+			vTaskDelay(50);
 		}
 		else if(serial.getch() == 'c'){
 			printf("PWM1_CCR: %f\t,PWM2_CCR: %f\t,PWM3_CCR: %f\t,PWM4_CCR: %f\n\r",global_var[PWM1_CCR].param,global_var[PWM2_CCR].param,global_var[PWM3_CCR].param,global_var[PWM4_CCR].param);
 			vTaskDelay(50);
 		}
+		else if(serial.getch() == 'v'){
+			printf("Pitch_Kp:%f  Pitch_Kd:%f  ,Roll_Kp:%f  Roll_Kd:%f  ,Yaw_Kp:%f  Yaw_Kd:%f \n\r", PID_Pitch.Kp, PID_Pitch.Kd, PID_Roll.Kp, PID_Roll.Kd, PID_Yaw.Kp, PID_Yaw.Kd);
+		}
+
+		else if(serial.getch() == 'b'){
+			printf("OPERATE - ROLL: %f\tPITCH:%f\n",global_var[OPERATE_ROLL].param,global_var[OPERATE_PITCH].param);
+			printf("          YAW:%f\tTHR:%f\n",global_var[OPERATE_YAW].param,global_var[OPERATE_THR].param);
+			vTaskDelay(50);
+		}
+		else if(serial.getch() == 'n'){	  
+			global_var[Write_PWM_Motor1].param = 830;  
+			global_var[Write_PWM_Motor2].param = 830; 
+			global_var[Write_PWM_Motor3].param = 830;
+			global_var[Write_PWM_Motor4].param = 830;
+			set_PWM_Motors = SYSTEM_INITIALIZED;
+			printf("ok, set 830 !\n");
+			vTaskDelay(50);
+			set_PWM_Motors = SYSTEM_INITIALIZED;
+		}
+		else if(serial.getch() == 'm'){	  
+			
+			printf("Change WFLY controller !\n");
+			vTaskDelay(50);
+			set_PWM_Motors = SYSTEM_UNINITIALIZED;
+		}
+		
 		else if(serial.getch() == 'q') 
 			break;
 	}
@@ -196,8 +224,8 @@ void shell_attitude(char parameter[][MAX_CMD_LEN], int par_cnt)
 void shell_gui(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
 	while(1){
-		printf("%f %f %d %d %d %d\n\r", AngE.Pitch, AngE.Roll, PWM_Motor1, PWM_Motor2, PWM_Motor3, PWM_Motor4);
-		//printf("%f %f %d %d %d %d\n\r", AngE.Pitch, AngE.Roll, global_var[MOTOR1].param, global_var[MOTOR2].param, global_var[MOTOR3].param, global_var[MOTOR4].param);
+	
+		printf("%f %f %f %f %f %f\n\r", AngE.Pitch, AngE.Roll, global_var[MOTOR1].param, global_var[MOTOR2].param, global_var[MOTOR3].param, global_var[MOTOR4].param);
 		
 		vTaskDelay(10);
 	}
