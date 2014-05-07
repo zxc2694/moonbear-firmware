@@ -22,13 +22,22 @@ enum {
 	TRUE_PITCH,
 	TRUE_YAW,
 	NO_RC_SIGNAL_MSG,
-	PID_ROLL,
-	PID_PITCH,
-	PID_YAW,
+	OPERATE_ROLL,
+	OPERATE_PITCH,
+	OPERATE_YAW,
+	OPERATE_THR,
 	MOTOR1,
 	MOTOR2,
 	MOTOR3,
 	MOTOR4,
+	test1,
+	test2,
+	test3,
+	test4,
+	Write_PWM_Motor1,
+	Write_PWM_Motor2,
+	Write_PWM_Motor3,
+	Write_PWM_Motor4,
 	GLOABAL_PARAM_COUNT
 };
 typedef __IO enum {
@@ -60,8 +69,11 @@ typedef struct {
 
 global_struct global_var[GLOABAL_PARAM_COUNT];
 
+
+
 extern xSemaphoreHandle serial_tx_wait_sem;
 extern xQueueHandle serial_rx_queue;
 extern SD_STATUS SDstatus;
 extern SD_STATUS SDcondition;
+extern SYSTEM_STATUS set_PWM_Motors;
 #endif
