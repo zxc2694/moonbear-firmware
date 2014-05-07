@@ -15,6 +15,7 @@ volatile uint32_t Correction_Time = 0;
 
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 extern SYSTEM_STATUS sys_status;
+extern SYSTEM_STATUS set_PWM_Motors;
 
 /*=====================================================================================================*/
 #define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
@@ -66,7 +67,7 @@ void system_init(void)
 
 	PID_Yaw.Kp = +2.5f; //5.0f
 	PID_Yaw.Ki = 0;
-	PID_Yaw.Kd = +1.0f; //15.0f
+	PID_Yaw.Kd = +3.0f; //15.0f
 
 	Delay_10ms(10);
 
@@ -89,6 +90,7 @@ void system_init(void)
 	LED_B = 1;
 
 	sys_status = SYSTEM_INITIALIZED;
+	set_PWM_Motors = SYSTEM_UNINITIALIZED;
 
 }
 
@@ -266,38 +268,56 @@ void flightControl_task()
 			Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ) + 3 * (s16)Exp_Yaw;
 			Thr   = (s16)Exp_Thr;
 
-			global_var[PID_ROLL].param = Roll;
-			global_var[PID_PITCH].param = Pitch;
-			global_var[PID_YAW].param = Yaw;
+			global_var[OPERATE_ROLL].param = Roll;
+			global_var[OPERATE_PITCH].param = Pitch;
+			global_var[OPERATE_YAW].param = Yaw;
+			global_var[OPERATE_THR].param = Thr;
+
+			if(set_PWM_Motors ==SYSTEM_UNINITIALIZED){
+				/* Motor Ctrl */
+				Final_M1 = Thr + Pitch - Roll - Yaw;
+				Final_M2 = Thr + Pitch + Roll + Yaw;
+				Final_M3 = Thr - Pitch + Roll - Yaw;
+				Final_M4 = Thr - Pitch - Roll + Yaw;
+
+				global_var[MOTOR1].param = Final_M1;
+				global_var[MOTOR2].param = Final_M2;
+				global_var[MOTOR3].param = Final_M3;
+				global_var[MOTOR4].param = Final_M4;
 
 
-			/* Motor Ctrl */
-			Final_M1 = Thr + Pitch - Roll - Yaw;
-			Final_M2 = Thr + Pitch + Roll + Yaw;
-			Final_M3 = Thr - Pitch + Roll - Yaw;
-			Final_M4 = Thr - Pitch - Roll + Yaw;
+				Bound(Final_M1, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
+				Bound(Final_M2, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
+				Bound(Final_M3, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
+				Bound(Final_M4, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
+			}
+			if(set_PWM_Motors ==SYSTEM_INITIALIZED){
+	
+				Final_M1 = global_var[Write_PWM_Motor1].param;
+				Final_M2 = global_var[Write_PWM_Motor2].param;
+				Final_M3 = global_var[Write_PWM_Motor3].param;
+				Final_M4 = global_var[Write_PWM_Motor4].param;
 
-			global_var[MOTOR1].param = Final_M1;
-			global_var[MOTOR2].param = Final_M2;
-			global_var[MOTOR3].param = Final_M3;
-			global_var[MOTOR4].param = Final_M4;
-
-			Bound(Final_M1, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
-			Bound(Final_M2, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
-			Bound(Final_M3, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
-			Bound(Final_M4, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
+				global_var[MOTOR1].param = Final_M1;
+				global_var[MOTOR2].param = Final_M2;
+				global_var[MOTOR3].param = Final_M3;
+				global_var[MOTOR4].param = Final_M4;
 
 
-			if (safety == 1) {
-				Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
-
-			} else {
-				Motor_Control(Final_M1, Final_M2, Final_M3, Final_M4);
+				Bound(Final_M1, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
+				Bound(Final_M2, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
+				Bound(Final_M3, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
+				Bound(Final_M4, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
 			}
 
+				if (safety == 1) {
+					Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
+				} 
+				else {		
+				Motor_Control(Final_M1, Final_M2, Final_M3, Final_M4);
+				}
+			
 			vTaskDelay(2);
-
-
 		}
 
 	}
@@ -322,12 +342,12 @@ void statusReport_task()
 	}
 }
 
-void check_task()
+void check_task() //protect switch
 {
 	//Waiting for system finish initialize
 	while (sys_status == SYSTEM_UNINITIALIZED);
 
-	while (remote_signal_check() == NO_SIGNAL);
+	while (remote_signal_check() == NO_SIGNAL); //If there is no receiver but need to test IMU, please mask.
 	LED_B = 0;
 	vTaskResume(correction_task_handle);
 	while(sys_status != SYSTEM_FLIGHT_CONTROL);
