@@ -10,6 +10,8 @@
 /* Status report functions */
 #define configSTATUS_GUI		0
 #define configSTATUS_SHELL		1
+#define configSTATUS_GET_MOTORS	0
+#define configSTATUS_GET_PITCH_ROLL	0
 
 /* Includes */
 //FreeRTOS
@@ -57,6 +59,7 @@
 #include "linenoise.h"
 #include "shell.h"
 #include "parser.h"
+#include "status_monitor.h"
 
 //Unit test
 #include "test.h"

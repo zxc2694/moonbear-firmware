@@ -408,15 +408,10 @@ int main(void)
 	 	    tskIDLE_PRIORITY + 6, NULL);
 #endif
 
-
-
-
-#if configSTATUS_SHELL
 	xTaskCreate(shell_task,
 		    (signed portCHAR *) "Shell",
 		    2048, NULL,
 		    tskIDLE_PRIORITY + 5, NULL);
-#endif
 
 	xTaskCreate(flightControl_task,
 		    (signed portCHAR *) "Flight control",

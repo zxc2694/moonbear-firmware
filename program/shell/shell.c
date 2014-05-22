@@ -2,23 +2,7 @@
 #include <stddef.h>
 #include <string.h>
 
-/* Linenoise and shell includes */
-#include "shell.h"
-#include "linenoise.h"
-#include "parser.h"
-
-#include "algorithm_pid.h"
-#include "module_rs232.h"
-#include "algorithm_quaternion.h"
-#include "QCopterFC_ctrl.h"
-#include "sys_manager.h"
-#include "module_motor.h" 
-#include "stm32f4_sdio.h"
-
-#include "FreeRTOS.h"
-#include "task.h"
-
-#include "status_monitor.h"
+#include "QuadCopterConfig.h"
 
 #define ReadBuf_Size 500
 extern sdio_task_handle;
@@ -77,25 +61,37 @@ void shell_linenoise_completion(const char *buf, linenoiseCompletions *lc)
 
 void shell_task()
 {
-	/* Clear the screen */
-	printf("\x1b[H\x1b[2J");
-	/* Show the prompt messages */
-	printf("[System status]Initialized successfully!\n\r");
-	printf("Please type \"help\" to get more informations\n\r");
+	#if configSTATUS_SHELL
+		printf("[System status]Initialized successfully!\n\r");
+		printf("Please type \"help\" to get more informations\n\r");
+	#endif
 
 	while (1) {
 		linenoiseSetCompletionCallback(shell_linenoise_completion);
 
 		command_data shell_cd = {.par_cnt = 0};
 
-		char *shell_str = linenoise("Quadcopter Shell > ");
-		
-		if(shell_str == NULL)
-			continue;
+		#if configSTATUS_SHELL
+			char *shell_str = linenoise("Quadcopter Shell > ");
+			if(shell_str == NULL)
+				continue;
+			commandExec(shell_str, &shell_cd, shellCmd_list, SHELL_CMD_CNT);
+			linenoiseHistoryAdd(shell_str);
+		#endif
 
-		commandExec(shell_str, &shell_cd, shellCmd_list, SHELL_CMD_CNT);
+		#if configSTATUS_GET_PITCH_ROLL
+			while(1){
+				printf("Pitch: %f\tRoll: %f\n\r", AngE.Pitch, AngE.Roll);
+				vTaskDelay(50);
+			}
+		#endif
 
-		linenoiseHistoryAdd(shell_str);
+		#if configSTATUS_GET_MOTORS
+			while(1){
+				printf("M1:%f  M2:%f  M3:%f  M4:%f\n\r",global_var[MOTOR1].param, global_var[MOTOR2].param, global_var[MOTOR3].param, global_var[MOTOR4].param);
+				vTaskDelay(50);
+			}
+		#endif
 	}
 }
 /**** Customize command function ******************************************************/
