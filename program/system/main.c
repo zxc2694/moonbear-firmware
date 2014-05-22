@@ -275,10 +275,10 @@ void flightControl_task()
 
 			if(set_PWM_Motors ==SYSTEM_UNINITIALIZED){
 				/* Motor Ctrl */
-				Final_M1 = Thr + Pitch - Roll + Yaw;
-				Final_M2 = Thr + Pitch + Roll - Yaw;
-				Final_M3 = Thr - Pitch + Roll + Yaw;
-				Final_M4 = Thr - Pitch - Roll - Yaw;
+				Final_M1 = Thr + Pitch - Roll + Yaw; //moonbear: - Yaw
+				Final_M2 = Thr + Pitch + Roll - Yaw; //moonbear: + Yaw
+				Final_M3 = Thr - Pitch + Roll + Yaw; //moonbear: - Yaw
+				Final_M4 = Thr - Pitch - Roll - Yaw; //moonbear: + Yaw
 
 				global_var[MOTOR1].param = Final_M1;
 				global_var[MOTOR2].param = Final_M2;
