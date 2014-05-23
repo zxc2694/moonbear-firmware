@@ -417,7 +417,7 @@ int main(void)
 		    (signed portCHAR *) "Flight control",
 		    4096, NULL,
 		    tskIDLE_PRIORITY + 9, &FlightControl_Handle);
-#if configSTATUS_GUI
+#if configSTATUS_NRF
 	xTaskCreate(nrf_sending_task,
 	(signed portCHAR *) "NRF_SENDING",
 	1024, NULL,
