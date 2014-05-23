@@ -118,7 +118,7 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("ps \tShow the list of all tasks\n\r");
 	printf("sdinfo\tShow SD card informations.\n\r");
 	printf("sdsave\tSave PID informations in the SD card.\n\r");
-	printf("watch\t'z'=watch angle;'x'=PID parameter;'c'=Channel of PWM;'q'=quit\n\r");
+	printf("watch\tObserve attitude & debug !\n\r");
 	printf("gui\tSupport real time display by python.\n\r");
 
 }
@@ -173,6 +173,16 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
+	printf("-----------Watch command------------\n\r");
+	printf("'z'=Show attitude  -> Pitch Roll Yaw\n\r");
+	printf("'x'=Show motor PWM -> Motor1 ~ Motor4\n\r");
+	printf("'c'=Show WFLY PWM  -> CCR1 ~ CCR4 \n\r");
+	printf("'v'=Show PD gain -> Pitch:Kp Kd, Roll:Kp Kd, Yaw:Kp Kd\n\r");
+	printf("'b'=Just for debug-1 ...\n\r");
+	printf("'n'=Just for debug-2...\n\r");
+	printf("'m'=Just for debug-3 ...\n\r");
+	printf("'q'=quit watch command.\n\r");
+	printf("'h'=Printf watch command function.\n\r");
 	while(1){
 		if(serial.getch() == 'z'){ 
 			printf("Pitch : %f\tRoll : %f\tYaw : %f\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
@@ -210,6 +220,18 @@ void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 			printf("Change WFLY controller !\n");
 			vTaskDelay(50);
 			set_PWM_Motors = SYSTEM_UNINITIALIZED;
+		}
+		if(serial.getch() == 'h'){ 
+			printf("-----------Watch command------------\n\r");
+			printf("'z'=Show attitude  -> Pitch Roll Yaw\n\r");
+			printf("'x'=Show motor PWM -> Motor1 ~ Motor4\n\r");
+			printf("'c'=Show WFLY PWM  -> CCR1 ~ CCR4 \n\r");
+			printf("'v'=Show PD gain -> Pitch:Kp Kd, Roll:Kp Kd, Yaw:Kp Kd\n\r");
+			printf("'b'=Just for debug-1 ...\n\r");
+			printf("'n'=Just for debug-2...\n\r");
+			printf("'m'=Just for debug-3 ...\n\r");
+			printf("'q'=quit watch command.\n\r");
+			printf("'h'=Printf watch command function.\n\r");
 		}
 		
 		else if(serial.getch() == 'q') 
