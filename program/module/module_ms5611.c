@@ -124,6 +124,8 @@ static void MS5611_Calculate(MS5611_ST *COEFF)
 	COEFF->Temp  = (float)(COEFF->rTemp / 100.0f);
 	COEFF->Press = (float)(COEFF->rPress / 100.0f);
 	COEFF->High  = (float)((COEFF->rPress - 101333) * 9.5238f);
+
+	global_var[BAROMETER].param = COEFF->Press;
 }
 /*=====================================================================================================*/
 /*=====================================================================================================*

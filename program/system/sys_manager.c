@@ -29,7 +29,8 @@ global_struct global_var[] = {
 	[Write_PWM_Motor1]= {.param_name = "Write_PWM_Motor1", .param = 0},
 	[Write_PWM_Motor2]= {.param_name = "Write_PWM_Motor2", .param = 0},
 	[Write_PWM_Motor3]= {.param_name = "Write_PWM_Motor3", .param = 0},
-	[Write_PWM_Motor4]= {.param_name = "Write_PWM_Motor4", .param = 0}
+	[Write_PWM_Motor4]= {.param_name = "Write_PWM_Motor4", .param = 0},
+	[BAROMETER] = {.param_name = "Show barometer value.", .param = 0}
 
 };
 SYSTEM_STATUS sys_status = SYSTEM_UNINITIALIZED;

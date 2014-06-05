@@ -38,6 +38,7 @@ enum {
 	Write_PWM_Motor2,
 	Write_PWM_Motor3,
 	Write_PWM_Motor4,
+	BAROMETER,
 	GLOABAL_PARAM_COUNT
 };
 typedef __IO enum {

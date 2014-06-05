@@ -201,8 +201,7 @@ void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 		}
 
 		else if(serial.getch() == 'b'){
-			printf("OPERATE - ROLL: %f\tPITCH:%f\n",global_var[OPERATE_ROLL].param,global_var[OPERATE_PITCH].param);
-			printf("          YAW:%f\tTHR:%f\n",global_var[OPERATE_YAW].param,global_var[OPERATE_THR].param);
+			printf("Barometer: %f\n\r",global_var[BAROMETER].param);
 			vTaskDelay(50);
 		}
 		else if(serial.getch() == 'n'){	  
@@ -227,7 +226,7 @@ void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 			printf("'x'=Show motor PWM -> Motor1 ~ Motor4\n\r");
 			printf("'c'=Show WFLY PWM  -> CCR1 ~ CCR4 \n\r");
 			printf("'v'=Show PD gain -> Pitch:Kp Kd, Roll:Kp Kd, Yaw:Kp Kd\n\r");
-			printf("'b'=Just for debug-1 ...\n\r");
+			printf("'b'=Show barometer value.\n\r");
 			printf("'n'=Just for debug-2...\n\r");
 			printf("'m'=Just for debug-3 ...\n\r");
 			printf("'q'=quit watch command.\n\r");
