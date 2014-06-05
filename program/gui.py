@@ -73,7 +73,7 @@ class AnalogPlot:
 		plt.xlabel("Time")
 		plt.ylabel("PWM")
 		plt.legend()		
-		plt.ylim([800, 1200]) 
+		plt.ylim([500, 2500]) 
 		plt.grid()
  
 # update plot
