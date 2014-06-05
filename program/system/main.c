@@ -347,7 +347,9 @@ void check_task() //protect switch
 	//Waiting for system finish initialize
 	while (sys_status == SYSTEM_UNINITIALIZED);
 
+#if configMotor
 	while (remote_signal_check() == NO_SIGNAL); //If there is no receiver but need to test IMU, please mask.
+#endif
 	LED_B = 0;
 	vTaskResume(correction_task_handle);
 	while(sys_status != SYSTEM_FLIGHT_CONTROL);
