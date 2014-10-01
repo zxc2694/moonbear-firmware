@@ -21,6 +21,7 @@ void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_gui(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_guiBinary(char parameter[][MAX_CMD_LEN], int par_cnt);
 /* The identifier of the command */
 enum SHELL_CMD_ID {
 	unknown_cmd_ID,
@@ -32,6 +33,7 @@ enum SHELL_CMD_ID {
 	sdsave_ID,
 	watch_ID,
 	gui_ID,
+	guiBinary_ID,
 	SHELL_CMD_CNT
 };
 
@@ -46,6 +48,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(sdsave, shell),
 	CMD_DEF(watch, shell),
 	CMD_DEF(gui, shell),
+	CMD_DEF(guiBinary, shell),
 };
 
 /**** Shell task **********************************************************************/
@@ -120,6 +123,7 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("sdsave\tSave PID informations in the SD card.\n\r");
 	printf("watch\tObserve attitude & debug !\n\r");
 	printf("gui\tSupport real time display by python.\n\r");
+	printf("guiBinary\tBinary transmit function\n\r");
 
 }
 
@@ -247,3 +251,26 @@ void shell_gui(char parameter[][MAX_CMD_LEN], int par_cnt)
 		vTaskDelay(10);
 	}
 }
+
+void shell_guiBinary(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	char buf[17] = {'\0'};
+	IMU_package package;
+
+	while (1) {
+		package.roll = (int16_t)AngE.Roll;
+		package.pitch  = (int16_t)AngE.Pitch;
+		package.yaw = (int16_t)AngE.Yaw;
+		package.acc_x = Acc.X;
+		package.acc_y = Acc.Y;
+		package.acc_z = Acc.Z;
+		package.gyro_x = Gyr.X;
+		package.gyro_y = Gyr.Y;
+		package.gyro_z = Gyr.Z;
+
+		generate_package(&package, (uint8_t *)buf);
+		send_package((uint8_t *)buf);
+	}
+}
+
+

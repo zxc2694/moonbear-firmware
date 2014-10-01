@@ -21,7 +21,7 @@ void send_package(uint8_t *buf)
 	int i = 0;
 
 	while (buf[i] != '\0') {
-		serial.putc(buf[i]);
+		serial.putch(buf[i]);
 		i++;
 	}
 }
