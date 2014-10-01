@@ -267,6 +267,7 @@ void flightControl_task()
 //      Yaw   = (s16)PID_AHRS_CalYaw(&PID_Yaw, AngE.Yaw,   Gyr.TrueZ);
 			Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ) + 3 * (s16)Exp_Yaw;
 			Thr   = (s16)Exp_Thr;
+			Bound(Yaw, -90, 90);
 
 			global_var[OPERATE_ROLL].param = Roll;
 			global_var[OPERATE_PITCH].param = Pitch;
