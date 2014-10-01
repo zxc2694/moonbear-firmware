@@ -11,7 +11,7 @@
 #define configSTATUS_NRF		0
 #define configSTATUS_SHELL		1
 #define configSTATUS_GET_MOTORS	0
-#define configSTATUS_GET_PITCH_ROLL	0
+#define configSTATUS_GET_ROLL_PITCH	0
 
 /* Includes */
 //FreeRTOS

@@ -82,9 +82,9 @@ void shell_task()
 			linenoiseHistoryAdd(shell_str);
 		#endif
 
-		#if configSTATUS_GET_PITCH_ROLL
+		#if configSTATUS_GET_ROLL_PITCH
 			while(1){
-				printf("Pitch: %f\tRoll: %f\n\r", AngE.Pitch, AngE.Roll);
+				printf("%f %f\n\r", AngE.Roll, AngE.Pitch);
 				vTaskDelay(50);
 			}
 		#endif
