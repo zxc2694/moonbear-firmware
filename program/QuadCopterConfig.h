@@ -27,6 +27,7 @@
 #include "QCopterFC_ahrs.h"
 #include "QCopterFC_ctrl.h"
 #include "sensor_correct.h"
+#include "communication.h"
 
 //Algorithm
 #include "algorithm_pid.h"
