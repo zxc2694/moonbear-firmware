@@ -232,6 +232,7 @@ void flightControl_task()
 			Mag.Y = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], 64);
 			Mag.Z = (s16)MoveAve_WMA(Mag.Z, MAG_FIFO[2], 64);
 
+
 			/* To Physical */
 			Acc.TrueX = Acc.X * MPU9150A_4g;      // g/LSB
 			Acc.TrueY = Acc.Y * MPU9150A_4g;      // g/LSB
@@ -243,6 +244,12 @@ void flightControl_task()
 			Mag.TrueY = Mag.Y * MPU9150M_1200uT;  // uT/LSB
 			Mag.TrueZ = Mag.Z * MPU9150M_1200uT;  // uT/LSB
 			Temp.TrueT = Temp.T * MPU9150T_85degC; // degC/LSB
+
+global_var[test1].param = Acc.TrueX;
+global_var[test2].param = Gyr.TrueX;
+global_var[test3].param = Mag.TrueY;
+global_var[test4].param = Mag.TrueZ;
+
 
 			/* Get Attitude Angle */
 			AHRS_Update();

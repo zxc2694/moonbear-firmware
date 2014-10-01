@@ -55,6 +55,7 @@ class AnalogPlot:
 		plt.title("Quadcopter attitude")
 		plt.legend()		#Show label figure.
 		plt.ylim([400, 1300]) # Vertical axis scale.
+#TEST	plt.ylim([-90, 90]) # Vertical axis scale.
 		plt.grid()
 
  
