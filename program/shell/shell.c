@@ -91,7 +91,7 @@ void shell_task()
 
 		#if configSTATUS_GET_MOTORS
 			while(1){
-				printf("M1:%f  M2:%f  M3:%f  M4:%f\n\r",global_var[MOTOR1].param, global_var[MOTOR2].param, global_var[MOTOR3].param, global_var[MOTOR4].param);
+				printf("%f %f %f %f\n\r",global_var[MOTOR1].param, global_var[MOTOR2].param, global_var[MOTOR3].param, global_var[MOTOR4].param);
 				vTaskDelay(50);
 			}
 		#endif
