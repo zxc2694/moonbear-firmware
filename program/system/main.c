@@ -74,7 +74,7 @@ void system_init(void)
 	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
 
-#if configFLIGHT_CONTROL_BOARD
+#if configSTATUS_NRF
 	/* nRF Check */
 	while ( nRF_Check()== ERROR );
 #endif
