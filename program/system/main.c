@@ -77,10 +77,10 @@ void system_init(void)
 #if configFLIGHT_CONTROL_BOARD
 	/* nRF Check */
 	while ( nRF_Check()== ERROR );
-
+#endif
 	/* Sensor Init */
 	while(Sensor_Init() == ERROR);
-#endif
+
 
 	Delay_10ms(10);
 

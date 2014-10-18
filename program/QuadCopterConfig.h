@@ -4,7 +4,7 @@
 #define USE_FUTABA_CONTROLLER 0
 #define USE_WFLY_CONTROLLER 1
 /* Hardware environments */
-#define configFLIGHT_CONTROL_BOARD	1 	//Choose whether to ignore nRF24L01 or not(0=ignore);
+#define configFLIGHT_CONTROL_BOARD	0 	//Choose whether to ignore nRF24L01 or not(0=ignore);
 #define configSD_BOARD			0		//Choose whether to ignore SD card or not (0=ignore);
 #define configMotor	1                   //if you no connect motor -> set 0. 
 /* Status report functions */
