@@ -5,9 +5,9 @@
 #define USE_WFLY_CONTROLLER 1
 /* Hardware environments */
 #define configSD_BOARD			0		//Choose whether to ignore SD card or not (0=ignore);
-#define configMotor	1                   //if you no connect motor -> set 0. 
-/* Status report functions */
 #define configSTATUS_NRF		0       //Choose whether to ignore nRF or not (0=ignore);
+#define configMotor				1       //if you no connect motor -> set 0. 
+/* Status report functions */
 #define configSTATUS_SHELL		1
 #define configSTATUS_GET_MOTORS	0
 #define configSTATUS_GET_ROLL_PITCH	0
