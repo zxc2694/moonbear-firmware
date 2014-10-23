@@ -51,10 +51,10 @@ class AnalogPlot:
 		self.v3line, = plt.plot(analogData.v3,label="value3",color="purple")
 		self.v4line, = plt.plot(analogData.v4,label="value4",color="green")
 		plt.xlabel("Time")
-		plt.ylabel("Angle(-90~+90)")
+		plt.ylabel("PWM 700~2000")
 		plt.title("Quadcopter attitude")
 		plt.legend()		#Show label figure.
-		plt.ylim([400, 1300]) # Vertical axis scale.
+		plt.ylim([700, 2000]) # Vertical axis scale.
 #TEST	plt.ylim([-90, 90]) # Vertical axis scale.
 		plt.grid()
 
