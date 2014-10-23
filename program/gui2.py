@@ -42,8 +42,8 @@ class AnalogPlot:
 # set plot to animated
 		plt.ion()
 		plt.figure(figsize=(9,8))
-		self.axline, = plt.plot(analogData.ax,label="value1",color="red")
-		self.ayline, = plt.plot(analogData.ay,label="value2",color="blue")
+		self.axline, = plt.plot(analogData.ax,label="Roll",color="red")
+		self.ayline, = plt.plot(analogData.ay,label="Pitch",color="blue")
 		plt.xlabel("Time")
 		plt.ylabel("Angle(-90~+90)")
 		plt.title("Quadcopter attitude")

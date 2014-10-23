@@ -224,13 +224,13 @@ void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
 			global_var[Write_PWM_Motor3].param = 830;
 			global_var[Write_PWM_Motor4].param = 830;
 			set_PWM_Motors = SYSTEM_INITIALIZED;
-			printf("ok, set 830 !\n");
+			printf("ok, set 830 !\n\r");
 			vTaskDelay(50);
 			set_PWM_Motors = SYSTEM_INITIALIZED;
 		}
 		else if(serial.getch() == 'm'){	  
 			
-			printf("Change WFLY controller !\n");
+			printf("Change WFLY controller !\n\r");
 			vTaskDelay(50);
 			set_PWM_Motors = SYSTEM_UNINITIALIZED;
 		}
