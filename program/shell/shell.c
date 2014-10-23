@@ -87,7 +87,7 @@ void shell_task()
 		#if configSTATUS_GET_ROLL_PITCH
 			while(1){
 				printf("%f %f\n\r", AngE.Roll, AngE.Pitch);
-				vTaskDelay(50);
+				vTaskDelay(100);
 			}
 		#endif
 		//Show four values to gui4.py
@@ -95,14 +95,14 @@ void shell_task()
 			while(1){
 				printf("%f %f %f %f\n\r",global_var[MOTOR1].param, global_var[MOTOR2].param, global_var[MOTOR3].param, global_var[MOTOR4].param);
 	//TEST 			printf("%f %f %f %f\n\r",global_var[test1].param, global_var[test2].param, global_var[test3].param, global_var[test4].param);
-				vTaskDelay(50);
+				vTaskDelay(100);
 			}
 		#endif
 		//Show six values to gui.py
 		#if configSTATUS_GET_ROLL_PITCH_MOTORS
 			while(1){
 				printf("%f %f %f %f %f %f\n\r", AngE.Roll, AngE.Pitch, global_var[MOTOR1].param, global_var[MOTOR2].param, global_var[MOTOR3].param, global_var[MOTOR4].param);
-				vTaskDelay(50);
+				vTaskDelay(100);
 			}
 		#endif
 	}
