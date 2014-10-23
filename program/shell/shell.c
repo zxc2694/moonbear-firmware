@@ -82,17 +82,26 @@ void shell_task()
 			linenoiseHistoryAdd(shell_str);
 		#endif
 
+
+		//Show two values to gui2.py 
 		#if configSTATUS_GET_ROLL_PITCH
 			while(1){
 				printf("%f %f\n\r", AngE.Roll, AngE.Pitch);
 				vTaskDelay(50);
 			}
 		#endif
-
+		//Show four values to gui4.py
 		#if configSTATUS_GET_MOTORS
 			while(1){
 				printf("%f %f %f %f\n\r",global_var[MOTOR1].param, global_var[MOTOR2].param, global_var[MOTOR3].param, global_var[MOTOR4].param);
 	//TEST 			printf("%f %f %f %f\n\r",global_var[test1].param, global_var[test2].param, global_var[test3].param, global_var[test4].param);
+				vTaskDelay(50);
+			}
+		#endif
+		//Show six values to gui.py
+		#if configSTATUS_GET_ROLL_PITCH_MOTORS
+			while(1){
+				printf("%f %f %f %f %f %f\n\r", AngE.Roll, AngE.Pitch, global_var[MOTOR1].param, global_var[MOTOR2].param, global_var[MOTOR3].param, global_var[MOTOR4].param);
 				vTaskDelay(50);
 			}
 		#endif
