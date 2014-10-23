@@ -16,6 +16,8 @@ volatile uint32_t Correction_Time = 0;
 Sensor_Mode SensorMode = Mode_GyrCorrect;
 extern SYSTEM_STATUS sys_status;
 extern SYSTEM_STATUS set_PWM_Motors;
+int set_landing =0;
+float i3=0;
 
 /*=====================================================================================================*/
 #define PRINT_DEBUG(var1) printf("DEBUG PRINT"#var1"\r\n")
@@ -282,41 +284,47 @@ global_var[test4].param = Mag.TrueZ;
 			global_var[OPERATE_THR].param = Thr;
 
 			if(set_PWM_Motors ==SYSTEM_UNINITIALIZED){
-				/* Motor Ctrl */
-				Final_M1 = Thr + Pitch - Roll + Yaw; //moonbear: - Yaw
-				Final_M2 = Thr + Pitch + Roll - Yaw; //moonbear: + Yaw
-				Final_M3 = Thr - Pitch + Roll + Yaw; //moonbear: - Yaw
-				Final_M4 = Thr - Pitch - Roll - Yaw; //moonbear: + Yaw
+					/* Motor Ctrl */
+					Final_M1 = Thr + Pitch - Roll + Yaw; //moonbear: - Yaw
+					Final_M2 = Thr + Pitch + Roll - Yaw; //moonbear: + Yaw
+					Final_M3 = Thr - Pitch + Roll + Yaw; //moonbear: - Yaw
+					Final_M4 = Thr - Pitch - Roll - Yaw; //moonbear: + Yaw
+			
+				/* [Motor PWM > 1300] represents that the quadrotor has taken off  */ 
+				/*test auto landing ...
 
-				global_var[MOTOR1].param = Final_M1;
-				global_var[MOTOR2].param = Final_M2;
-				global_var[MOTOR3].param = Final_M3;
-				global_var[MOTOR4].param = Final_M4;
-
-
-				Bound(Final_M1, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
-				Bound(Final_M2, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
-				Bound(Final_M3, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
-				Bound(Final_M4, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
+				if(Final_M1 > 1300){
+				set_landing =1;														
+				}
+				if((Final_M1 < 1100) && (set_landing == 1)){			
+					Final_M1 = 1100-i3;
+					Final_M2 = 1100-i3;
+					Final_M3 = 1100-i3;
+					Final_M4 = 1100-i3;
+					i3=i3+0.1;
+					if (Final_M1 == 830){
+						i3 = 0;	
+						set_landing = 0;	
+					}														
+				}	*/
 			}
 			if(set_PWM_Motors ==SYSTEM_INITIALIZED){
 	
 				Final_M1 = global_var[Write_PWM_Motor1].param;
 				Final_M2 = global_var[Write_PWM_Motor2].param;
 				Final_M3 = global_var[Write_PWM_Motor3].param;
-				Final_M4 = global_var[Write_PWM_Motor4].param;
+				Final_M4 = global_var[Write_PWM_Motor4].param;				
+			}
+				
+				Bound(Final_M1, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
+				Bound(Final_M2, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
+				Bound(Final_M3, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
+				Bound(Final_M4, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
 
 				global_var[MOTOR1].param = Final_M1;
 				global_var[MOTOR2].param = Final_M2;
 				global_var[MOTOR3].param = Final_M3;
 				global_var[MOTOR4].param = Final_M4;
-
-
-				Bound(Final_M1, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
-				Bound(Final_M2, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
-				Bound(Final_M3, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
-				Bound(Final_M4, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
-			}
 
 				if (safety == 1) {
 					Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
