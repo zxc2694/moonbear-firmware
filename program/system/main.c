@@ -65,7 +65,7 @@ void system_init(void)
 
 	PID_Roll.Kp = +4.0f;	//4.0f * 0.7 = 2.8f
 	PID_Roll.Ki = 0;
-	PID_Roll.Kd = 1.5f ;	//1.5f * 0.7 = 1.05f
+	PID_Roll.Kd = +1.5f ;	//1.5f * 0.7 = 1.05f
 
 	PID_Yaw.Kp = +5.0f ;	//5.0f * 0.7 = 3.5f
 	PID_Yaw.Ki = 0;
