@@ -21,11 +21,10 @@
 #include "semphr.h"
 
 //System
-#include "main.h"
 #include "sys_manager.h"
 #include "std.h"
-#include "QCopterFC_ahrs.h"
-#include "QCopterFC_ctrl.h"
+#include "ahrs.h"
+#include "rc_control.h"
 #include "sensor_correct.h"
 #include "communication.h"
 
