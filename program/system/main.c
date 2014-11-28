@@ -105,7 +105,8 @@ void correction_task()
 	while ( sensor_correct == ERROR ) {
 
 		while (SensorMode != Mode_Algorithm) {
-			uint8_t IMU_Buf[20] = {0};
+	//		uint8_t IMU_Buf[20] = {0};
+			uint8_t IMU_Buf[14] = {0};
 
 			static uint8_t BaroCnt = 0;
 
@@ -128,9 +129,14 @@ void correction_task()
 			Gyr.X  = (s16)((IMU_Buf[8]  << 8) | IMU_Buf[9]);
 			Gyr.Y  = (s16)((IMU_Buf[10] << 8) | IMU_Buf[11]);
 			Gyr.Z  = (s16)((IMU_Buf[12] << 8) | IMU_Buf[13]);
-			Mag.X  = (s16)((IMU_Buf[15] << 8) | IMU_Buf[14]);
+		/*	Mag.X  = (s16)((IMU_Buf[15] << 8) | IMU_Buf[14]);
 			Mag.Y  = (s16)((IMU_Buf[17] << 8) | IMU_Buf[16]);
-			Mag.Z  = (s16)((IMU_Buf[19] << 8) | IMU_Buf[18]);
+			Mag.Z  = (s16)((IMU_Buf[19] << 8) | IMU_Buf[18]);*/
+
+			Mag.X=1;
+			Mag.Y=1;
+			Mag.Z=1;
+
 
 			/* Offset */
 			Acc.X -= Acc.OffsetX;
@@ -139,9 +145,9 @@ void correction_task()
 			Gyr.X -= Gyr.OffsetX;
 			Gyr.Y -= Gyr.OffsetY;
 			Gyr.Z -= Gyr.OffsetZ;
-			Mag.X *= Mag.AdjustX;
+		/*	Mag.X *= Mag.AdjustX;
 			Mag.Y *= Mag.AdjustY;
-			Mag.Z *= Mag.AdjustZ;
+			Mag.Z *= Mag.AdjustZ;*/
 
 			correct_sensor();
 
@@ -172,7 +178,9 @@ void flightControl_task()
 	sys_status = SYSTEM_FLIGHT_CONTROL;
 	while (1) {
 		GPIO_ToggleBits(GPIOC, GPIO_Pin_7);
-		uint8_t IMU_Buf[20] = {0};
+//		uint8_t IMU_Buf[20] = {0};
+		uint8_t IMU_Buf[14] = {0};
+
 
 		int16_t Final_M1 = 0;
 		int16_t Final_M2 = 0;
@@ -206,9 +214,9 @@ void flightControl_task()
 		Gyr.X  = (s16)((IMU_Buf[8]  << 8) | IMU_Buf[9]);
 		Gyr.Y  = (s16)((IMU_Buf[10] << 8) | IMU_Buf[11]);
 		Gyr.Z  = (s16)((IMU_Buf[12] << 8) | IMU_Buf[13]);
-		Mag.X  = (s16)((IMU_Buf[15] << 8) | IMU_Buf[14]);
+	/*	Mag.X  = (s16)((IMU_Buf[15] << 8) | IMU_Buf[14]);
 		Mag.Y  = (s16)((IMU_Buf[17] << 8) | IMU_Buf[16]);
-		Mag.Z  = (s16)((IMU_Buf[19] << 8) | IMU_Buf[18]);
+		Mag.Z  = (s16)((IMU_Buf[19] << 8) | IMU_Buf[18]);*/
 
 		/* Offset */
 		Acc.X -= Acc.OffsetX;
@@ -217,9 +225,9 @@ void flightControl_task()
 		Gyr.X -= Gyr.OffsetX;
 		Gyr.Y -= Gyr.OffsetY;
 		Gyr.Z -= Gyr.OffsetZ;
-		Mag.X *= Mag.AdjustX;
+	/*	Mag.X *= Mag.AdjustX;
 		Mag.Y *= Mag.AdjustY;
-		Mag.Z *= Mag.AdjustZ;
+		Mag.Z *= Mag.AdjustZ;*/
 
 		if (SensorMode == Mode_Algorithm) {
 
@@ -230,9 +238,9 @@ void flightControl_task()
 			Gyr.X = (s16)MoveAve_WMA(Gyr.X, GYR_FIFO[0], 8);
 			Gyr.Y = (s16)MoveAve_WMA(Gyr.Y, GYR_FIFO[1], 8);
 			Gyr.Z = (s16)MoveAve_WMA(Gyr.Z, GYR_FIFO[2], 8);
-			Mag.X = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], 64);
+		/*	Mag.X = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], 64);
 			Mag.Y = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], 64);
-			Mag.Z = (s16)MoveAve_WMA(Mag.Z, MAG_FIFO[2], 64);
+			Mag.Z = (s16)MoveAve_WMA(Mag.Z, MAG_FIFO[2], 64);*/
 
 
 			/* To Physical */
@@ -242,15 +250,15 @@ void flightControl_task()
 			Gyr.TrueX = Gyr.X * MPU9150G_2000dps; // dps/LSB
 			Gyr.TrueY = Gyr.Y * MPU9150G_2000dps; // dps/LSB
 			Gyr.TrueZ = Gyr.Z * MPU9150G_2000dps; // dps/LSB
-			Mag.TrueX = Mag.X * MPU9150M_1200uT;  // uT/LSB
+		/*	Mag.TrueX = Mag.X * MPU9150M_1200uT;  // uT/LSB
 			Mag.TrueY = Mag.Y * MPU9150M_1200uT;  // uT/LSB
 			Mag.TrueZ = Mag.Z * MPU9150M_1200uT;  // uT/LSB
-			Temp.TrueT = Temp.T * MPU9150T_85degC; // degC/LSB
+			Temp.TrueT = Temp.T * MPU9150T_85degC; // degC/LSB*/
 
-global_var[test1].param = Acc.TrueX;
-global_var[test2].param = Gyr.TrueX;
-global_var[test3].param = Mag.TrueY;
-global_var[test4].param = Mag.TrueZ;
+//global_var[test1].param = Acc.TrueX;
+//global_var[test2].param = Gyr.TrueX;
+//global_var[test3].param = Mag.TrueY;
+//global_var[test4].param = Mag.TrueZ;
 
 
 			/* Get Attitude Angle */
