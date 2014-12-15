@@ -5,17 +5,9 @@
 xTaskHandle FlightControl_Handle = NULL;
 xTaskHandle correction_task_handle = NULL;
 xSemaphoreHandle sdio_semaphore = NULL;
-volatile int16_t ACC_FIFO[3][256] = {{0}};
-volatile int16_t GYR_FIFO[3][256] = {{0}};
-volatile int16_t MAG_FIFO[3][256] = {{0}};
 
-volatile int16_t MagDataX[8] = {0};
-volatile int16_t MagDataY[8] = {0};
-volatile uint32_t Correction_Time = 0;
-
-Sensor_Mode SensorMode = Mode_GyrCorrect;
+extern Sensor_Mode SensorMode;
 extern SYSTEM_STATUS sys_status;
-extern SYSTEM_STATUS set_PWM_Motors;
 
 void vApplicationStackOverflowHook(xTaskHandle pxTask, signed char *pcTaskName)
 {
@@ -60,14 +52,14 @@ void system_init(void)
 	PID_Yaw.Ki = 0;
 	PID_Yaw.Kd = +10.5f;	//15.0f * 0.7=10.5f
 
-	Delay_10ms(10);
 	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
-
 	while(Sensor_Init() == ERROR); //Sensor Init
 	Delay_10ms(10);
+
 	LED_R = 0;
 	LED_G = 1;
 	LED_B = 1;
+
 	sys_status = SYSTEM_INITIALIZED;
 	set_PWM_Motors = SYSTEM_UNINITIALIZED;
 }
@@ -78,33 +70,7 @@ void correction_task()
 	while (sys_status == SYSTEM_UNINITIALIZED);
 	while ( sensor_correct == ERROR ) {
 		while (SensorMode != Mode_Algorithm) {
-			uint8_t IMU_Buf[14] = {0};
-			static uint8_t BaroCnt = 0;
-
-			MPU9150_Read(IMU_Buf);
-			BaroCnt++;//100Hz, Read Barometer
-			if (BaroCnt == SampleRateFreg / 100) {
-				MS5611_Read(&Baro, MS5611_D1_OSR_4096);
-				BaroCnt = 0;
-			}
-			Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
-			Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
-			Acc.Z  = (s16)((IMU_Buf[4]  << 8) | IMU_Buf[5]);
-			Temp.T = (s16)((IMU_Buf[6]  << 8) | IMU_Buf[7]);
-			Gyr.X  = (s16)((IMU_Buf[8]  << 8) | IMU_Buf[9]);
-			Gyr.Y  = (s16)((IMU_Buf[10] << 8) | IMU_Buf[11]);
-			Gyr.Z  = (s16)((IMU_Buf[12] << 8) | IMU_Buf[13]);
-			Mag.X=1;
-			Mag.Y=1;
-			Mag.Z=1;
-
-			/* Offset */
-			Acc.X -= Acc.OffsetX;
-			Acc.Y -= Acc.OffsetY;
-			Acc.Z -= Acc.OffsetZ;
-			Gyr.X -= Gyr.OffsetX;
-			Gyr.Y -= Gyr.OffsetY;
-			Gyr.Z -= Gyr.OffsetZ;
+			sensor_read();
 			correct_sensor();
 			vTaskDelay(2);
 		}
@@ -130,90 +96,14 @@ void flightControl_task()
 	while (sys_status == SYSTEM_UNINITIALIZED);
 	sys_status = SYSTEM_FLIGHT_CONTROL;
 	while (1) {
-		GPIO_ToggleBits(GPIOC, GPIO_Pin_7);
-		uint8_t IMU_Buf[14] = {0};
-		int16_t Final_M1 = 0;
-		int16_t Final_M2 = 0;
-		int16_t Final_M3 = 0;
-		int16_t Final_M4 = 0;
-		int16_t Thr = 0, Pitch = 0, Roll = 0, Yaw = 0;
-		int16_t Exp_Thr = 0, Exp_Pitch = 0, Exp_Roll = 0, Exp_Yaw = 0;
-		uint8_t safety = 0;
-		static uint8_t BaroCnt = 0;
+		GPIO_ToggleBits(GPIOC, GPIO_Pin_7);		
+		int16_t Final_M1 = 0, Final_M2 = 0, Final_M3 = 0, Final_M4 = 0;
+		int16_t Thr = 0, Pitch = 0, Roll = 0, Yaw = 0;		
+		int16_t safety = 0;
 
-		MPU9150_Read(IMU_Buf);
-		BaroCnt++; //100Hz, Read Barometer
-		if (BaroCnt == SampleRateFreg / 100) {
-			MS5611_Read(&Baro, MS5611_D1_OSR_4096);
-			BaroCnt = 0;
-		}
-		Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
-		Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
-		Acc.Z  = (s16)((IMU_Buf[4]  << 8) | IMU_Buf[5]);
-		Temp.T = (s16)((IMU_Buf[6]  << 8) | IMU_Buf[7]);
-		Gyr.X  = (s16)((IMU_Buf[8]  << 8) | IMU_Buf[9]);
-		Gyr.Y  = (s16)((IMU_Buf[10] << 8) | IMU_Buf[11]);
-		Gyr.Z  = (s16)((IMU_Buf[12] << 8) | IMU_Buf[13]);
-
-		/* Offset */
-		Acc.X -= Acc.OffsetX;
-		Acc.Y -= Acc.OffsetY;
-		Acc.Z -= Acc.OffsetZ;
-		Gyr.X -= Gyr.OffsetX;
-		Gyr.Y -= Gyr.OffsetY;
-		Gyr.Z -= Gyr.OffsetZ;
-
+		sensor_read();
 		if (SensorMode == Mode_Algorithm) {
-
-			/* 加權移動平均法 Weighted Moving Average */
-			Acc.X = (s16)MoveAve_WMA(Acc.X, ACC_FIFO[0], 8);
-			Acc.Y = (s16)MoveAve_WMA(Acc.Y, ACC_FIFO[1], 8);
-			Acc.Z = (s16)MoveAve_WMA(Acc.Z, ACC_FIFO[2], 8);
-			Gyr.X = (s16)MoveAve_WMA(Gyr.X, GYR_FIFO[0], 8);
-			Gyr.Y = (s16)MoveAve_WMA(Gyr.Y, GYR_FIFO[1], 8);
-			Gyr.Z = (s16)MoveAve_WMA(Gyr.Z, GYR_FIFO[2], 8);
-
-			/* To Physical */
-			Acc.TrueX = Acc.X * MPU9150A_4g;      // g/LSB
-			Acc.TrueY = Acc.Y * MPU9150A_4g;      // g/LSB
-			Acc.TrueZ = Acc.Z * MPU9150A_4g;      // g/LSB
-			Gyr.TrueX = Gyr.X * MPU9150G_2000dps; // dps/LSB
-			Gyr.TrueY = Gyr.Y * MPU9150G_2000dps; // dps/LSB
-			Gyr.TrueZ = Gyr.Z * MPU9150G_2000dps; // dps/LSB
-//global_var[test1].param = Acc.TrueX;
-//global_var[test2].param = Gyr.TrueX;
-//global_var[test3].param = Mag.TrueY;
-//global_var[test4].param = Mag.TrueZ;
-
-			/* Get Attitude Angle */
-			AHRS_Update();
-			global_var[TRUE_ROLL].param = AngE.Roll;
-			global_var[TRUE_PITCH].param = AngE.Pitch;
-			global_var[TRUE_YAW].param = AngE.Yaw;
-
-			/*Get RC Control*/
-			Update_RC_Control(&Exp_Roll, &Exp_Pitch, &Exp_Yaw, &Exp_Thr, &safety);
-			global_var[RC_EXP_THR].param  = Exp_Thr;
-			global_var[RC_EXP_ROLL].param = Exp_Roll;
-			global_var[RC_EXP_PITCH].param = Exp_Pitch;
-			global_var[RC_EXP_YAW].param = Exp_Yaw;
-			
-			/* Get ZeroErr */
-			PID_Pitch.ZeroErr = (float)((s16)Exp_Pitch);
-			PID_Roll.ZeroErr  = (float)((s16)Exp_Roll);
-			PID_Yaw.ZeroErr   = (float)((s16)Exp_Yaw) + 180.0f;
-
-			/* PID */
-			Roll  = (s16)PID_AHRS_Cal(&PID_Roll,   AngE.Roll,  Gyr.TrueX);
-			Pitch = (s16)PID_AHRS_Cal(&PID_Pitch,  AngE.Pitch, Gyr.TrueY);
-			Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ) + 3 * (s16)Exp_Yaw;
-			Thr   = (s16)Exp_Thr;
-			Bound(Yaw, -90, 90);
-
-			global_var[OPERATE_ROLL].param = Roll;
-			global_var[OPERATE_PITCH].param = Pitch;
-			global_var[OPERATE_YAW].param = Yaw;
-			global_var[OPERATE_THR].param = Thr;
+			AHRS_and_RC_updata(&Thr, &Pitch, &Roll, &Yaw, &safety ,&safety);
 
 			Final_M1 = Thr + Pitch - Roll + Yaw; //moonbear: - Yaw
 			Final_M2 = Thr + Pitch + Roll - Yaw; //moonbear: + Yaw
