@@ -26,7 +26,7 @@ void LED_Config(void)
 
 
 
-	LED_G = 1;
+	LED_G = 1; // set 1 => Light off ; set 0 => Light on
 	LED_R = 1;
 	LED_B = 1;
 }
