@@ -13,6 +13,7 @@ extern volatile int16_t MagDataX[8];
 extern volatile int16_t MagDataY[8];
 extern volatile uint32_t Correction_Time;
 
+
 void correct_sensor()
 {
 	float Ellipse[5] = {0};

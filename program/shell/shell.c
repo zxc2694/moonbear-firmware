@@ -5,11 +5,9 @@
 #include "QuadCopterConfig.h"
 
 #define ReadBuf_Size 500
-extern sdio_task_handle;
 extern SD_STATUS SDstatus;
 extern SD_STATUS SDcondition;
 extern ReadBuf[ReadBuf_Size];
-extern xSemaphoreHandle sdio_semaphore;
 extern SYSTEM_STATUS set_PWM_Motors;
 /* Shell Command handlers */
 void shell_unknown_cmd(char parameter[][MAX_CMD_LEN], int par_cnt);
@@ -17,8 +15,6 @@ void shell_clear(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_monitor(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
-void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt);
-void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_gui(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_guiBinary(char parameter[][MAX_CMD_LEN], int par_cnt);
@@ -28,9 +24,6 @@ enum SHELL_CMD_ID {
 	clear_ID,
 	help_ID,
 	monitor_ID,
-	/*ps_ID,*/
-	sdinfo_ID,
-	sdsave_ID,
 	watch_ID,
 	gui_ID,
 	guiBinary_ID,
@@ -43,9 +36,6 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(clear, shell),
 	CMD_DEF(help, shell),
 	CMD_DEF(monitor, shell),
-	/*CMD_DEF(ps, shell),*/
-	CMD_DEF(sdinfo, shell),
-	CMD_DEF(sdsave, shell),
 	CMD_DEF(watch, shell),
 	CMD_DEF(gui, shell),
 	CMD_DEF(guiBinary, shell),
@@ -129,60 +119,10 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("help \tShow the list of all commands\n\r");
 	printf("monitor The QuadCopter Status monitor\n\r");
 	printf("ps \tShow the list of all tasks\n\r");
-	printf("sdinfo\tShow SD card informations.\n\r");
-	printf("sdsave\tSave PID informations in the SD card.\n\r");
 	printf("watch\tObserve attitude & debug !\n\r");
 	printf("gui\tSupport real time display by python.\n\r");
 	printf("guiBinary\tBinary transmit function\n\r");
 
-}
-
-void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt)
-{
-	signed char buf[256] = {'\0'};
-
-	vTaskList(buf);
-
-	//TODO:replace the hardcode by using sprintf()
-	printf("\n\rName          State   Priority  Stack Num\n\r");
-	printf("*****************************************\n\r");
-	printf("%s\n\r", buf);
-}
-
-void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
-{
-	printf("-----SD Init Info-----\r\n");
-	printf(" Capacity : ");
-	printf("%d MB\r\n", (int)(SDCardInfo.CardCapacity >> 20));
-	printf(" CardBlockSize : ");
-	printf("%d\r\n", SDCardInfo.CardBlockSize);
-	printf(" CardType : ");
-	printf("%d\r\n", SDCardInfo.CardType);
-	printf(" RCA : ");
-	printf("%d\r\n", SDCardInfo.RCA);
-	printf("----------------------\r\n\r\n");
-	vTaskDelay(100);	
-}
-
-void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
-{
-	SDstatus = SD_UNREADY;
-	SDcondition == SD_UNSAVE;
-	xSemaphoreGive(sdio_semaphore);
-	while(SDstatus == SD_UNREADY);
-	vTaskDelay(200);
-	if(SDcondition == SD_SAVE){
-		printf("Has been saved ! \n\r\n\r");
-		printf("Read SD card ...... \n\r");
-		printf("SD card content : \n\r");		
-		printf("%s", ReadBuf);	
-	}
-	else if(SDcondition == SD_UNSAVE){
-		printf("OK! not store!\n\r");
-	}
-	else if(SDcondition == SD_ERSAVE){
-		printf("error!\n\r");
-	}
 }
 
 void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)

@@ -22,11 +22,11 @@ u8 MPU9150_Init(void)
 		{0x32, MPU6050_INT_PIN_CFG},  //
 		{0x00, MPU6050_USER_CTRL}     //
 	};
-	u8 AK8975_Init_Data[3][2] = {
+/*	u8 AK8975_Init_Data[3][2] = {
 		{0x0F, AK8975_CNTL},          // Set Fuse ROM access mode
 		{0x00, AK8975_CNTL},          // Set Power Down Mode
 		{0x01, AK8975_CNTL}           // Set Single Measurement Mode
-	};
+	};*/
 
 	/* MPU6050 */
 	I2C_DMA_ReadReg(MPU6050_I2C_ADDR, MPU6050_WHO_AM_I, ReadBuf, 1);
@@ -84,9 +84,8 @@ u8 MPU9150_Init(void)
 /*==============================================================================================*/
 void MPU9150_Read(u8 *ReadBuf)
 {
-	u8 ReadData = 0x00;
-	u8 WriteData = 0x01;
-
+//	u8 ReadData = 0x00;
+//	u8 WriteData = 0x01;
 	I2C_DMA_ReadReg(MPU6050_I2C_ADDR, MPU6050_ACCEL_XOUT_H, ReadBuf, 14);
 /*	I2C_DMA_ReadReg(AK8975_I2C_ADDR, AK8975_ST1, &ReadData, 1);       // Wait Prapare Data
 
