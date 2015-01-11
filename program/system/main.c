@@ -103,7 +103,7 @@ void flightControl_task()
 
 		sensor_read();
 		if (SensorMode == Mode_Algorithm) {
-			AHRS_and_RC_updata(&Thr, &Pitch, &Roll, &Yaw, &safety ,&safety);
+			AHRS_and_RC_updata(&Thr, &Pitch, &Roll, &Yaw, &safety);
 
 			Final_M1 = Thr + Pitch - Roll + Yaw; //moonbear: - Yaw
 			Final_M2 = Thr + Pitch + Roll - Yaw; //moonbear: + Yaw
