@@ -91,7 +91,7 @@ u8 Sensor_Init(void)
 **使用 : EllipseFitting(Ellipse, MagDataX, MagDataY, 8);
 **=====================================================================================================*/
 /*=====================================================================================================*/
-void EllipseFitting(float *Ans, s16 *MagDataX, s16 *MagDataY, u8 Num)
+void EllipseFitting(float *Ans, volatile s16 *MagDataX, volatile s16 *MagDataY, u8 Num)
 {
 	s8 i, j, k;
 	float temp, temp1, temp2;

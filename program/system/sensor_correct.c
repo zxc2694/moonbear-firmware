@@ -239,7 +239,7 @@ void AHRS_and_RC_updata(int16_t *Thr, int16_t *Pitch, int16_t *Roll, int16_t *Ya
 	*Pitch = (s16)PID_AHRS_Cal(&PID_Pitch,  AngE.Pitch, Gyr.TrueY);
 	*Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ) + 3 * (s16)Exp_Yaw;
 	*Thr   = (s16)Exp_Thr;
-	Bound(Yaw, -90, 90);
+	Bound(*Yaw, -90, 90);
 
 	global_var[OPERATE_ROLL].param = *Roll;
 	global_var[OPERATE_PITCH].param = *Pitch;

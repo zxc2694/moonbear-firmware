@@ -10,7 +10,7 @@ static __IO uint16_t rc_ctrl_timeout = 0;
 /*=====================================================================================================*/
 /*=====================================================================================================*/
 /*=====================================================================================================*/
-void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *Thr, uint8_t *safety)
+void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *Thr, int16_t *safety)
 {
 	/*Get PWM3 Input capture to control trottle*/
 	if ((global_var[PWM3_CCR].param > MIN_PWM_INPUT) &&
