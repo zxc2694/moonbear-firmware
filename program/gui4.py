@@ -46,15 +46,19 @@ class AnalogPlot:
 # set plot to animated
 		plt.ion()
 		plt.figure(figsize=(9,8))
-		self.v1line, = plt.plot(analogData.v1,label="motor1",color="red")
-		self.v2line, = plt.plot(analogData.v2,label="motor2",color="blue")
-		self.v3line, = plt.plot(analogData.v3,label="motor3",color="purple")
-		self.v4line, = plt.plot(analogData.v4,label="motor4",color="green")
+
+
+		self.v1line, = plt.plot(analogData.v1,label="motor4 -PWM9",color="red")
+		self.v2line, = plt.plot(analogData.v2,label="motor3 -PWM10",color="orange")
+		self.v3line, = plt.plot(analogData.v3,label="motor2 -PWM11",color="green")
+		self.v4line, = plt.plot(analogData.v4,label="motor1 -PWM12",color="blue")
+
+
 		plt.xlabel("Time")
 		plt.ylabel("PWM 700~2000")
 		plt.title("Quadcopter attitude")
 		plt.legend()		#Show label figure.
-		plt.ylim([700, 2000]) # Vertical axis scale.
+		plt.ylim([780, 1200]) # Vertical axis scale.
 #TEST	plt.ylim([-90, 90]) # Vertical axis scale.
 		plt.grid()
 
