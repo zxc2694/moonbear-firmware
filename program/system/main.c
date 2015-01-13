@@ -59,17 +59,17 @@ void system_init(void)
 	PID_Init(&PID_Roll);
 	PID_Init(&PID_Pitch);
 
-	PID_Pitch.Kp = +2.8f;	//4.0f * 0.7 = 2.8f
+	PID_Pitch.Kp = +5.0f;	//4.0f * 0.7 = 2.8f   //10 3  //5 10 <-- successd
 	PID_Pitch.Ki = 0;
-	PID_Pitch.Kd = +1.05f;	//1.5f * 0.7 = 1.05f
+	PID_Pitch.Kd = +10.0f;	//1.5f * 0.7 = 1.05f  
 
-	PID_Roll.Kp = +2.8f;	//4.0f * 0.7 = 2.8f
+	PID_Roll.Kp = +5.0f;	//4.0f * 0.7 = 2.8f
 	PID_Roll.Ki = 0;
-	PID_Roll.Kd = +1.05f ;	//1.5f * 0.7 = 1.05f
+	PID_Roll.Kd = +10.0f ;	//1.5f * 0.7 = 1.05f
 
-	PID_Yaw.Kp = +3.5f ;	//5.0f * 0.7 = 3.5f
+	PID_Yaw.Kp = +4.8f ;	//5.0f * 0.7 = 3.5f
 	PID_Yaw.Ki = 0;
-	PID_Yaw.Kd = +10.5f;	//15.0f * 0.7=10.5f
+	PID_Yaw.Kd = +10.0f;	//15.0f * 0.7=10.5f
 
 	Delay_10ms(10);
 
@@ -285,10 +285,15 @@ global_var[test4].param = Mag.TrueZ;
 
 			if(set_PWM_Motors ==SYSTEM_UNINITIALIZED){
 					/* Motor Ctrl */
-					Final_M1 = Thr + Pitch - Roll + Yaw; //moonbear: - Yaw
+	/*				Final_M1 = Thr + Pitch - Roll + Yaw; //moonbear: - Yaw
 					Final_M2 = Thr + Pitch + Roll - Yaw; //moonbear: + Yaw
 					Final_M3 = Thr - Pitch + Roll + Yaw; //moonbear: - Yaw
 					Final_M4 = Thr - Pitch - Roll - Yaw; //moonbear: + Yaw
+    */
+					Final_M1 = 110 + Thr + Pitch - Roll + Yaw; //moonbear: - Yaw
+					Final_M2 = 110 + Thr + Pitch + Roll - Yaw; //moonbear: + Yaw
+					Final_M3 = 110 + Thr - Pitch + Roll + Yaw; //moonbear: - Yaw
+					Final_M4 = 110 + Thr - Pitch - Roll - Yaw; //moonbear: + Yaw
 			
 				/* [Motor PWM > 1300] represents that the quadrotor has taken off  */ 
 				/*test auto landing ...
