@@ -54,8 +54,8 @@ class AnalogPlot:
 		plt.ion()
 		plt.figure(figsize=(9,8))
 		plt.subplot(211)
-		self.axline, = plt.plot(analogData.ax,label="Pitch",color="red")
-		self.ayline, = plt.plot(analogData.ay,label="Roll",color="blue")
+		self.axline, = plt.plot(analogData.ax,label="Roll",color="red")
+		self.ayline, = plt.plot(analogData.ay,label="Pitch",color="blue")
 		plt.xlabel("Time")
 		plt.ylabel("Angle(-90~+90)")
 		plt.title("Quadcopter attitude")
@@ -65,15 +65,15 @@ class AnalogPlot:
 
 
 		plt.subplot(212)
-		self.m1line, = plt.plot(analogData.m1,label="motor1",color="red")
-		self.m2line, = plt.plot(analogData.m2,label="motor2",color="orange")
-		self.m3line, = plt.plot(analogData.m3,label="motor3",color="green")
-		self.m4line, = plt.plot(analogData.m4,label="motor4",color="blue")
+		self.m1line, = plt.plot(analogData.m1,label="motor4 -PWM9",color="red")
+		self.m2line, = plt.plot(analogData.m2,label="motor3 -PWM10",color="orange")
+		self.m3line, = plt.plot(analogData.m3,label="motor2 -PWM11",color="green")
+		self.m4line, = plt.plot(analogData.m4,label="motor1 -PWM12",color="blue")
 
 		plt.xlabel("Time")
 		plt.ylabel("PWM")
 		plt.legend()		
-		plt.ylim([500, 2500]) 
+		plt.ylim([750, 1600]) 
 		plt.grid()
  
 # update plot
