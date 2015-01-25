@@ -4,7 +4,7 @@
 #define USE_FUTABA_CONTROLLER 0
 #define USE_WFLY_CONTROLLER 1
 /* Hardware environments */
-#define configMotor				1       //if you no connect motor -> set 0. 
+#define configMotor				0       //if you no connect motor -> set 0. 
 /* Status report functions */
 #define configSTATUS_SHELL		0
 #define configSTATUS_GET_MOTORS	0

@@ -20,11 +20,11 @@ void sensor_read()
 	static uint8_t BaroCnt = 0;
 
 	MPU9150_Read(IMU_Buf);
-	BaroCnt++;//100Hz, Read Barometer
+/*	BaroCnt++;//100Hz, Read Barometer
 	if (BaroCnt == SampleRateFreg / 100) {
 		MS5611_Read(&Baro, MS5611_D1_OSR_4096);
 		BaroCnt = 0;
-	}
+	}*/
 	
 	Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
 	Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
