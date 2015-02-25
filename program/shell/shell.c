@@ -18,6 +18,7 @@ void shell_ps(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_gui(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_guiBinary(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_tuning(char parameter[][MAX_CMD_LEN], int par_cnt);
 /* The identifier of the command */
 enum SHELL_CMD_ID {
 	unknown_cmd_ID,
@@ -27,6 +28,7 @@ enum SHELL_CMD_ID {
 	watch_ID,
 	gui_ID,
 	guiBinary_ID,
+	tuning_ID,
 	SHELL_CMD_CNT
 };
 
@@ -39,6 +41,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(watch, shell),
 	CMD_DEF(gui, shell),
 	CMD_DEF(guiBinary, shell),
+	CMD_DEF(tuning, shell)
 };
 
 /**** Shell task **********************************************************************/
@@ -117,12 +120,65 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	printf("\n\rSupport commands:\n\r");
 	printf("clear  \tClear the screan\n\r");
 	printf("help \tShow the list of all commands\n\r");
+	printf("tuning\tChange PID parameter\n\r");
 	printf("monitor The QuadCopter Status monitor\n\r");
 	printf("ps \tShow the list of all tasks\n\r");
 	printf("watch\tObserve attitude & debug !\n\r");
 	printf("gui\tSupport real time display by python.\n\r");
 	printf("guiBinary\tBinary transmit function\n\r");
 
+}
+
+void shell_tuning(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	PID_Pitch.Kp = +2.8f;	//4.0f * 0.7 = 2.8f
+	PID_Pitch.Ki = 0;
+	PID_Pitch.Kd = +1.05f;	//1.5f * 0.7 = 1.05f
+
+	PID_Roll.Kp = +2.8f;	//4.0f * 0.7 = 2.8f
+	PID_Roll.Ki = 0;
+	PID_Roll.Kd = +1.05f;	//1.5f * 0.7 = 1.05f
+
+	PID_Yaw.Kp = +3.5f;	//5.0f * 0.7 = 3.5f
+	PID_Yaw.Ki = 0;
+	PID_Yaw.Kd = +10.5f;	//15.0f * 0.7=10.5f
+	printf("You can change 'Roll angle' control parameter ...\n\r");
+	printf("Change Kp gain: input 'p' -> input '+' or '-'  \n\r");
+	printf("Change Kd gain: input 'd' -> input '+' or '-'  \n\n\r");
+	while(1){
+		if(serial.getch() == 'p'){ 
+			while(1){
+				if(serial.getch() == '+'){ 
+					PID_Roll.Kp = PID_Roll.Kp + 0.3f;
+					printf("PID_Roll.Kp = %f\n", PID_Roll.Kp);
+				}
+				if(serial.getch() == '-'){ 
+					PID_Roll.Kp = PID_Roll.Kp - 0.3f;
+					printf("PID_Roll.Kp = %f\n", PID_Roll.Kp);
+				}
+				if(serial.getch() == 'q'){ 
+					break;
+				}
+			}
+		}
+		if(serial.getch() == 'd'){ 
+			while(1){
+				if(serial.getch() == '+'){ 
+					PID_Roll.Kd = PID_Roll.Kd + 0.3f;
+					printf("PID_Roll.Kd = %f\n", PID_Roll.Kd);
+				}
+				if(serial.getch() == '-'){ 
+					PID_Roll.Kd = PID_Roll.Kd - 0.3f;
+					printf("PID_Roll.Kd = %f\n", PID_Roll.Kd);
+				}
+				if(serial.getch() == 'q'){ 
+					break;
+				}
+			}
+		}
+		if(serial.getch() == 'q') 
+			break;
+	}
 }
 
 void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt)
