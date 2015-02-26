@@ -52,6 +52,20 @@ void system_init(void)
 	PID_Yaw.Ki = 0;
 	PID_Yaw.Kd = +10.5f;	//15.0f * 0.7=10.5f
 
+#if QuadrotorMotorcycle
+	PID_Pitch.Kp = +5.0f;	
+	PID_Pitch.Ki = 0;
+	PID_Pitch.Kd = +10.0f;	
+
+	PID_Roll.Kp = +5.0f;	
+	PID_Roll.Ki = 0;
+	PID_Roll.Kd = +10.0f ;	
+
+	PID_Yaw.Kp = +3.5f ;	
+	PID_Yaw.Ki = 0;
+	PID_Yaw.Kd = +10.5f;
+#endif		
+
 	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 	while(Sensor_Init() == ERROR); //Sensor Init
 	Delay_10ms(10);
@@ -109,7 +123,13 @@ void flightControl_task()
 			Final_M2 = Thr + Pitch + Roll - Yaw; //moonbear: + Yaw
 			Final_M3 = Thr - Pitch + Roll + Yaw; //moonbear: - Yaw
 			Final_M4 = Thr - Pitch - Roll - Yaw; //moonbear: + Yaw
-				
+
+#if QuadrotorMotorcycle
+			Final_M1 = 110 + Thr + Pitch - Roll + Yaw; 
+			Final_M2 = 110 + Thr + Pitch + Roll - Yaw; 
+			Final_M3 = 110 + Thr - Pitch + Roll + Yaw; 
+			Final_M4 = 110 + Thr - Pitch - Roll - Yaw; 
+#endif				
 			Bound(Final_M1, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
 			Bound(Final_M2, PWM_MOTOR_MIN, PWM_MOTOR_MAX);
 			Bound(Final_M3, PWM_MOTOR_MIN, PWM_MOTOR_MAX);

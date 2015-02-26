@@ -11,6 +11,9 @@
 #define configSTATUS_GET_ROLL_PITCH	0
 #define configSTATUS_GET_ROLL_PITCH_MOTORS 0
 
+/* Quadrotor-Motorcycle mode */
+#define QuadrotorMotorcycle 0
+
 /* Includes */
 //FreeRTOS
 #include "FreeRTOS.h"
