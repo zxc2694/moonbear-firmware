@@ -101,7 +101,6 @@ SRC+=$(SYSTEM)/AHRS.c \
 	$(SYSTEM)/global.c \
 	$(SYSTEM)/IMU_correct.c \
 	$(SYSTEM)/interrupt.c \
-	$(SYSTEM)/main.c \
 	$(SYSTEM)/remote_control.c\
 	$(SYSTEM)/communication.c
 
@@ -114,6 +113,8 @@ SRC+=$(SHELL_)/linenoise.c \
 
 CFLAGS+=-I$(DEBUG)
 SRC+=$(DEBUG)/test.c
+
+SRC+=./main.c
 
 CFLAGS+=-I$(FREERTOS)/Source/include \
 	-I$(FREERTOS)/Source/portable/GCC/ARM_$(ARCH)
