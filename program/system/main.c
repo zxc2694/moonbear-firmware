@@ -301,8 +301,10 @@ void check_task()
 	//Waiting for system finish initialize
 	while (system.status != SYSTEM_INITIALIZED);
 
-	while (remote_signal_check() == NO_SIGNAL);
-
+#if configMotor
+	while (remote_signal_check() == NO_SIGNAL); //If there is no receiver but need to test IMU, please mask.
+#endif
+	
 	SetLED(LED_B, DISABLE);
 	vTaskResume(correction_task_handle);
 
