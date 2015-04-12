@@ -57,12 +57,19 @@ typedef struct {
 	status_t status;
 } system_t;
 
+typedef __IO enum {
+	Mode_GyrCorrect,
+	Mode_AccCorrect,  // 僅在水平狀態下做校正
+	Mode_MagCorrect,
+	Mode_Quaternion,
+	Mode_Algorithm
+} Sensor_Mode;
+
 global_t variable[SYS_VAR_CNT];
 
 extern system_t system;
-
 extern status_t SD_status;
-
+extern Sensor_Mode SensorMode;
 extern xSemaphoreHandle serial_tx_wait_sem;
 extern xQueueHandle serial_rx_queue;
 
