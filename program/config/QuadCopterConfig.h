@@ -3,8 +3,8 @@
 
 /* Hardware environments */
 /* Radio Control */
-#define USE_FUTABA_CONTROLLER		1
-#define USE_WFLY_CONTROLLER		0
+#define USE_FUTABA_CONTROLLER		0
+#define USE_WFLY_CONTROLLER		1
 
 /* Status report functions */
 #define configSTATUS_GUI		1
