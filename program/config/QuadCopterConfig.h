@@ -11,7 +11,7 @@
 #define configSTATUS_SHELL		1
 
 /* Set baudrate */
-#define Serial_Baudrate 57600
+#define Serial_Baudrate 9600
 
 /* Includes */
 //FreeRTOS
