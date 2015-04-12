@@ -250,6 +250,7 @@ void AHRS_and_RC_updata(int16_t *Thr, int16_t *Pitch, int16_t *Roll, int16_t *Ya
 	*Pitch = (s16)PID_AHRS_Cal(&PID_Pitch,  AngE.Pitch, Gyr.TrueY);
 	*Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ) + 3 * (s16)Exp_Yaw;
 	*Thr   = (s16)Exp_Thr;
+	Bound(*Yaw, -90, 90);
 
     system.variable[PID_ROLL].value = *Roll;
 	system.variable[PID_PITCH].value = *Pitch;
