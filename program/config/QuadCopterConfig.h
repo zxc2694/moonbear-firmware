@@ -32,7 +32,6 @@
 #include "_math.h"
 
 //System
-#include "main.h"
 #include "global.h"
 #include "std.h"
 #include "AHRS.h"
