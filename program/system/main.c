@@ -71,8 +71,9 @@ void system_init(void)
 	SetLED(LED_G, ENABLE);
 	SetLED(LED_B, ENABLE);
 
-	//Check if no error
+#if configSD
 	if (system.status != SYSTEM_ERROR_SD)
+#endif		
 		system.status = SYSTEM_INITIALIZED;
 
 }
