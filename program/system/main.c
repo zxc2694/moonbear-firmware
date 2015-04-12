@@ -86,10 +86,7 @@ void correction_task()
 	while (sensor_correct == ERROR) {
 
 		while (SensorMode != Mode_Algorithm) {
-			uint8_t IMU_Buf[20] = {0};
-
-			static uint8_t BaroCnt = 0;
-
+			
 			/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
 			MPU9150_Read(IMU_Buf);
 
@@ -103,29 +100,7 @@ void correction_task()
 			}
 
 #endif
-
-			Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
-			Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
-			Acc.Z  = (s16)((IMU_Buf[4]  << 8) | IMU_Buf[5]);
-			Temp.T = (s16)((IMU_Buf[6]  << 8) | IMU_Buf[7]);
-			Gyr.X  = (s16)((IMU_Buf[8]  << 8) | IMU_Buf[9]);
-			Gyr.Y  = (s16)((IMU_Buf[10] << 8) | IMU_Buf[11]);
-			Gyr.Z  = (s16)((IMU_Buf[12] << 8) | IMU_Buf[13]);
-			Mag.X  = (s16)((IMU_Buf[15] << 8) | IMU_Buf[14]);
-			Mag.Y  = (s16)((IMU_Buf[17] << 8) | IMU_Buf[16]);
-			Mag.Z  = (s16)((IMU_Buf[19] << 8) | IMU_Buf[18]);
-
-			/* Offset */
-			Acc.X -= Acc.OffsetX;
-			Acc.Y -= Acc.OffsetY;
-			Acc.Z -= Acc.OffsetZ;
-			Gyr.X -= Gyr.OffsetX;
-			Gyr.Y -= Gyr.OffsetY;
-			Gyr.Z -= Gyr.OffsetZ;
-			Mag.X *= Mag.AdjustX;
-			Mag.Y *= Mag.AdjustY;
-			Mag.Z *= Mag.AdjustZ;
-
+			sensor_read();
 			correct_sensor();
 
 			vTaskDelay(2);
@@ -158,7 +133,6 @@ void flightControl_task()
 
 	while (1) {
 		GPIO_ToggleBits(GPIOC, GPIO_Pin_7);
-		uint8_t IMU_Buf[20] = {0};
 
 		int16_t Final_M1 = 0;
 		int16_t Final_M2 = 0;
@@ -168,8 +142,6 @@ void flightControl_task()
 		int16_t Thr = 0, Pitch = 0, Roll = 0, Yaw = 0;
 		int16_t Exp_Thr = 0, Exp_Pitch = 0, Exp_Roll = 0, Exp_Yaw = 0;
 		uint8_t safety = 0;
-
-		static uint8_t BaroCnt = 0;
 
 		/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
 		MPU9150_Read(IMU_Buf);
@@ -184,28 +156,8 @@ void flightControl_task()
 		}
 
 #endif
-		Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
-		Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
-		Acc.Z  = (s16)((IMU_Buf[4]  << 8) | IMU_Buf[5]);
-		Temp.T = (s16)((IMU_Buf[6]  << 8) | IMU_Buf[7]);
-		Gyr.X  = (s16)((IMU_Buf[8]  << 8) | IMU_Buf[9]);
-		Gyr.Y  = (s16)((IMU_Buf[10] << 8) | IMU_Buf[11]);
-		Gyr.Z  = (s16)((IMU_Buf[12] << 8) | IMU_Buf[13]);
-		Mag.X  = (s16)((IMU_Buf[15] << 8) | IMU_Buf[14]);
-		Mag.Y  = (s16)((IMU_Buf[17] << 8) | IMU_Buf[16]);
-		Mag.Z  = (s16)((IMU_Buf[19] << 8) | IMU_Buf[18]);
 
-		/* Offset */
-		Acc.X -= Acc.OffsetX;
-		Acc.Y -= Acc.OffsetY;
-		Acc.Z -= Acc.OffsetZ;
-		Gyr.X -= Gyr.OffsetX;
-		Gyr.Y -= Gyr.OffsetY;
-		Gyr.Z -= Gyr.OffsetZ;
-		Mag.X *= Mag.AdjustX;
-		Mag.Y *= Mag.AdjustY;
-		Mag.Z *= Mag.AdjustZ;
-
+		sensor_read();
 		if (SensorMode == Mode_Algorithm) {
 
 			/* 加權移動平均法 Weighted Moving Average */

@@ -13,6 +13,41 @@ extern volatile int16_t MagDataX[8];
 extern volatile int16_t MagDataY[8];
 extern volatile uint32_t Correction_Time;
 
+void sensor_read()
+{
+	uint8_t IMU_Buf[20] = {0};
+	static uint8_t BaroCnt = 0;
+
+	MPU9150_Read(IMU_Buf);
+	BaroCnt++;//100Hz, Read Barometer
+	if (BaroCnt == SampleRateFreg / 100) {
+		MS5611_Read(&Baro, MS5611_D1_OSR_4096);
+		BaroCnt = 0;
+	}
+	
+		Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
+		Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
+		Acc.Z  = (s16)((IMU_Buf[4]  << 8) | IMU_Buf[5]);
+		Temp.T = (s16)((IMU_Buf[6]  << 8) | IMU_Buf[7]);
+		Gyr.X  = (s16)((IMU_Buf[8]  << 8) | IMU_Buf[9]);
+		Gyr.Y  = (s16)((IMU_Buf[10] << 8) | IMU_Buf[11]);
+		Gyr.Z  = (s16)((IMU_Buf[12] << 8) | IMU_Buf[13]);
+		Mag.X  = (s16)((IMU_Buf[15] << 8) | IMU_Buf[14]);
+		Mag.Y  = (s16)((IMU_Buf[17] << 8) | IMU_Buf[16]);
+		Mag.Z  = (s16)((IMU_Buf[19] << 8) | IMU_Buf[18]);
+
+		/* Offset */
+		Acc.X -= Acc.OffsetX;
+		Acc.Y -= Acc.OffsetY;
+		Acc.Z -= Acc.OffsetZ;
+		Gyr.X -= Gyr.OffsetX;
+		Gyr.Y -= Gyr.OffsetY;
+		Gyr.Z -= Gyr.OffsetZ;
+		Mag.X *= Mag.AdjustX;
+		Mag.Y *= Mag.AdjustY;
+		Mag.Z *= Mag.AdjustZ;
+}
+
 void correct_sensor()
 {
 	float Ellipse[5] = {0};
