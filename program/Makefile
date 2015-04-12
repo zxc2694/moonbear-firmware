@@ -14,7 +14,7 @@ GDB=arm-none-eabi-gdb
 
 CFLAGS=-g -mlittle-endian -mthumb
 CFLAGS+=-mcpu=cortex-m4
-CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=hard
+CFLAGS+=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
 CFLAGS+=-ffreestanding -nostdlib -Wall
 CFLAGS+=-Wl,-T,stm32_flash.ld
 
