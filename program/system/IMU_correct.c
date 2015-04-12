@@ -5,21 +5,24 @@ extern SensorGyr Gyr;
 extern SensorMag Mag;
 extern SensorTemp Temp;
 
-extern volatile int16_t ACC_FIFO[3][256];
-extern volatile int16_t GYR_FIFO[3][256];
-extern volatile int16_t MAG_FIFO[3][256];
+volatile int16_t ACC_FIFO[3][256] = {{0}};
+volatile int16_t GYR_FIFO[3][256] = {{0}};
+volatile int16_t MAG_FIFO[3][256] = {{0}};
 
-extern volatile int16_t MagDataX[8];
-extern volatile int16_t MagDataY[8];
-extern volatile uint32_t Correction_Time;
+volatile int16_t MagDataX[8] = {0};
+volatile int16_t MagDataY[8] = {0};
+volatile uint32_t Correction_Time = 0;
 
 void sensor_read()
 {
 	uint8_t IMU_Buf[20] = {0};
 	static uint8_t BaroCnt = 0;
 
+	/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
 	MPU9150_Read(IMU_Buf);
+
 	BaroCnt++;//100Hz, Read Barometer
+
 	if (BaroCnt == SampleRateFreg / 100) {
 		MS5611_Read(&Baro, MS5611_D1_OSR_4096);
 		BaroCnt = 0;
@@ -194,4 +197,63 @@ void correct_sensor()
 		break;
 	}
 
+}
+
+void AHRS_and_RC_updata(int16_t *Thr, int16_t *Pitch, int16_t *Roll, int16_t *Yaw, int16_t *safety)
+{
+	int16_t Exp_Thr = 0, Exp_Pitch = 0, Exp_Roll = 0, Exp_Yaw = 0;
+	int16_t Safety = *safety ;
+
+
+	/* 加權移動平均法 Weighted Moving Average */
+	Acc.X = (s16)MoveAve_WMA(Acc.X, ACC_FIFO[0], 8);
+	Acc.Y = (s16)MoveAve_WMA(Acc.Y, ACC_FIFO[1], 8);
+	Acc.Z = (s16)MoveAve_WMA(Acc.Z, ACC_FIFO[2], 8);
+	Gyr.X = (s16)MoveAve_WMA(Gyr.X, GYR_FIFO[0], 8);
+	Gyr.Y = (s16)MoveAve_WMA(Gyr.Y, GYR_FIFO[1], 8);
+	Gyr.Z = (s16)MoveAve_WMA(Gyr.Z, GYR_FIFO[2], 8);
+	Mag.X = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], 64);
+	Mag.Y = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], 64);
+	Mag.Z = (s16)MoveAve_WMA(Mag.Z, MAG_FIFO[2], 64);
+
+	/* To Physical */
+	Acc.TrueX = Acc.X * MPU9150A_4g;      // g/LSB
+	Acc.TrueY = Acc.Y * MPU9150A_4g;      // g/LSB
+	Acc.TrueZ = Acc.Z * MPU9150A_4g;      // g/LSB
+	Gyr.TrueX = Gyr.X * MPU9150G_2000dps; // dps/LSB
+	Gyr.TrueY = Gyr.Y * MPU9150G_2000dps; // dps/LSB
+	Gyr.TrueZ = Gyr.Z * MPU9150G_2000dps; // dps/LSB
+	Mag.TrueX = Mag.X * MPU9150M_1200uT;  // uT/LSB
+	Mag.TrueY = Mag.Y * MPU9150M_1200uT;  // uT/LSB
+	Mag.TrueZ = Mag.Z * MPU9150M_1200uT;  // uT/LSB
+	Temp.TrueT = Temp.T * MPU9150T_85degC; // degC/LSB
+
+/* Get Attitude Angle */
+	AHRS_Update();
+	system.variable[TRUE_ROLL].value = AngE.Roll;
+	system.variable[TRUE_PITCH].value = AngE.Pitch;
+	system.variable[TRUE_YAW].value = AngE.Yaw;
+
+	/*Get RC Control*/
+	Update_RC_Control(&Exp_Roll, &Exp_Pitch, &Exp_Yaw, &Exp_Thr, &safety);
+	system.variable[RC_EXP_THR].value  = Exp_Thr;
+	system.variable[RC_EXP_ROLL].value = Exp_Roll;
+	system.variable[RC_EXP_PITCH].value = Exp_Pitch;
+	system.variable[RC_EXP_YAW].value = Exp_Yaw;
+	/* Get ZeroErr */
+	PID_Pitch.ZeroErr = (float)((s16)Exp_Pitch);
+	PID_Roll.ZeroErr  = (float)((s16)Exp_Roll);
+	PID_Yaw.ZeroErr   = (float)((s16)Exp_Yaw) + 180.0f;
+
+	/* PID */
+	*Roll  = (s16)PID_AHRS_Cal(&PID_Roll,   AngE.Roll,  Gyr.TrueX);
+	*Pitch = (s16)PID_AHRS_Cal(&PID_Pitch,  AngE.Pitch, Gyr.TrueY);
+	*Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ) + 3 * (s16)Exp_Yaw;
+	*Thr   = (s16)Exp_Thr;
+
+    system.variable[PID_ROLL].value = *Roll;
+	system.variable[PID_PITCH].value = *Pitch;
+	system.variable[PID_YAW].value = *Yaw;
+
+	*safety = Safety;
 }
