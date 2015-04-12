@@ -1,12 +1,11 @@
 #ifndef __QUADCOPTER_CONFIG_H
 #define __QUADCOPTER_CONFIG_H
 
-/* Hardware environments */
-/* Radio Control */
+/*Radio control*/
 #define USE_FUTABA_CONTROLLER		0
 #define USE_WFLY_CONTROLLER		1
-
-#define configMotor				1       //if you no connect motor -> set 0. 
+/* Hardware environments */
+#define configMotor				0       //if you no connect motor -> set 0. 
 
 /* Status report functions */
 #define configSTATUS_GUI		1
