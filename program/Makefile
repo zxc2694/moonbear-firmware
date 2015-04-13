@@ -160,7 +160,9 @@ clean:
 #Make flash
 flash:
 	st-flash write $(BIN_IMAGE) 0x8000000
-
+#Make screen
+screen:
+	echo sudo screen /dev/ttyUSB0 9600 
 #Make openocd
 openocd: flash
 	openocd -s /opt/openocd/share/openocd/scripts/ -f ./debug/openocd.cfg
