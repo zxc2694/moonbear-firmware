@@ -274,7 +274,7 @@ int main(void)
 		    2048, NULL,
 		    tskIDLE_PRIORITY + 7, NULL);
 
-#if configSTATUS_GUI
+#if configSTATUS_NRF
 	xTaskCreate(nrf_sending_task,
 		    (signed portCHAR *) "NRF Sending",
 		    1024, NULL,
