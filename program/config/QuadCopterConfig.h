@@ -8,8 +8,12 @@
 #define configMotor				1       //if you no connect motor -> set 0. 
 #define configSD				1       //if you no connect motor -> set 0.
 /* Status report functions */
-#define configSTATUS_NRF		1
-#define configSTATUS_SHELL		1
+#define configSTATUS_NRF		0
+#define configSTATUS_SHELL		0
+#define configSTATUS_GET_MOTORS	0
+#define configSTATUS_GET_ROLL_PITCH	0
+#define configSTATUS_GET_ROLL_PITCH_MOTORS 1
+
 
 /* Set baudrate */
 #define Serial_Baudrate 9600

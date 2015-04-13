@@ -61,6 +61,7 @@ void shell_task()
 	//Waiting for system finish initialize
 	while (system.status != SYSTEM_INITIALIZED);
 
+#if configSTATUS_SHELL
 	/* Clear the screen */
 	serial.printf("\x1b[H\x1b[2J");
 	/* Show the prompt messages */
@@ -70,12 +71,16 @@ void shell_task()
 
 	serial.printf("Please type \"help\" to get more informations\n\r");
 
+#endif
+
 	while (1) {
 		linenoiseSetCompletionCallback(shell_linenoise_completion);
 
 		command_data shell_cd = {.par_cnt = 0};
 
+#if configSTATUS_SHELL
 		char *shell_str = linenoise("Quadcopter Shell > ");
+
 
 		if (shell_str == NULL)
 			continue;
@@ -83,6 +88,39 @@ void shell_task()
 		commandExec(shell_str, &shell_cd, shellCmd_list, SHELL_CMD_CNT);
 
 		linenoiseHistoryAdd(shell_str);
+#endif
+
+		//Show two values to gui2.py 
+#if configSTATUS_GET_ROLL_PITCH
+			while(1){
+				printf("%f %f\n\r", AngE.Roll, AngE.Pitch);
+				vTaskDelay(100);
+			}
+#endif
+
+		//Show four values to gui4.py
+#if configSTATUS_GET_MOTORS
+			while(1){
+				serial.printf("\n\r%f %f %f %f ",
+					      system.variable[MOTOR1].value, system.variable[MOTOR2].value,
+					      system.variable[MOTOR3].value, system.variable[MOTOR4].value
+					     );
+				vTaskDelay(100);
+			}
+#endif
+
+		//Show six values to gui6.py
+#if configSTATUS_GET_ROLL_PITCH_MOTORS
+			while(1){
+				serial.printf("\n\r%f %f %f %f %f %f",
+					      AngE.Roll, AngE.Pitch,
+					      system.variable[MOTOR1].value, system.variable[MOTOR2].value,
+					      system.variable[MOTOR3].value, system.variable[MOTOR4].value
+					     );
+				vTaskDelay(100);
+			}
+#endif
+
 	}
 }
 /**** Customize command function ******************************************************/

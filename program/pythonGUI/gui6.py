@@ -93,7 +93,7 @@ def main():
 	if(len(sys.argv) != 2):
 		print "Type:" 
 		print "sudo chmod 777 /dev/ttyUSB0"
-		print "python gui.py '/dev/ttyUSB0'"
+		print "python gui6.py '/dev/ttyUSB0'"
 		exit(1)
  
 #strPort = '/dev/tty.usbserial-A7006Yqh'
