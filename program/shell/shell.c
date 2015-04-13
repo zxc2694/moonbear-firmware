@@ -108,6 +108,7 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	serial.printf("monitor The QuadCopter Status monitor\n\r");
 	serial.printf("sdinfo\tShow SD card informations.\n\r");
 	serial.printf("sdsave\tSave PID informations in the SD card.\n\r");
+	serial.printf("watch\tDisplay attitudes and motors PWM\n\r");
 }
 
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
