@@ -25,7 +25,12 @@ global_t variable[] = {
 
 	[PID_PITCH] = {.name = "pid.pitch"},
 	[PID_ROLL] = {.name = "pid.roll"},
-	[PID_YAW] = {.name = "pid.yaw"}
+	[PID_YAW] = {.name = "pid.yaw"},
+
+	[TEST1] = {.name = "test1"},
+	[TEST2] = {.name = "test2"},
+	[TEST3] = {.name = "test3"},
+	[TEST4] = {.name = "test4"}
 };
 
 system_t system = {

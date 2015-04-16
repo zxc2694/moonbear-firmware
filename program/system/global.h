@@ -24,6 +24,10 @@ enum {
 	MOTOR2,
 	MOTOR3,
 	MOTOR4,
+	TEST1,
+	TEST2,
+	TEST3,
+	TEST4,
 	SYS_VAR_CNT
 };
 
