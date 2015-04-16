@@ -80,15 +80,6 @@ void correction_task()
 
 		while (SensorMode != Mode_Algorithm) {		
 
-#ifdef Use_Barometer
-			/* 100Hz, Read Barometer */
-			BaroCnt++;
-
-			if (BaroCnt == SampleRateFreg / 100) {
-				MS5611_Read(&Baro, MS5611_D1_OSR_4096);
-				BaroCnt = 0;
-			}
-#endif
 			sensor_read();
 			correct_sensor();
 			vTaskDelay(2);
@@ -130,17 +121,6 @@ void flightControl_task()
 		int16_t Thr = 0, Pitch = 0, Roll = 0, Yaw = 0;
 		int16_t Exp_Thr = 0, Exp_Pitch = 0, Exp_Roll = 0, Exp_Yaw = 0;
 		uint8_t safety = 0;
-
-#ifdef Use_Barometer
-		/* 100Hz, Read Barometer */
-		BaroCnt++;
-
-		if (BaroCnt == SampleRateFreg / 100) {
-			MS5611_Read(&Baro, MS5611_D1_OSR_4096);
-			BaroCnt = 0;
-		}
-
-#endif
 
 		sensor_read();
 		if (SensorMode == Mode_Algorithm) {
