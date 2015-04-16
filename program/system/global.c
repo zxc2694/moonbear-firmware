@@ -22,6 +22,7 @@ global_t variable[] = {
 	[TRUE_PITCH] = {.name = "imu.pitch"},
 	[TRUE_ROLL] = {.name = "imu.roll"},
 	[TRUE_YAW] = {.name = "imu.yaw"},
+	[BAROMETER] = {.name = "imu.barometer"},
 
 	[PID_PITCH] = {.name = "pid.pitch"},
 	[PID_ROLL] = {.name = "pid.roll"},
