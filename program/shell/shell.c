@@ -15,6 +15,7 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_license(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_gui_test(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_showData(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
 enum SHELL_CMD_ID {
@@ -28,6 +29,7 @@ enum SHELL_CMD_ID {
 	license_ID,
 	watch_ID,
 	gui_test_ID,
+	showData_ID,
 	SHELL_CMD_CNT
 };
 
@@ -42,7 +44,8 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(sdsave, shell),
 	CMD_DEF(license, shell),
 	CMD_DEF(gui_test, shell),
-	CMD_DEF(watch, shell)
+	CMD_DEF(watch, shell),
+	CMD_DEF(showData, shell)
 };
 
 /**** Shell task **********************************************************************/
@@ -147,6 +150,7 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	serial.printf("sdinfo\tShow SD card informations.\n\r");
 	serial.printf("sdsave\tSave PID informations in the SD card.\n\r");
 	serial.printf("watch\tDisplay attitudes and motors PWM\n\r");
+	serial.printf("showData Display all data\n\r");
 }
 
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
@@ -248,3 +252,84 @@ void shell_gui_test(char parameter[][MAX_CMD_LEN], int par_cnt)
 	}
 }
 
+void shell_showData(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	serial.printf("-----------showData command------------\n\r");
+	serial.printf("'z'=Show attitude  -> Pitch Roll Yaw\n\r");
+	serial.printf("'x'=Show motor PWM -> Motor1 ~ Motor4\n\r");
+	serial.printf("'c'=Show WFLY PWM  -> CCR1 ~ CCR4 \n\r");
+	serial.printf("'v'=Show PD gain -> Pitch:Kp Kd, Roll:Kp Kd, Yaw:Kp Kd\n\r");
+	serial.printf("'b'=Show barometer press ...\n\r");
+	serial.printf("'n'=Just test -1...\n\r");
+	serial.printf("'m'=Just test -2 ...\n\r");
+	serial.printf("'k'=Just test -3...\n\r");
+	serial.printf("'j'=Just test -4 ...\n\r");
+	serial.printf("'q'=quit watch command.\n\r");
+	serial.printf("'h'=Printf watch command function.\n\r");
+	while(1){
+		if(serial.getc() == 'z'){ 
+			serial.printf("Pitch : %f\tRoll : %f\tYaw : %f\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
+			vTaskDelay(50);
+		}
+		else if(serial.getc() == 'x'){
+			serial.printf("\n\r%f %f %f %f ",
+			        system.variable[MOTOR1].value, system.variable[MOTOR2].value,
+			        system.variable[MOTOR3].value, system.variable[MOTOR4].value
+					     );
+			vTaskDelay(50);
+		}
+		else if(serial.getc() == 'c'){
+			serial.printf("PWM1_CCR: %f\t,PWM2_CCR: %f\t,PWM3_CCR: %f\t,PWM4_CCR: %f\n\r",
+					system.variable[PWM1_CCR].value,system.variable[PWM2_CCR].value,
+					system.variable[PWM3_CCR].value,system.variable[PWM4_CCR].value);
+			vTaskDelay(50);
+		}
+		else if(serial.getc() == 'v'){
+			serial.printf("Pitch_Kp:%f  Pitch_Kd:%f  ,Roll_Kp:%f  Roll_Kd:%f  ,Yaw_Kp:%f  Yaw_Kd:%f \n\r", 
+					system.variable[PID_ROLL].value,system.variable[PID_PITCH].value,system.variable[PID_YAW].value);
+			vTaskDelay(50);
+		}
+
+		else if(serial.getc() == 'b'){
+			serial.printf("Barometer: %f\n\r",system.variable[BAROMETER].value);
+			vTaskDelay(50);
+		}
+		else if(serial.getc() == 'n'){	  
+
+			serial.printf("test1: %f\n\r",system.variable[TEST1].value);
+			vTaskDelay(50);
+		}
+		else if(serial.getc() == 'm'){	  
+			
+			serial.printf("test1: %f\n\r",system.variable[TEST2].value);
+			vTaskDelay(50);
+		}
+		else if(serial.getc() == 'k'){	  
+
+			serial.printf("test3: %f\n\r",system.variable[TEST3].value);
+			vTaskDelay(50);
+		}
+		else if(serial.getc() == 'j'){	  
+			
+			serial.printf("test4: %f\n\r",system.variable[TEST4].value);
+			vTaskDelay(50);
+		}
+		if(serial.getc() == 'h'){ 
+			serial.printf("-----------showData command------------\n\r");
+			serial.printf("'z'=Show attitude  -> Pitch Roll Yaw\n\r");
+			serial.printf("'x'=Show motor PWM -> Motor1 ~ Motor4\n\r");
+			serial.printf("'c'=Show WFLY PWM  -> CCR1 ~ CCR4 \n\r");
+			serial.printf("'v'=Show PD gain -> Pitch:Kp Kd, Roll:Kp Kd, Yaw:Kp Kd\n\r");
+			serial.printf("'b'=Show barometer press ...\n\r");
+			serial.printf("'n'=Just test -1...\n\r");
+			serial.printf("'m'=Just test -2 ...\n\r");
+			serial.printf("'h'=Just test -3...\n\r");
+			serial.printf("'j'=Just test -4 ...\n\r");
+			serial.printf("'q'=quit watch command.\n\r");
+			serial.printf("'h'=Printf watch command function.\n\r");
+		}
+		
+		else if(serial.getc() == 'q') 
+			break;
+	}
+}

@@ -27,6 +27,9 @@ void sensor_read()
 		MS5611_Read(&Baro, MS5611_D1_OSR_4096);
 		BaroCnt = 0;
 	}
+	system.variable[TEST1].value = Baro.Temp;
+	system.variable[TEST2].value = Baro.Press;
+	system.variable[TEST3].value = Baro.High;
 	
 		Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
 		Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
