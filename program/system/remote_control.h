@@ -65,7 +65,7 @@ typedef enum RC_State {
 #define ENGINE_OFF 1
 #define ENGINE_ON 0
 
-void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *Thr, uint8_t *safety);
+void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *Thr, int16_t *safety); 
 RC_State remote_signal_check();
 
 extern vs16 PWM_M1;

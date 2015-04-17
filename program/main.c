@@ -119,8 +119,7 @@ void flightControl_task()
 		int16_t Final_M4 = 0;
 
 		int16_t Thr = 0, Pitch = 0, Roll = 0, Yaw = 0;
-		int16_t Exp_Thr = 0, Exp_Pitch = 0, Exp_Roll = 0, Exp_Yaw = 0;
-		uint8_t safety = 0;
+		int16_t safety = 0;
 
 		sensor_read();
 		if (SensorMode == Mode_Algorithm) {

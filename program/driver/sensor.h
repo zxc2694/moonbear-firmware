@@ -71,7 +71,7 @@ extern SensorTemp Temp;
 /*=====================================================================================================*/
 void Sensor_Config(void);
 u8 Sensor_Init(void);
-void EllipseFitting(float *Ans, s16 *MagDataX, s16 *MagDataY, u8 Num);
+void EllipseFitting(float *Ans, volatile s16 *MagDataX, volatile s16 *MagDataY, u8 Num);
 u8 CompassDir(float Angle);
 /*=====================================================================================================*/
 /*=====================================================================================================*/
