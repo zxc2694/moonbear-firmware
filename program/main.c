@@ -128,10 +128,10 @@ void flightControl_task()
 			AHRS_and_RC_updata(&Thr, &Pitch, &Roll, &Yaw, &safety);
 			
 			/* Motor Ctrl */
-			Final_M1 = Thr + Pitch - Roll - Yaw;
-			Final_M2 = Thr + Pitch + Roll + Yaw;
-			Final_M3 = Thr - Pitch + Roll - Yaw;
-			Final_M4 = Thr - Pitch - Roll + Yaw;
+			Final_M1 = Thr + Pitch - Roll + Yaw; //moonbear: - Yaw
+			Final_M2 = Thr + Pitch + Roll - Yaw; //moonbear: + Yaw
+			Final_M3 = Thr - Pitch + Roll + Yaw; //moonbear: - Yaw
+			Final_M4 = Thr - Pitch - Roll - Yaw; //moonbear: + Yaw
 
 			system.variable[MOTOR1].value = Final_M1;
 			system.variable[MOTOR2].value = Final_M2;
