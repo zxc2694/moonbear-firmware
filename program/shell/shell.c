@@ -286,7 +286,7 @@ void shell_showData(char parameter[][MAX_CMD_LEN], int par_cnt)
 		}
 		else if(serial.getc() == 'v'){
 			serial.printf("Pitch_Kp:%f  Pitch_Kd:%f  ,Roll_Kp:%f  Roll_Kd:%f  ,Yaw_Kp:%f  Yaw_Kd:%f \n\r", 
-					system.variable[PID_ROLL].value,system.variable[PID_PITCH].value,system.variable[PID_YAW].value);
+					PID_Pitch.Kp,PID_Pitch.Kd,PID_Roll.Kp,PID_Roll.Kd,PID_Yaw.Kp,PID_Yaw.Kd);
 			vTaskDelay(50);
 		}
 
