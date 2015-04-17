@@ -259,20 +259,21 @@ void shell_showData(char parameter[][MAX_CMD_LEN], int par_cnt)
 	serial.printf("'x'=Show motor PWM -> Motor1 ~ Motor4\n\r");
 	serial.printf("'c'=Show WFLY PWM  -> CCR1 ~ CCR4 \n\r");
 	serial.printf("'v'=Show PD gain -> Pitch:Kp Kd, Roll:Kp Kd, Yaw:Kp Kd\n\r");
+	serial.printf("'a'=Show magnetometer data ...\n\r");
 	serial.printf("'b'=Show barometer press ...\n\r");
 	serial.printf("'n'=Just test -1...\n\r");
 	serial.printf("'m'=Just test -2 ...\n\r");
 	serial.printf("'k'=Just test -3...\n\r");
 	serial.printf("'j'=Just test -4 ...\n\r");
 	serial.printf("'q'=quit watch command.\n\r");
-	serial.printf("'h'=Printf watch command function.\n\r");
+	serial.printf("'h'=Print command function.\n\r");
 	while(1){
 		if(serial.getc() == 'z'){ 
 			serial.printf("Pitch : %f\tRoll : %f\tYaw : %f\n\r", AngE.Pitch, AngE.Roll, AngE.Yaw);
 			vTaskDelay(50);
 		}
 		else if(serial.getc() == 'x'){
-			serial.printf("\n\r%f %f %f %f ",
+			serial.printf("Motor1: %f\tMotor2: %f\tMotor3: %f\tMotor4: %f\n\r",
 			        system.variable[MOTOR1].value, system.variable[MOTOR2].value,
 			        system.variable[MOTOR3].value, system.variable[MOTOR4].value
 					     );
@@ -314,19 +315,26 @@ void shell_showData(char parameter[][MAX_CMD_LEN], int par_cnt)
 			serial.printf("test4: %f\n\r",system.variable[TEST4].value);
 			vTaskDelay(50);
 		}
+		else if(serial.getc() == 'a'){
+			serial.printf("MAG X: %f\tMAG Y: %f\tMAG Z: %f\n\r",
+			        system.variable[MAGX].value, system.variable[MAGY].value,
+			        system.variable[MAGZ].value);
+			vTaskDelay(50);
+		}
 		if(serial.getc() == 'h'){ 
 			serial.printf("-----------showData command------------\n\r");
 			serial.printf("'z'=Show attitude  -> Pitch Roll Yaw\n\r");
 			serial.printf("'x'=Show motor PWM -> Motor1 ~ Motor4\n\r");
 			serial.printf("'c'=Show WFLY PWM  -> CCR1 ~ CCR4 \n\r");
 			serial.printf("'v'=Show PD gain -> Pitch:Kp Kd, Roll:Kp Kd, Yaw:Kp Kd\n\r");
+			serial.printf("'a'=Show magnetometer data ...\n\r");
 			serial.printf("'b'=Show barometer press ...\n\r");
 			serial.printf("'n'=Just test -1...\n\r");
 			serial.printf("'m'=Just test -2 ...\n\r");
 			serial.printf("'h'=Just test -3...\n\r");
 			serial.printf("'j'=Just test -4 ...\n\r");
 			serial.printf("'q'=quit watch command.\n\r");
-			serial.printf("'h'=Printf watch command function.\n\r");
+			serial.printf("'h'=Print command function.\n\r");
 		}
 		
 		else if(serial.getc() == 'q') 

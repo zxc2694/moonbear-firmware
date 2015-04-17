@@ -28,6 +28,10 @@ global_t variable[] = {
 	[PID_ROLL] = {.name = "pid.roll"},
 	[PID_YAW] = {.name = "pid.yaw"},
 
+	[MAGX] = {.name = "mag_x"},
+	[MAGY] = {.name = "mag_y"},
+	[MAGZ] = {.name = "mag_z"},
+
 	[TEST1] = {.name = "test1"},
 	[TEST2] = {.name = "test2"},
 	[TEST3] = {.name = "test3"},

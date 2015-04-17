@@ -28,6 +28,9 @@ enum {
 	TEST2,
 	TEST3,
 	TEST4,
+	MAGX,
+	MAGY,
+	MAGZ,
 	BAROMETER,
 	SYS_VAR_CNT
 };

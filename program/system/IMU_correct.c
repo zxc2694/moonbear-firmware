@@ -52,6 +52,10 @@ void sensor_read()
 		Mag.X *= Mag.AdjustX;
 		Mag.Y *= Mag.AdjustY;
 		Mag.Z *= Mag.AdjustZ;
+
+	system.variable[MAGX].value = Mag.X;
+	system.variable[MAGY].value = Mag.Y;
+	system.variable[MAGZ].value = Mag.Z;
 }
 
 void correct_sensor()
