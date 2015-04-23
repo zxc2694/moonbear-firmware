@@ -15,6 +15,7 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_license(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_watch(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_gui_test(char parameter[][MAX_CMD_LEN], int par_cnt);
+void shell_tuning(char parameter[][MAX_CMD_LEN], int par_cnt);
 void shell_showData(char parameter[][MAX_CMD_LEN], int par_cnt);
 
 /* The identifier of the command */
@@ -29,6 +30,7 @@ enum SHELL_CMD_ID {
 	license_ID,
 	watch_ID,
 	gui_test_ID,
+	tuning_ID,
 	showData_ID,
 	SHELL_CMD_CNT
 };
@@ -45,6 +47,7 @@ command_list shellCmd_list[SHELL_CMD_CNT] = {
 	CMD_DEF(license, shell),
 	CMD_DEF(gui_test, shell),
 	CMD_DEF(watch, shell),
+	CMD_DEF(tuning, shell),
 	CMD_DEF(showData, shell)
 };
 
@@ -150,7 +153,9 @@ void shell_help(char parameter[][MAX_CMD_LEN], int par_cnt)
 	serial.printf("sdinfo\tShow SD card informations.\n\r");
 	serial.printf("sdsave\tSave PID informations in the SD card.\n\r");
 	serial.printf("watch\tDisplay attitudes and motors PWM\n\r");
+	serial.printf("tuning\ttuning the PD gains\n\r");
 	serial.printf("showData Display all data\n\r");
+	serial.printf("\n\r");
 }
 
 void shell_sdinfo(char parameter[][MAX_CMD_LEN], int par_cnt)
@@ -249,6 +254,52 @@ void shell_gui_test(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 		generate_package(&package, (uint8_t *)buf);
 		send_package((uint8_t *)buf);
+	}
+}
+
+void shell_tuning(char parameter[][MAX_CMD_LEN], int par_cnt)
+{
+	serial.printf("\nPitch_Kp:%f  Pitch_Kd:%f  ,Roll_Kp:%f  Roll_Kd:%f  ,Yaw_Kp:%f  Yaw_Kd:%f \n\n\r", 
+					PID_Pitch.Kp,PID_Pitch.Kd,PID_Roll.Kp,PID_Roll.Kd,PID_Yaw.Kp,PID_Yaw.Kd);
+	vTaskDelay(50);
+	serial.printf("You can change 'Roll angle' control parameter ...\n\r");
+	serial.printf("Change Kp gain: input 'p' -> input '+' or '-'  \n\r");
+	serial.printf("Change Kd gain: input 'd' -> input '+' or '-'  \n\n\r");
+	while(1){
+		if(serial.getc() == 'p'){ 
+			serial.printf("[Kp]___ input '+' or '-' \n\r");
+			while(1){
+				if(serial.getc() == '+'){ 
+					PID_Roll.Kp = PID_Roll.Kp + 0.3f;
+					serial.printf("PID_Roll.Kp = %f\n\r", PID_Roll.Kp);
+				}
+				else if(serial.getc() == '-'){ 
+					PID_Roll.Kp = PID_Roll.Kp - 0.3f;
+					serial.printf("PID_Roll.Kp = %f\n\r", PID_Roll.Kp);
+				}
+				else if(serial.getc() == 'q'){ 
+					break;
+				}
+			}
+		}
+		else if(serial.getc() == 'd'){ 
+			serial.printf("[Kd]___ input '+' or '-' \n\r");
+			while(1){
+				if(serial.getc() == '+'){ 
+					PID_Roll.Kd = PID_Roll.Kd + 0.3f;
+					serial.printf("PID_Roll.Kd = %f\n\r", PID_Roll.Kd);
+				}
+				else if(serial.getc() == '-'){ 
+					PID_Roll.Kd = PID_Roll.Kd - 0.3f;
+					serial.printf("PID_Roll.Kd = %f\n\r", PID_Roll.Kd);
+				}
+				else if(serial.getc() == 'q'){ 
+					break;
+				}
+			}
+		}
+		else if(serial.getc() == 'q') 
+			break;
 	}
 }
 
