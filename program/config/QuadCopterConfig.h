@@ -6,13 +6,14 @@
 #define USE_WFLY_CONTROLLER		1
 /* Hardware environments */
 #define configMotor				1       //if you no connect motor -> set 0. 
-#define configSD				1       //if you no connect motor -> set 0.
+#define configSD				0       //if you no connect SD card -> set 0.
+#define configNRF				0       //if you no connect nRF module -> set 0.
 /* Status report functions */
 #define configSTATUS_NRF		0
-#define configSTATUS_SHELL		0
+#define configSTATUS_SHELL		1
 #define configSTATUS_GET_MOTORS	0
 #define configSTATUS_GET_ROLL_PITCH	0
-#define configSTATUS_GET_ROLL_PITCH_MOTORS 1
+#define configSTATUS_GET_ROLL_PITCH_MOTORS 0
 
 
 /* Set baudrate */

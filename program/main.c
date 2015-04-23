@@ -36,7 +36,10 @@ void system_init(void)
 
 	//IMU Config
 	Sensor_Config();
+
+#if configNRF
 	nRF24L01_Config();
+#endif	
 
 	//SD Config
 	if ((SD_status = SD_Init()) != SD_OK)
@@ -50,8 +53,10 @@ void system_init(void)
 
 	Motor_Control(PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN, PWM_MOTOR_MIN);
 
+#if configNRF
 	/* nRF Check */
 	while (nRF_Check() == ERROR);
+#endif	
 
 	/* Sensor Init */
 	while (Sensor_Init() == ERROR);
@@ -181,6 +186,7 @@ void check_task()
 
 void nrf_sending_task()
 {
+#if configSTATUS_NRF
 	char buf[128] = {0};
 	nrf_package package;
 
@@ -203,6 +209,7 @@ void nrf_sending_task()
 		nrf_generate_package(&package, (uint8_t *)buf);
 		nrf_send_package((uint8_t *)buf);
 	}
+#endif
 
 }
 
@@ -253,7 +260,7 @@ int main(void)
 		    2048, NULL,
 		    tskIDLE_PRIORITY + 7, NULL);
 
-#if configSTATUS_NRF
+#if configNRF
 	xTaskCreate(nrf_sending_task,
 		    (signed portCHAR *) "NRF Sending",
 		    1024, NULL,
