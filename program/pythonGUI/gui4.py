@@ -87,17 +87,20 @@ def main():
 	analogPlot = AnalogPlot(analogData)
 
 	print "plotting data..."
-
+	a = 1
 # open serial port
 	ser = serial.Serial(strPort, 9600)
 	while True:
 		try:
 			line = ser.readline()
 			data = [float(val) for val in line.split()]
-			print data[0] , data[1] ,data[2] , data[3] 
-			if(len(data) == 4):
-				analogData.add(data)
-				analogPlot.update(analogData)
+			if (a < 10):
+				a = a + 1
+			else:
+				print data[0] , data[1] ,data[2] , data[3] 
+				if(len(data) == 4):
+					analogData.add(data)
+					analogPlot.update(analogData)
 		except KeyboardInterrupt:
 			print "exiting"
 			break
