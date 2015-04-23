@@ -333,7 +333,7 @@ void shell_showData(char parameter[][MAX_CMD_LEN], int par_cnt)
 			serial.printf("'m'=Just test -2 ...\n\r");
 			serial.printf("'h'=Just test -3...\n\r");
 			serial.printf("'j'=Just test -4 ...\n\r");
-			serial.printf("'q'=quit watch command.\n\r");
+			serial.printf("'q'=quit showData command.\n\r");
 			serial.printf("'h'=Print command function.\n\r");
 		}
 		

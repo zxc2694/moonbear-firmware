@@ -78,9 +78,7 @@ u8 Sensor_Init(void)
 	Temp.TrueT = 0.0f;
 
 	Sta = MPU9150_Init();
-#ifdef Use_Barometer
 	MS5611_Init(&Baro);
-#endif
 
 	return Sta;
 }
