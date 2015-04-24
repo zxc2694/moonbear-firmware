@@ -69,6 +69,20 @@
 #define MIN_PWM5_INPUT 2200.0 	// GEAR // Protect Switch
 #endif
 
+/*
+	          left hand                          right hand
+           _______________                     _______________
+          /       ↑       \                   /       ↑       \
+         /     PWM2(Pitch) \                 /    PWM3(Thrust) \    
+        /         |         \               /         |         \
+       /          |          \             /          |          \
+       <<---------+--------->> PWM4(Yaw)   <<---------+--------->> PWM1(Roll) 
+       \          |          /             \          |          /
+        \         |         /               \         |         /
+         \        |        /                 \        |        /
+          \______ ↓ ______/                   \______ ↓ ______/
+*/
+
 #define MAX_CTRL_ROLL 45
 #define MIN_CTRL_ROLL -45
 
