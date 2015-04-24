@@ -46,8 +46,27 @@
 #define MIN_PWM4_INPUT 2201.0
 
 #define MAX_PWM5_INPUT 3900.0
-
 #define MIN_PWM5_INPUT 2201.0
+#endif
+
+#if USE_DEVO_v10_CONTROLLER
+#define MAX_PWM1_INPUT 3775.0
+#define MID_PWM1_INPUT 2973.0 	// AILE // Roll
+#define MIN_PWM1_INPUT 2175.0
+
+#define MAX_PWM2_INPUT 3804.0
+#define MID_PWM2_INPUT 3064.0 	// ELEV // Pitch
+#define MIN_PWM2_INPUT 2203.0
+
+#define MAX_PWM3_INPUT 3795.0
+#define MIN_PWM3_INPUT 2192.0 	// THRO // Thrust
+
+#define MAX_PWM4_INPUT 3812.0
+#define MID_PWM4_INPUT 3012.0 	// RUDD // Yaw
+#define MIN_PWM4_INPUT 2212.0
+
+#define MAX_PWM5_INPUT 3800.0 	
+#define MIN_PWM5_INPUT 2200.0 	// GEAR // Protect Switch
 #endif
 
 #define MAX_CTRL_ROLL 45
