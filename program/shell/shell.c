@@ -331,9 +331,9 @@ void shell_showData(char parameter[][MAX_CMD_LEN], int par_cnt)
 			vTaskDelay(50);
 		}
 		else if(serial.getc() == 'c'){
-			serial.printf("PWM1_CCR: %f\t,PWM2_CCR: %f\t,PWM3_CCR: %f\t,PWM4_CCR: %f\n\r",
+			serial.printf("PWM1_CCR: %f\t,PWM2_CCR: %f\t,PWM3_CCR: %f\t,PWM4_CCR: %f\t,PWM5_CCR: %f\t\n\r",
 					system.variable[PWM1_CCR].value,system.variable[PWM2_CCR].value,
-					system.variable[PWM3_CCR].value,system.variable[PWM4_CCR].value);
+					system.variable[PWM3_CCR].value,system.variable[PWM4_CCR].value,system.variable[PWM5_CCR].value);
 			vTaskDelay(50);
 		}
 		else if(serial.getc() == 'v'){
