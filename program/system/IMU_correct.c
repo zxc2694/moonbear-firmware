@@ -53,9 +53,6 @@ void sensor_read()
 		Mag.Y *= Mag.AdjustY;
 		Mag.Z *= Mag.AdjustZ;
 
-	system.variable[MAGX].value = Mag.X;
-	system.variable[MAGY].value = Mag.Y;
-	system.variable[MAGZ].value = Mag.Z;
 }
 
 void correct_sensor()
@@ -234,6 +231,18 @@ void AHRS_and_RC_updata(int16_t *Thr, int16_t *Pitch, int16_t *Roll, int16_t *Ya
 	Mag.TrueY = Mag.Y * MPU9150M_1200uT;  // uT/LSB
 	Mag.TrueZ = Mag.Z * MPU9150M_1200uT;  // uT/LSB
 	Temp.TrueT = Temp.T * MPU9150T_85degC; // degC/LSB
+
+	system.variable[ACCX].value = Acc.TrueX;
+	system.variable[ACCY].value = Acc.TrueY;
+	system.variable[ACCZ].value = Acc.TrueZ;
+
+	system.variable[GYROX].value = Gyr.TrueX;
+	system.variable[GYROY].value = Gyr.TrueY;
+	system.variable[GYROZ].value = Gyr.TrueZ;
+	
+	system.variable[MAGX].value = Mag.TrueX;
+	system.variable[MAGY].value = Mag.TrueY;
+	system.variable[MAGZ].value = Mag.TrueZ;
 
 /* Get Attitude Angle */
 	AHRS_Update();

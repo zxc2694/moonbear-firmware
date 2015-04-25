@@ -127,6 +127,39 @@ void shell_task()
 			}
 #endif
 
+#if configSTATUS_GET_MAG
+			while(1){
+				serial.printf("%f %f %f \n\r",
+					      system.variable[MAGX].value, system.variable[MAGY].value,
+					      system.variable[MAGZ].value);
+				vTaskDelay(100);
+			}
+/*			while(1){
+				serial.printf("%f %f %f \n\r",
+					      system.variable[TEST1].value, system.variable[TEST2].value,
+					      system.variable[TEST3].value);
+				vTaskDelay(100);
+			}*/
+#endif	
+
+#if configSTATUS_GET_ACC
+			while(1){
+				serial.printf("%f %f %f \n\r",
+					      system.variable[ACCX].value, system.variable[ACCY].value,
+					      system.variable[ACCZ].value);
+				vTaskDelay(100);
+			}
+#endif
+
+#if configSTATUS_GET_GYRO
+			while(1){
+				serial.printf("%f %f %f \n\r",
+					      system.variable[GYROX].value, system.variable[GYROY].value,
+					      system.variable[GYROZ].value);
+				vTaskDelay(100);
+			}
+#endif
+
 	}
 }
 /**** Customize command function ******************************************************/
