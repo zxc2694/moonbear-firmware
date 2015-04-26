@@ -251,7 +251,7 @@ void AHRS_and_RC_updata(int16_t *Thr, int16_t *Pitch, int16_t *Roll, int16_t *Ya
 	system.variable[TRUE_YAW].value = AngE.Yaw;
 
 	/*Get RC Control*/
-	Update_RC_Control(&Exp_Roll, &Exp_Pitch, &Exp_Yaw, &Exp_Thr, &safety);
+	Update_RC_Control(&Exp_Roll, &Exp_Pitch, &Exp_Yaw, &Exp_Thr, &Safety);
 	system.variable[RC_EXP_THR].value  = Exp_Thr;
 	system.variable[RC_EXP_ROLL].value = Exp_Roll;
 	system.variable[RC_EXP_PITCH].value = Exp_Pitch;
