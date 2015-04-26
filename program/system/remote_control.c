@@ -20,9 +20,15 @@ void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *
 	/*Get PWM1 Input capture to control roll*/
 	if ((system.variable[PWM1_CCR].value > MIN_PWM_INPUT) &&
 	    (system.variable[PWM1_CCR].value < MAX_PWM_INPUT)) {
-
+#if USE_WFLY_CONTROLLER
 		*Roll = MAX_CTRL_ROLL / (MAX_PWM1_INPUT - MID_PWM1_INPUT) *
 			(system.variable[PWM1_CCR].value - MID_PWM1_INPUT);
+#endif
+
+#if USE_DEVO_v10_CONTROLLER
+			*Roll = -1*(MAX_CTRL_ROLL / (MAX_PWM1_INPUT - MID_PWM1_INPUT) *
+			(system.variable[PWM1_CCR].value - MID_PWM1_INPUT));
+#endif
 	}
 
 	/*Get PWM2 Input capture to control pitch*/
@@ -36,9 +42,15 @@ void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *
 	/*Get PWM4 Input capture to control yaw*/
 	if ((system.variable[PWM4_CCR].value > MIN_PWM_INPUT) &&
 	    (system.variable[PWM4_CCR].value < MAX_PWM_INPUT)) {
-
+#if USE_WFLY_CONTROLLER
 		*Yaw = MAX_CTRL_YAW / (MAX_PWM4_INPUT - MID_PWM4_INPUT) *
 		       (system.variable[PWM4_CCR].value - MID_PWM4_INPUT);
+#endif
+
+#if USE_DEVO_v10_CONTROLLER
+		       *Yaw = -1*(MAX_CTRL_YAW / (MAX_PWM4_INPUT - MID_PWM4_INPUT) *
+		       (system.variable[PWM4_CCR].value - MID_PWM4_INPUT));
+#endif		
 	}
 
 	/*Get PWM5 Input capture to set safety switch*/
