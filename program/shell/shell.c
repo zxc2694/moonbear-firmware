@@ -379,27 +379,27 @@ void shell_showData(char parameter[][MAX_CMD_LEN], int par_cnt)
 			serial.printf("Barometer: %f\n\r",system.variable[BAROMETER].value);
 			vTaskDelay(50);
 		}
-		else if(serial.getc() == 'n'){	  
+		else if(serial.getc() == '1'){	  
 
 			serial.printf("test1: %f\n\r",system.variable[TEST1].value);
 			vTaskDelay(50);
 		}
-		else if(serial.getc() == 'm'){	  
+		else if(serial.getc() == '2'){	  
 			
 			serial.printf("test1: %f\n\r",system.variable[TEST2].value);
 			vTaskDelay(50);
 		}
-		else if(serial.getc() == 'k'){	  
+		else if(serial.getc() == '3'){	  
 
 			serial.printf("test3: %f\n\r",system.variable[TEST3].value);
 			vTaskDelay(50);
 		}
-		else if(serial.getc() == 'j'){	  
+		else if(serial.getc() == '4'){	  
 			
 			serial.printf("test4: %f\n\r",system.variable[TEST4].value);
 			vTaskDelay(50);
 		}
-		else if(serial.getc() == 'a'){
+		else if(serial.getc() == 'm'){
 			serial.printf("MAG X: %f\tMAG Y: %f\tMAG Z: %f\n\r",
 			        system.variable[MAGX].value, system.variable[MAGY].value,
 			        system.variable[MAGZ].value);
@@ -409,14 +409,14 @@ void shell_showData(char parameter[][MAX_CMD_LEN], int par_cnt)
 			serial.printf("-----------showData command------------\n\r");
 			serial.printf("'z'=Show attitude  -> Pitch Roll Yaw\n\r");
 			serial.printf("'x'=Show motor PWM -> Motor1 ~ Motor4\n\r");
-			serial.printf("'c'=Show WFLY PWM  -> CCR1 ~ CCR4 \n\r");
+			serial.printf("'c'=Show CCR PWM  -> CCR1 ~ CCR5 \n\r");
 			serial.printf("'v'=Show PD gain -> Pitch:Kp Kd, Roll:Kp Kd, Yaw:Kp Kd\n\r");
-			serial.printf("'a'=Show magnetometer data ...\n\r");
+			serial.printf("'m'=Show magnetometer data ...\n\r");
 			serial.printf("'b'=Show barometer press ...\n\r");
-			serial.printf("'n'=Just test -1...\n\r");
-			serial.printf("'m'=Just test -2 ...\n\r");
-			serial.printf("'h'=Just test -3...\n\r");
-			serial.printf("'j'=Just test -4 ...\n\r");
+			serial.printf("'1'=Just test -1...\n\r");
+			serial.printf("'2'=Just test -2 ...\n\r");
+			serial.printf("'3'=Just test -3...\n\r");
+			serial.printf("'4'=Just test -4 ...\n\r");
 			serial.printf("'q'=quit showData command.\n\r");
 			serial.printf("'h'=Print command function.\n\r");
 		}
