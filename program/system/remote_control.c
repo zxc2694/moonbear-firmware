@@ -54,10 +54,19 @@ void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *
 	}
 
 	/*Get PWM5 Input capture to set safety switch*/
+#if USE_WFLY_CONTROLLER
 	if (system.variable[PWM5_CCR].value > (MAX_PWM5_INPUT + MIN_PWM5_INPUT) / 2)
 		*safety = ENGINE_OFF;
 	else
 		*safety = ENGINE_ON;
+#endif
+
+#if USE_DEVO_v10_CONTROLLER
+	if (system.variable[PWM5_CCR].value > (MAX_PWM5_INPUT + MIN_PWM5_INPUT) / 2)
+		*safety = ENGINE_ON;
+	else
+		*safety = ENGINE_OFF;
+#endif	
 
 	Bound(*Roll, MIN_CTRL_ROLL, MAX_CTRL_ROLL);
 	Bound(*Pitch, MIN_CTRL_PITCH, MAX_CTRL_PITCH);
