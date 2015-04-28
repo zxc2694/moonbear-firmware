@@ -229,13 +229,14 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 		f_mount(&FatFs, "", 1);
 		f_opendir(&dirs, "0:/");
 		f_readdir(&dirs, &finfo);
-		f_open(&file, "SDCard_K.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+		f_open(&file, "SDCARD_K.TXT", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
 
-		sprintf(WriteData, "Pitch\n\r%f,%f,%f\n\rRoll\n\r%f,%f,%f\n\rYaw\n\r%f,%f,%f\n\r",
+		sprintf(WriteData, "<Pitch> Kp: %f, Ki: %f, Kd: %f\n\r<Roll> Kp: %f, Ki: %f, Kd: %f\n\r<Yaw> Kp: %f, Ki: %f, Kd: %f\n\r",
 			PID_Pitch.Kp, PID_Pitch.Ki, PID_Pitch.Kd,
 			PID_Roll.Kp, PID_Roll.Ki, PID_Roll.Kd,
 			PID_Yaw.Kp, PID_Yaw.Ki, PID_Yaw.Kd
 		       );
+		
 
 		f_write(&file, WriteData, strlen(WriteData), (UINT *)&i);
 
@@ -243,7 +244,9 @@ void shell_sdsave(char parameter[][MAX_CMD_LEN], int par_cnt)
 		f_read(&file, ReadBuf, ReadBuf_Size, (UINT *)&i);
 
 		/* Debug */
-		serial.printf("[Debug output]\n\r%s\n\r", ReadBuf);
+		serial.printf("Has been saved !\n\r\n\r");
+		serial.printf("Read SD card ......\n\r");
+		serial.printf("%s\n\r", ReadBuf);
 
 		f_close(&file);
 		break;
@@ -292,23 +295,23 @@ void shell_gui_test(char parameter[][MAX_CMD_LEN], int par_cnt)
 
 void shell_tuning(char parameter[][MAX_CMD_LEN], int par_cnt)
 {
-	serial.printf("\nPitch_Kp:%f  Pitch_Kd:%f  ,Roll_Kp:%f  Roll_Kd:%f  ,Yaw_Kp:%f  Yaw_Kd:%f \n\n\r", 
-					PID_Pitch.Kp,PID_Pitch.Kd,PID_Roll.Kp,PID_Roll.Kd,PID_Yaw.Kp,PID_Yaw.Kd);
+	serial.printf("\nRoll_Kp:%f  Pitch_Kp:%f  ,Yaw_Kp:%f  \n\rRoll_Kd:%f  ,Pitch_Kd:%f  Yaw_Kd:%f \n\n\r", 
+					PID_Roll.Kp,PID_Pitch.Kp,PID_Yaw.Kp,PID_Roll.Kd,PID_Pitch.Kd,PID_Yaw.Kd);
 	vTaskDelay(50);
 	serial.printf("You can change 'Roll angle' control parameter ...\n\r");
 	serial.printf("Change Kp gain: input 'p' -> input '+' or '-'  \n\r");
 	serial.printf("Change Kd gain: input 'd' -> input '+' or '-'  \n\n\r");
 	while(1){
 		if(serial.getc() == 'p'){ 
-			serial.printf("[Kp]___ input '+' or '-' \n\r");
+			serial.printf("[tuning Kp] (input '+' or '-') \n\r");
 			while(1){
 				if(serial.getc() == '+'){ 
 					PID_Roll.Kp = PID_Roll.Kp + 0.3f;
-					serial.printf("PID_Roll.Kp = %f\n\r", PID_Roll.Kp);
+					serial.printf("> Roll.Kp = %f\n\r", PID_Roll.Kp);
 				}
 				else if(serial.getc() == '-'){ 
 					PID_Roll.Kp = PID_Roll.Kp - 0.3f;
-					serial.printf("PID_Roll.Kp = %f\n\r", PID_Roll.Kp);
+					serial.printf("> Roll.Kp = %f\n\r", PID_Roll.Kp);
 				}
 				else if(serial.getc() == 'q'){ 
 					break;
@@ -316,15 +319,15 @@ void shell_tuning(char parameter[][MAX_CMD_LEN], int par_cnt)
 			}
 		}
 		else if(serial.getc() == 'd'){ 
-			serial.printf("[Kd]___ input '+' or '-' \n\r");
+			serial.printf("[tuning Kd] (input '+' or '-') \n\r");
 			while(1){
 				if(serial.getc() == '+'){ 
 					PID_Roll.Kd = PID_Roll.Kd + 0.3f;
-					serial.printf("PID_Roll.Kd = %f\n\r", PID_Roll.Kd);
+					serial.printf("> Roll.Kd = %f\n\r", PID_Roll.Kd);
 				}
 				else if(serial.getc() == '-'){ 
 					PID_Roll.Kd = PID_Roll.Kd - 0.3f;
-					serial.printf("PID_Roll.Kd = %f\n\r", PID_Roll.Kd);
+					serial.printf("> Roll.Kd = %f\n\r", PID_Roll.Kd);
 				}
 				else if(serial.getc() == 'q'){ 
 					break;
