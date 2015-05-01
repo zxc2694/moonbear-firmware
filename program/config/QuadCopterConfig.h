@@ -6,7 +6,7 @@
 #define USE_WFLY_CONTROLLER		1
 #define USE_DEVO_v10_CONTROLLER 0
 /* Hardware environments */
-#define configMotor				1       //if you no connect motor -> set 0. 
+#define configMotor				0       //if you no connect motor -> set 0. 
 #define configSD				0       //if you no connect SD card -> set 0.
 #define configNRF				0       //if you no connect nRF module -> set 0.
 /* Status report functions */
@@ -20,6 +20,11 @@
 #define configSTATUS_GET_ACC 0
 #define configSTATUS_GET_GYRO 0
 
+/*motot PWM parameter adjustment*/
+#define adjustmentMotor1 100	//100
+#define adjustmentMotor2 100	//100
+#define adjustmentMotor3 105	//105
+#define adjustmentMotor4 -55	// -55
 
 /* Set baudrate */
 #define Serial_Baudrate 9600
