@@ -167,7 +167,7 @@ void check_task()
 	//Waiting for system finish initialize
 	while (system.status != SYSTEM_INITIALIZED);
 
-#if configMotor
+#if configRemoteControl
 	while (remote_signal_check() == NO_SIGNAL); //If there is no receiver but need to test IMU, please mask.
 #endif
 	
