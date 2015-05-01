@@ -6,7 +6,7 @@
 #define USE_WFLY_CONTROLLER		1
 #define USE_DEVO_v10_CONTROLLER 0
 /* Hardware environments */
-#define configMotor				0       //if you no connect motor -> set 0. 
+#define configRemoteControl				0       //if you no connect motor -> set 0. 
 #define configSD				0       //if you no connect SD card -> set 0.
 #define configNRF				0       //if you no connect nRF module -> set 0.
 /* Status report functions */
