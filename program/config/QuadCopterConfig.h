@@ -21,10 +21,10 @@
 #define configSTATUS_GET_GYRO 0
 
 /*motot PWM parameter adjustment*/
-#define adjustmentMotor1 100	//100
-#define adjustmentMotor2 100	//100
-#define adjustmentMotor3 105	//105
-#define adjustmentMotor4 -55	// -55
+#define adjustmentMotor1 0	//100
+#define adjustmentMotor2 0	//100
+#define adjustmentMotor3 0	//105
+#define adjustmentMotor4 0	// -55
 
 /* Set baudrate */
 #define Serial_Baudrate 9600
