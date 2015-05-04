@@ -41,10 +41,6 @@ void system_init(void)
 	nRF24L01_Config();
 #endif	
 
-	//SD Config
-	if ((SD_status = SD_Init()) != SD_OK)
-		system.status = SYSTEM_ERROR_SD;
-
 	PID_Init(&PID_Pitch, 4.0, 0.0, 1.5);
 	PID_Init(&PID_Roll, 4.0, 0.0, 1.5);
 	PID_Init(&PID_Yaw, 5.0, 0.0, 15.0);
