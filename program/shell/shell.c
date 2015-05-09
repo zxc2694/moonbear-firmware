@@ -99,7 +99,7 @@ void shell_task()
 		//Show two values to gui2.py 
 #if configSTATUS_GET_ROLL_PITCH
 			while(1){
-				printf("%f %f\n\r", AngE.Roll, AngE.Pitch);
+				serial.printf("%f %f\n\r", AngE.Roll, AngE.Pitch);
 				vTaskDelay(100);
 			}
 #endif
