@@ -193,8 +193,7 @@ void correct_sensor()
 
 		AngE.Pitch = toDeg(atan2f(Acc.TrueY, Acc.TrueZ));
 		AngE.Roll  = toDeg(-asinf(Acc.TrueX));
-		AngE.Yaw   = toDeg(atan2f(Ellipse[3], Ellipse[4])) + 180.0f;
-
+		AngE.Yaw   = toDeg(atan2f(Mag.TrueX, Mag.TrueY)) + 180.0f;
 		Quaternion_ToNumQ(&NumQ, &AngE);
 
 		SensorMode = Mode_Algorithm;
