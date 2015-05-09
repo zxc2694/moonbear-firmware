@@ -89,6 +89,7 @@ void AHRS_Update(void)
 
 	AngE.Pitch = toDeg(AngE.Pitch);
 	AngE.Roll  = toDeg(AngE.Roll);
+	AngE.Yaw   = toDeg(atan2f(Mag.TrueX, Mag.TrueY)) + 180.0f;
 
 	/* 互補濾波 Complementary Filter */
 #define CF_A 0.9f
