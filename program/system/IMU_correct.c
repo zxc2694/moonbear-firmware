@@ -27,9 +27,6 @@ void sensor_read()
 		MS5611_Read(&Baro, MS5611_D1_OSR_4096);
 		BaroCnt = 0;
 	}
-	system.variable[TEST1].value = Baro.Temp;
-	system.variable[TEST2].value = Baro.Press;
-	system.variable[TEST3].value = Baro.High;
 	
 		Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
 		Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
@@ -266,10 +263,11 @@ void AHRS_and_RC_updata(int16_t *Thr, int16_t *Pitch, int16_t *Roll, int16_t *Ya
 	*Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ) + 3 * (s16)Exp_Yaw;
 	*Thr   = (s16)Exp_Thr;
 	Bound(*Yaw, -90, 90);
-
+system.variable[TEST1].value = AngE.Yaw;
     system.variable[PID_ROLL].value = *Roll;
 	system.variable[PID_PITCH].value = *Pitch;
 	system.variable[PID_YAW].value = *Yaw;
+
 
 	*safety = Safety;
 }

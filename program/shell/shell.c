@@ -113,6 +113,13 @@ void shell_task()
 					     );
 				vTaskDelay(100);
 			}
+/*			while(1){
+				serial.printf("\n\r%f %f %f %f ",
+					      system.variable[TEST1].value, system.variable[TEST2].value,
+					      system.variable[TEST3].value, system.variable[TEST4].value
+					     );
+				vTaskDelay(100);
+			}*/
 #endif
 
 		//Show six values to gui6.py
