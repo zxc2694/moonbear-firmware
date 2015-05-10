@@ -92,16 +92,10 @@ void AHRS_Update(void)
 	AngE.Yaw   = toDeg(atan2f(Mag.TrueX, Mag.TrueY)) + 180.0f;
 
 	/* 互補濾波 Complementary Filter */
-#define CF_A 0.9f
-#define CF_B 0.1f
+#define CF_A 0.1f
+#define CF_B 0.9f
 	AngZ_Temp = AngZ_Temp + GyrZ * SampleRate;
 	AngZ_Temp = CF_A * AngZ_Temp + CF_B * AngE.Yaw;
-
-	if (AngZ_Temp > 360.0f)
-		AngE.Yaw = AngZ_Temp - 360.0f;
-	else if (AngZ_Temp < 0.0f)
-		AngE.Yaw = AngZ_Temp + 360.0f;
-	else
-		AngE.Yaw = AngZ_Temp;
+	AngE.Yaw = AngZ_Temp;
 }
 
