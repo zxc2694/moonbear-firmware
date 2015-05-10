@@ -55,7 +55,7 @@ class AnalogPlot:
 		plt.ylabel("PWM range")
 		plt.title("Measure Gyroscope values")
 		plt.legend()		#Show label figure.
-		plt.ylim([-200, 200]) # Vertical axis scale.
+		plt.ylim([-600, 600]) # Vertical axis scale.
 #TEST	plt.ylim([-90, 90]) # Vertical axis scale.
 		plt.grid()
 
