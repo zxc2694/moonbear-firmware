@@ -103,6 +103,13 @@ void shell_task()
 				vTaskDelay(100);
 			}
 #endif
+		//Show two values to gui3.py 
+#if configSTATUS_GET_ROLL_PITCH_YAW	
+			while(1){
+				serial.printf("%f %f %f\n\r", AngE.Roll, AngE.Pitch, AngE.Yaw);
+				vTaskDelay(100);
+			}
+#endif
 
 		//Show four values to gui4.py
 #if configSTATUS_GET_MOTORS
