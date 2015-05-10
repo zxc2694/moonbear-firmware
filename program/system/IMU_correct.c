@@ -112,9 +112,6 @@ void correct_sensor()
 		Mag.TrueZ = Mag.Z * MPU9150M_1200uT;  // uT/LSB
 		Temp.TrueT = Temp.T * MPU9150T_85degC; // degC/LSB
 
-		Ellipse[3] = (Mag.X * arm_cos_f32(Mag.EllipseSita) + Mag.Y * arm_sin_f32(Mag.EllipseSita)) / Mag.EllipseB;
-		Ellipse[4] = (-Mag.X * arm_sin_f32(Mag.EllipseSita) + Mag.Y * arm_cos_f32(Mag.EllipseSita)) / Mag.EllipseA;
-
 		AngE.Pitch = toDeg(atan2f(Acc.TrueY, Acc.TrueZ));
 		AngE.Roll  = toDeg(-asinf(Acc.TrueX));
 		AngE.Yaw   = toDeg(atan2f(Mag.TrueX, Mag.TrueY)) + 180.0f;
