@@ -54,7 +54,6 @@ void sensor_read()
 
 void correct_sensor()
 {
-	float Ellipse[5] = {0};
 #define MovegAveFIFO_Size 250
 
 	switch (SensorMode) {
@@ -95,78 +94,6 @@ void correct_sensor()
 
 			Correction_Time = 0;
 			SensorMode = Mode_Quaternion; // Mode_MagCorrect;
-		}
-
-		break;
-
-		/************************** Mode_CorrectMag **************************************/
-#define MagCorrect_Ave    100
-#define MagCorrect_Delay  600   // DelayTime : SampleRate * 600
-
-	case Mode_MagCorrect:
-		Correction_Time++;
-
-		switch ((u16)(Correction_Time / MagCorrect_Delay)) {
-		case 0:
-
-			MagDataX[0] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[0] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		case 1:
-
-			MagDataX[1] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[1] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		case 2:
-
-			MagDataX[2] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[2] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		case 3:
-
-			MagDataX[3] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[3] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		case 4:
-
-			MagDataX[4] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[4] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		case 5:
-
-			MagDataX[5] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[5] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		case 6:
-
-			MagDataX[6] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[6] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		case 7:
-
-			MagDataX[7] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[7] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		default:
-
-			EllipseFitting(Ellipse, MagDataX, MagDataY, 8);
-			Mag.EllipseSita = Ellipse[0];
-			Mag.EllipseX0   = Ellipse[1];
-			Mag.EllipseY0   = Ellipse[2];
-			Mag.EllipseA    = Ellipse[3];
-			Mag.EllipseB    = Ellipse[4];
-
-			Correction_Time = 0;
-			SensorMode = Mode_Quaternion;
-			break;
 		}
 
 		break;
