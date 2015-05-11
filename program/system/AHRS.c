@@ -97,7 +97,7 @@ void AHRS_Update(void)
 		}
 		set++;		
 	}
-	AngE.Yaw  = toDeg(atan2f(Mag.TrueX, Mag.TrueY)) - initYaw;
+	AngE.Yaw  = -(toDeg(atan2f(Mag.TrueX, Mag.TrueY)) - initYaw); //加入負號，讓Yaw的旋轉角度與與IMU一致
 
 
 	/* 互補濾波 Complementary Filter */
