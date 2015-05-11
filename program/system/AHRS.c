@@ -31,6 +31,7 @@ void AHRS_Update(void)
 
 	static float AngZ_Temp = 0.0f;
 	static float exInt = 0.0f, eyInt = 0.0f, ezInt = 0.0f;
+	static int initYaw = 0, set=0;
 
 //   Mq11 = NumQ.q0*NumQ.q0 + NumQ.q1*NumQ.q1 - NumQ.q2*NumQ.q2 - NumQ.q3*NumQ.q3;
 //   Mq12 = 2.0f*(NumQ.q1*NumQ.q2 + NumQ.q0*NumQ.q3);
@@ -89,13 +90,26 @@ void AHRS_Update(void)
 
 	AngE.Pitch = toDeg(AngE.Pitch);
 	AngE.Roll  = toDeg(AngE.Roll);
-	AngE.Yaw   = toDeg(atan2f(Mag.TrueX, Mag.TrueY)) + 180.0f;
+
+	while ((AngE.Yaw != 0) && (set < 16)){
+		if (set ==15){
+			initYaw = toDeg(atan2f(Mag.TrueX, Mag.TrueY));				
+		}
+		set++;		
+	}
+	AngE.Yaw  = toDeg(atan2f(Mag.TrueX, Mag.TrueY)) - initYaw;
+
 
 	/* 互補濾波 Complementary Filter */
 #define CF_A 0.1f
 #define CF_B 0.9f
 	AngZ_Temp = AngZ_Temp + GyrZ * SampleRate;
 	AngZ_Temp = CF_A * AngZ_Temp + CF_B * AngE.Yaw;
-	AngE.Yaw = AngZ_Temp;
+	if (AngZ_Temp > 360.0f)
+		AngE.Yaw = AngZ_Temp - 360.0f;
+	else if (AngZ_Temp < 0.0f)
+		AngE.Yaw = AngZ_Temp + 360.0f;
+	else
+		AngE.Yaw = AngZ_Temp;
 }
 
