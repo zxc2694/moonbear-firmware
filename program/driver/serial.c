@@ -18,11 +18,13 @@ void Serial_Config(int buadrate) /* Tx:Pb10, Rx:Pb11 */
 {
 	/* RCC Initialization */
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,  ENABLE);
+	//GPIO使用之宣告，來自stm32f4xx_rcc.c，使用腳位PB系列
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
+	//USART使用之宣告，來自stm32f4xx_rcc.c，使用USART第三組
 
 	/* GPIO Initialization */
 	GPIO_InitTypeDef GPIO_InitStruct = {
-		.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11,
+		.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11, 		//腳位設定
 		.GPIO_Mode = GPIO_Mode_AF,
 		.GPIO_OType = GPIO_OType_PP,
 		.GPIO_PuPd = GPIO_PuPd_UP,
@@ -31,21 +33,23 @@ void Serial_Config(int buadrate) /* Tx:Pb10, Rx:Pb11 */
 
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource10, GPIO_AF_USART3);
 	GPIO_PinAFConfig(GPIOB, GPIO_PinSource11, GPIO_AF_USART3);
+	// GPIO使用之宣告，來自stm32f4xx_gpio.c
 	GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 	/* USART3 Initialization */
 	USART_InitTypeDef USART_InitStruct = {
-		.USART_BaudRate = buadrate,
+		.USART_BaudRate = buadrate, 				//設定鮑率
 		.USART_WordLength = USART_WordLength_8b,
 		.USART_StopBits = USART_StopBits_1,
 		.USART_Parity = USART_Parity_No,
 		.USART_HardwareFlowControl = USART_HardwareFlowControl_None,
-		.USART_Mode = USART_Mode_Rx | USART_Mode_Tx
+		.USART_Mode = USART_Mode_Rx | USART_Mode_Tx 	//設定模式
 	};
 
 	USART_Init(USART3, &USART_InitStruct);
 	USART_Cmd(USART3, ENABLE);
 	USART_ClearFlag(USART3, USART_FLAG_TC);
+	// USART初始函數，來自stm32f4xx_usart.c
 
 	/* NVIC Initialization */
 	USART_ITConfig(USART3, USART_IT_TXE, DISABLE);

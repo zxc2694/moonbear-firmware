@@ -1,3 +1,8 @@
+// IMU校正
+// MPU9150 : 加速規、陀螺儀、電子羅盤
+// MS5611 (Baro): 氣壓計
+// AKB8975 : 電子羅盤
+
 #include "QuadCopterConfig.h"
 extern Sensor_Mode SensorMode;
 extern SensorAcc Acc;
@@ -14,19 +19,21 @@ volatile int16_t MagDataY[8] = {0};
 volatile uint32_t Correction_Time = 0;
 
 void sensor_read()
-{
+{	// 讀取IMU數值
+
 	uint8_t IMU_Buf[20] = {0};
 	static uint8_t BaroCnt = 0;
 
 	/* 500Hz, Read Sensor ( Accelerometer, Gyroscope, Magnetometer ) */
 	MPU9150_Read(IMU_Buf);
+	// 讀取加速規、陀螺儀、電子羅盤之值
 
 	BaroCnt++;//100Hz, Read Barometer
 
 	if (BaroCnt == SampleRateFreg / 100) {
 		MS5611_Read(&Baro, MS5611_D1_OSR_4096);
 		BaroCnt = 0;
-	}
+	}// 每讀取前述三個感測器 "SampleRateFreg / 100" 次，讀取氣壓計一次
 	
 		Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
 		Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
@@ -38,6 +45,7 @@ void sensor_read()
 		Mag.X  = (s16)((IMU_Buf[15] << 8) | IMU_Buf[14]);
 		Mag.Y  = (s16)((IMU_Buf[17] << 8) | IMU_Buf[16]);
 		Mag.Z  = (s16)((IMU_Buf[19] << 8) | IMU_Buf[18]);
+		//從buffer讀取IMU之值	
 
 		/* Offset */
 		Acc.X -= Acc.OffsetX;
@@ -52,8 +60,8 @@ void sensor_read()
 
 }
 
-void correct_sensor()
-{
+void correct_sensor() 
+{	// 校正IMU
 #define MovegAveFIFO_Size 250
 
 	switch (SensorMode) {
@@ -64,6 +72,7 @@ void correct_sensor()
 		Gyr.X = (s16)MoveAve_SMA(Gyr.X, GYR_FIFO[0], MovegAveFIFO_Size);
 		Gyr.Y = (s16)MoveAve_SMA(Gyr.Y, GYR_FIFO[1], MovegAveFIFO_Size);
 		Gyr.Z = (s16)MoveAve_SMA(Gyr.Z, GYR_FIFO[2], MovegAveFIFO_Size);
+		//將上述讀取出來的陀螺儀數值作平均
 
 		Correction_Time++;  // 等待 FIFO 填滿空值 or 填滿靜態資料
 
@@ -84,6 +93,7 @@ void correct_sensor()
 		Acc.X = (s16)MoveAve_SMA(Acc.X, ACC_FIFO[0], MovegAveFIFO_Size);
 		Acc.Y = (s16)MoveAve_SMA(Acc.Y, ACC_FIFO[1], MovegAveFIFO_Size);
 		Acc.Z = (s16)MoveAve_SMA(Acc.Z, ACC_FIFO[2], MovegAveFIFO_Size);
+		//將上述讀取出來的加速規數值作平均
 
 		Correction_Time++;  // 等待 FIFO 填滿空值 or 填滿靜態資料
 
@@ -101,6 +111,7 @@ void correct_sensor()
 	/************************** Algorithm Mode **************************************/
 	case Mode_Quaternion:
 		/* To Physical */
+		/* 將數值轉換為現實世界中單位 */
 		Acc.TrueX = Acc.X * MPU9150A_4g;      // g/LSB
 		Acc.TrueY = Acc.Y * MPU9150A_4g;      // g/LSB
 		Acc.TrueZ = Acc.Z * MPU9150A_4g;      // g/LSB
@@ -166,12 +177,14 @@ void AHRS_and_RC_updata(int16_t *Thr, int16_t *Pitch, int16_t *Roll, int16_t *Ya
 
 /* Get Attitude Angle */
 	AHRS_Update();
+	//計算四元數誤差以及將角度轉換為尤拉角，並使用互補式濾波器處理訊號
 	system.variable[TRUE_ROLL].value = AngE.Roll;
 	system.variable[TRUE_PITCH].value = AngE.Pitch;
 	system.variable[TRUE_YAW].value = AngE.Yaw;
 
 	/*Get RC Control*/
 	Update_RC_Control(&Exp_Roll, &Exp_Pitch, &Exp_Yaw, &Exp_Thr, &Safety);
+	//將輸入訊號依照遙控器型號不同分別處理，並計算出roll、pitch、yaw、throttle、safety訊號
 	system.variable[RC_EXP_THR].value  = Exp_Thr;
 	system.variable[RC_EXP_ROLL].value = Exp_Roll;
 	system.variable[RC_EXP_PITCH].value = Exp_Pitch;

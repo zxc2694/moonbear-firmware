@@ -1,3 +1,6 @@
+// IMU校正
+//可參考https://github.com/CYACAcademic/BalancedCar
+
 #include "QuadCopterConfig.h"
 
 #define Kp 15.0f
@@ -33,17 +36,19 @@ void AHRS_Update(void)
 	static float exInt = 0.0f, eyInt = 0.0f, ezInt = 0.0f;
 	static int initYaw = 0, set=0;
 
-//   Mq11 = NumQ.q0*NumQ.q0 + NumQ.q1*NumQ.q1 - NumQ.q2*NumQ.q2 - NumQ.q3*NumQ.q3;
-//   Mq12 = 2.0f*(NumQ.q1*NumQ.q2 + NumQ.q0*NumQ.q3);
+	//   Mq11 = NumQ.q0*NumQ.q0 + NumQ.q1*NumQ.q1 - NumQ.q2*NumQ.q2 - NumQ.q3*NumQ.q3;
+	//   Mq12 = 2.0f*(NumQ.q1*NumQ.q2 + NumQ.q0*NumQ.q3);
 	Mq13 = 2.0f * (NumQ.q1 * NumQ.q3 - NumQ.q0 * NumQ.q2);
-//   Mq21 = 2.0f*(NumQ.q1*NumQ.q2 - NumQ.q0*NumQ.q3);
-//   Mq22 = NumQ.q0*NumQ.q0 - NumQ.q1*NumQ.q1 + NumQ.q2*NumQ.q2 - NumQ.q3*NumQ.q3;
+	//   Mq21 = 2.0f*(NumQ.q1*NumQ.q2 - NumQ.q0*NumQ.q3);
+	//   Mq22 = NumQ.q0*NumQ.q0 - NumQ.q1*NumQ.q1 + NumQ.q2*NumQ.q2 - NumQ.q3*NumQ.q3;
 	Mq23 = 2.0f * (NumQ.q0 * NumQ.q1 + NumQ.q2 * NumQ.q3);
-//   Mq31 = 2.0f*(NumQ.q0*NumQ.q2 + NumQ.q1*NumQ.q3);
-//   Mq32 = 2.0f*(NumQ.q2*NumQ.q3 - NumQ.q0*NumQ.q1);
+	//   Mq31 = 2.0f*(NumQ.q0*NumQ.q2 + NumQ.q1*NumQ.q3);
+	//   Mq32 = 2.0f*(NumQ.q2*NumQ.q3 - NumQ.q0*NumQ.q1);
 	Mq33 = NumQ.q0 * NumQ.q0 - NumQ.q1 * NumQ.q1 - NumQ.q2 * NumQ.q2 + NumQ.q3 * NumQ.q3;
+	//計算四元數M旋轉矩陣之元素
 
 	Normalize = invSqrtf(squa(Acc.TrueX) + squa(Acc.TrueY) + squa(Acc.TrueZ));
+	//產生正規化參數
 	AccX = Acc.TrueX * Normalize;
 	AccY = Acc.TrueY * Normalize;
 	AccZ = Acc.TrueZ * Normalize;
@@ -83,8 +88,10 @@ void AHRS_Update(void)
 	GyrX = GyrX + Kp * ErrX + exInt;
 	GyrY = GyrY + Kp * ErrY + eyInt;
 	GyrZ = GyrZ + Kp * ErrZ + ezInt;
+	//感測器之PI小回授計算
 
 	Quaternion_RungeKutta(&NumQ, GyrX, GyrY, GyrZ, SampleRateHelf);
+	//使用RungeKutta法更新四元數
 	Quaternion_Normalize(&NumQ);
 	Quaternion_ToAngE(&NumQ, &AngE);
 
