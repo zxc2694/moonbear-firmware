@@ -178,3 +178,7 @@ int memcmp(const void *cs, const void *ct, unsigned long count)
 
 	return res;
 }
+float bound_float(float val, float min, float max)
+{
+	return val < min ? min : (val > max ? max : val);
+}
