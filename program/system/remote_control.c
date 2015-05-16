@@ -15,12 +15,13 @@ void Update_RC_Control(int16_t *Roll, int16_t  *Pitch, int16_t  *Yaw, int16_t  *
 
 		*Thr = (PWM_MOTOR_MAX - PWM_MOTOR_MIN) / (MAX_PWM3_INPUT - MIN_PWM3_INPUT) *
 		       (system.variable[PWM3_CCR].value - MIN_PWM3_INPUT) + PWM_MOTOR_MIN;
-	}
+	}//若輸入訊號在正常範圍內 (大於MIN_PWM_INPUT、小於MAX_PWM_INPUT)，
+	//則將PWM3(推力)訊號正規化(換算至PWM_MOTOR_MAX至MIN之間的大小)
 
 	/*Get PWM1 Input capture to control roll*/
 	if ((system.variable[PWM1_CCR].value > MIN_PWM_INPUT) &&
 	    (system.variable[PWM1_CCR].value < MAX_PWM_INPUT)) {
-#if USE_WFLY_CONTROLLER
+#if USE_WFLY_CONTROLLER 		//依照不同遙控器做控制訊號上的調整
 		*Roll = MAX_CTRL_ROLL / (MAX_PWM1_INPUT - MID_PWM1_INPUT) *
 			(system.variable[PWM1_CCR].value - MID_PWM1_INPUT);
 #endif

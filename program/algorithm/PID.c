@@ -1,3 +1,5 @@
+//PID參數計算
+
 #include "QuadCopterConfig.h"
 
 PID_t PID_Yaw = {

@@ -1,3 +1,10 @@
+//馬達運作程式
+//PWM 1  - PB 6 : roll 				//PWM 9  - PA 6 : 馬達1
+//PWM 2  - PB 7 : pitch 				//PWM 10 - PA 7 : 馬達2
+//PWM 3  - PA 0 : 推力 (throttle)			//PWM 11 - PB 0 : 馬達3
+//PWM 4  - PA 1 : yaw				//PWM 12 - PB 1 : 馬達4
+//PWM 5  - PA 2 : 安全開關
+
 #include "QuadCopterConfig.h"
 
 /* TIM2 PWM3  PA0 */	/* TIM2 PWM4  PA1 */	/* TIM2 PWM5  PA2 */	/* TIM2 PWM8  PA3 */
@@ -8,6 +15,7 @@ void Motor_Config(void)
 {
 	/* -- RCC Clock Configuration ----------------------------------------------- */
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB, ENABLE);
+	//GPIO使用之宣告，來自stm32f4xx_rcc.c，使用腳位PB、PA系列
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3 , ENABLE);
 
 	/* -- GPIO Configuration ---------------------------------------------------- */
@@ -74,7 +82,8 @@ void Motor_Config(void)
 }
 
 void Motor_Control(u16 motor1, u16 motor2, u16 motor3, u16 motor4)
-{
+{	// 控制馬達之PWM使其介於PWM_MOTOR_MAX和PWM_MOTOR_MIN中
+	
 	if (motor1 > PWM_MOTOR_MAX)      motor1 = PWM_MOTOR_MAX;
 	else if (motor1 < PWM_MOTOR_MIN) motor1 = PWM_MOTOR_MIN;
 
