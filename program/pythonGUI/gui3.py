@@ -1,5 +1,5 @@
 ################################################################################
-# File name: gui3.py
+# File name: gui.py
 #
 # Function: Display three data from stm32f4 using Python (matplotlib)
 #	    The three data is roll, pith, yall angle of quadcopter attitude.
@@ -18,9 +18,9 @@ from matplotlib import pyplot as plt
 class AnalogData:
 # constr
 	def __init__(self, maxLen):
-		self.v1 = deque([0.0]*maxLen)
-		self.v2 = deque([0.0]*maxLen)	
-		self.v3 = deque([0.0]*maxLen)
+		self.ax = deque([0.0]*maxLen)
+		self.ay = deque([0.0]*maxLen)	
+		self.ayaw = deque([0.0]*maxLen)	
 		self.maxLen = maxLen
  
 # ring buffer
@@ -34,9 +34,9 @@ class AnalogData:
 #Add new data
 	def add(self, data):      
 		assert(len(data) == 3)
-		self.addToBuf(self.v1, data[0])
-		self.addToBuf(self.v2, data[1])
-		self.addToBuf(self.v3, data[2])
+		self.addToBuf(self.ax, data[0])
+		self.addToBuf(self.ay, data[1])
+		self.addToBuf(self.ayaw, data[2])
 # plot class
 class AnalogPlot:
 # constr
@@ -44,27 +44,22 @@ class AnalogPlot:
 # set plot to animated
 		plt.ion()
 		plt.figure(figsize=(9,8))
-
-
-		self.v1line, = plt.plot(analogData.v1,label="Gyroscope_X",color="red")
-		self.v2line, = plt.plot(analogData.v2,label="Gyroscope_Y",color="orange")
-		self.v3line, = plt.plot(analogData.v3,label="Gyroscope_Z",color="green")
-
-
+		self.axline, = plt.plot(analogData.ax,label="Roll",color="red")
+		self.ayline, = plt.plot(analogData.ay,label="Pitch",color="blue")
+		self.ayawline, = plt.plot(analogData.ayaw,label="Yaw",color="green")
 		plt.xlabel("Time")
-		plt.ylabel("PWM range")
-		plt.title("Measure Gyroscope values")
+		plt.ylabel("Angle(-90~+90)")
+		plt.title("Quadcopter attitude")
 		plt.legend()		#Show label figure.
-		plt.ylim([-600, 600]) # Vertical axis scale.
-#TEST	plt.ylim([-90, 90]) # Vertical axis scale.
+		plt.ylim([-120, 120]) # Vertical axis scale.
 		plt.grid()
 
  
 # update plot
 	def update(self, analogData):
-		self.v1line.set_ydata(analogData.v1)
-		self.v2line.set_ydata(analogData.v2)
-		self.v3line.set_ydata(analogData.v3)
+		self.axline.set_ydata(analogData.ax)
+		self.ayline.set_ydata(analogData.ay)
+		self.ayawline.set_ydata(analogData.ayaw)
 		plt.draw()
  
 def main():
@@ -72,7 +67,7 @@ def main():
 	if(len(sys.argv) != 2):
 		print "Type:" 
 		print "sudo chmod 777 /dev/ttyUSB0"
-		print "python gui3_gyroscope.py '/dev/ttyUSB0'"
+		print "python gui3.py '/dev/ttyUSB0'"
 		exit(1)
  
 #strPort = '/dev/tty.usbserial-A7006Yqh'
@@ -93,7 +88,7 @@ def main():
 			if (a < 10):
 				a = a + 1
 			else:
-				print data[0] , data[1] ,data[2] 
+				print data[0] , data[1] , data[2] 
 				if(len(data) == 3):
 					analogData.add(data)
 					analogPlot.update(analogData)

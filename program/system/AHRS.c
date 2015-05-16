@@ -31,6 +31,7 @@ void AHRS_Update(void)
 
 	static float AngZ_Temp = 0.0f;
 	static float exInt = 0.0f, eyInt = 0.0f, ezInt = 0.0f;
+	static int initYaw = 0, set=0;
 
 //   Mq11 = NumQ.q0*NumQ.q0 + NumQ.q1*NumQ.q1 - NumQ.q2*NumQ.q2 - NumQ.q3*NumQ.q3;
 //   Mq12 = 2.0f*(NumQ.q1*NumQ.q2 + NumQ.q0*NumQ.q3);
@@ -87,20 +88,23 @@ void AHRS_Update(void)
 	Quaternion_Normalize(&NumQ);
 	Quaternion_ToAngE(&NumQ, &AngE);
 
-	tempX    = (Mag.X * arm_cos_f32(Mag.EllipseSita) + Mag.Y * arm_sin_f32(Mag.EllipseSita)) / Mag.EllipseB;
-	tempY    = (-Mag.X * arm_sin_f32(Mag.EllipseSita) + Mag.Y * arm_cos_f32(Mag.EllipseSita)) / Mag.EllipseA;
-	AngE.Yaw = atan2f(tempX, tempY);
-
 	AngE.Pitch = toDeg(AngE.Pitch);
 	AngE.Roll  = toDeg(AngE.Roll);
-	AngE.Yaw   = toDeg(AngE.Yaw) + 180.0f;
+
+	while ((AngE.Yaw != 0) && (set < 16)){
+		if (set ==15){
+			initYaw = toDeg(atan2f(Mag.TrueX, Mag.TrueY));				
+		}
+		set++;		
+	}
+	AngE.Yaw  = -(toDeg(atan2f(Mag.TrueX, Mag.TrueY)) - initYaw); //加入負號，讓Yaw的旋轉角度與與IMU一致
+
 
 	/* 互補濾波 Complementary Filter */
-#define CF_A 0.9f
-#define CF_B 0.1f
+#define CF_A 0.1f
+#define CF_B 0.9f
 	AngZ_Temp = AngZ_Temp + GyrZ * SampleRate;
 	AngZ_Temp = CF_A * AngZ_Temp + CF_B * AngE.Yaw;
-
 	if (AngZ_Temp > 360.0f)
 		AngE.Yaw = AngZ_Temp - 360.0f;
 	else if (AngZ_Temp < 0.0f)

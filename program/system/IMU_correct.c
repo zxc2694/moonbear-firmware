@@ -27,9 +27,6 @@ void sensor_read()
 		MS5611_Read(&Baro, MS5611_D1_OSR_4096);
 		BaroCnt = 0;
 	}
-	system.variable[TEST1].value = Baro.Temp;
-	system.variable[TEST2].value = Baro.Press;
-	system.variable[TEST3].value = Baro.High;
 	
 		Acc.X  = (s16)((IMU_Buf[0]  << 8) | IMU_Buf[1]);
 		Acc.Y  = (s16)((IMU_Buf[2]  << 8) | IMU_Buf[3]);
@@ -57,7 +54,6 @@ void sensor_read()
 
 void correct_sensor()
 {
-	float Ellipse[5] = {0};
 #define MovegAveFIFO_Size 250
 
 	switch (SensorMode) {
@@ -102,78 +98,6 @@ void correct_sensor()
 
 		break;
 
-		/************************** Mode_CorrectMag **************************************/
-#define MagCorrect_Ave    100
-#define MagCorrect_Delay  600   // DelayTime : SampleRate * 600
-
-	case Mode_MagCorrect:
-		Correction_Time++;
-
-		switch ((u16)(Correction_Time / MagCorrect_Delay)) {
-		case 0:
-
-			MagDataX[0] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[0] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		case 1:
-
-			MagDataX[1] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[1] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		case 2:
-
-			MagDataX[2] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[2] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		case 3:
-
-			MagDataX[3] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[3] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		case 4:
-
-			MagDataX[4] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[4] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		case 5:
-
-			MagDataX[5] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[5] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		case 6:
-
-			MagDataX[6] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[6] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		case 7:
-
-			MagDataX[7] = (s16)MoveAve_WMA(Mag.X, MAG_FIFO[0], MagCorrect_Ave);
-			MagDataY[7] = (s16)MoveAve_WMA(Mag.Y, MAG_FIFO[1], MagCorrect_Ave);
-			break;
-
-		default:
-
-			EllipseFitting(Ellipse, MagDataX, MagDataY, 8);
-			Mag.EllipseSita = Ellipse[0];
-			Mag.EllipseX0   = Ellipse[1];
-			Mag.EllipseY0   = Ellipse[2];
-			Mag.EllipseA    = Ellipse[3];
-			Mag.EllipseB    = Ellipse[4];
-
-			Correction_Time = 0;
-			SensorMode = Mode_Quaternion;
-			break;
-		}
-
-		break;
-
 	/************************** Algorithm Mode **************************************/
 	case Mode_Quaternion:
 		/* To Physical */
@@ -188,13 +112,9 @@ void correct_sensor()
 		Mag.TrueZ = Mag.Z * MPU9150M_1200uT;  // uT/LSB
 		Temp.TrueT = Temp.T * MPU9150T_85degC; // degC/LSB
 
-		Ellipse[3] = (Mag.X * arm_cos_f32(Mag.EllipseSita) + Mag.Y * arm_sin_f32(Mag.EllipseSita)) / Mag.EllipseB;
-		Ellipse[4] = (-Mag.X * arm_sin_f32(Mag.EllipseSita) + Mag.Y * arm_cos_f32(Mag.EllipseSita)) / Mag.EllipseA;
-
 		AngE.Pitch = toDeg(atan2f(Acc.TrueY, Acc.TrueZ));
 		AngE.Roll  = toDeg(-asinf(Acc.TrueX));
-		AngE.Yaw   = toDeg(atan2f(Ellipse[3], Ellipse[4])) + 180.0f;
-
+		AngE.Yaw   = toDeg(atan2f(Mag.TrueX, Mag.TrueY)) + 180.0f;
 		Quaternion_ToNumQ(&NumQ, &AngE);
 
 		SensorMode = Mode_Algorithm;
@@ -267,10 +187,39 @@ void AHRS_and_RC_updata(int16_t *Thr, int16_t *Pitch, int16_t *Roll, int16_t *Ya
 	*Yaw   = (s16)(PID_Yaw.Kd * Gyr.TrueZ) + 3 * (s16)Exp_Yaw;
 	*Thr   = (s16)Exp_Thr;
 	Bound(*Yaw, -90, 90);
-
-    system.variable[PID_ROLL].value = *Roll;
+   system.variable[PID_ROLL].value = *Roll;
 	system.variable[PID_PITCH].value = *Pitch;
 	system.variable[PID_YAW].value = *Yaw;
 
+	if (AngE.Yaw > 180.0f) 
+		AngE.Yaw=AngE.Yaw-360;
+//	system.variable[TEST1].value = AngE.Yaw;
+
 	*safety = Safety;
+}
+
+#define LOOP_DT  (0.00025f)
+
+void PID_vertical_Zd(vertical_pid_t* PID_control, float *vertical_data)
+{
+	/* 高度控制程式 */
+	if( PID_control -> controller_status == CONTROLLER_ENABLE){
+
+		float error = (PID_control -> setpoint) - (*vertical_data);
+
+		float P = error * (PID_control -> kp);
+
+		PID_control -> integral += (error * (PID_control -> ki)) * LOOP_DT;
+
+		PID_control -> integral = bound_float(PID_control -> integral,-20.0f,+20.0f);
+
+		(PID_control -> output) = P+(PID_control -> integral);
+
+		PID_control -> output = bound_float(PID_control -> output,PID_control -> out_min,PID_control -> out_max);
+
+	}else{
+
+		PID_control -> integral = 0.0f;
+		PID_control -> output =0.0f;
+	}
 }
