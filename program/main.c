@@ -45,6 +45,10 @@ void system_init(void)
 	nRF24L01_Config();
 #endif	
 
+#if configSD
+	SD_Init();
+#endif	
+
 	PID_Init(&PID_Pitch, 4.0, 0.0, 1.5);
 	PID_Init(&PID_Roll, 4.0, 0.0, 1.5);
 	PID_Init(&PID_Yaw, 5.0, 0.0, 15.0);
@@ -68,11 +72,8 @@ void system_init(void)
 	SetLED(LED_R, DISABLE);
 	SetLED(LED_G, ENABLE);
 	SetLED(LED_B, ENABLE);
-
-#if configSD
-	if (system.status != SYSTEM_ERROR_SD)
-#endif		
-		system.status = SYSTEM_INITIALIZED;
+	
+	system.status = SYSTEM_INITIALIZED;
 		//至此初始化完成
 
 }
