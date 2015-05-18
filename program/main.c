@@ -229,23 +229,18 @@ void nrf_sending_task() 			//將資料經由nrf傳輸出去
 
 }
 
-void error_handler_task() 		//錯誤訊息處理與顯示
+void lcd_task() 	
 {
-	while (system.status != SYSTEM_ERROR_SD || system.status == SYSTEM_UNINITIALIZED) {
-		if (system.status == SYSTEM_INITIALIZED)
-			vTaskDelete(NULL);
-			//若程式沒有error則刪除自己這個task
-	}
+	TM_ILI9341_Init();
+	TM_ILI9341_Rotate(TM_ILI9341_Orientation_Landscape_2);
+	TM_ILI9341_Fill(ILI9341_COLOR_MAGENTA);
 
-	/* Clear the screen */
-	serial.printf("\x1b[H\x1b[2J");
-
-	if (SD_status != SD_OK) {
-		serial.printf("[System status]SD Initialized failed!\n\r");
-		serial.printf("Please Insert the SD card correctly then reboot the QuadCopter!");
-	}//若SD卡沒有就緒則發出錯誤訊息
-
-	while (1);
+	TM_ILI9341_Puts(50, 15, "ICLab - Quadrotor", &TM_Font_16x26, ILI9341_COLOR_BLACK, ILI9341_COLOR_BLUE2);
+	TM_ILI9341_Puts(20, 50, "1. Roll:", &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_MAGENTA);
+	TM_ILI9341_Puts(20, 80, "2. Pitch:", &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_MAGENTA);
+	TM_ILI9341_Puts(20, 110, "3. Yaw:", &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_MAGENTA);
+	TM_ILI9341_Puts(20, 140, "4. Height:", &TM_Font_11x18, ILI9341_COLOR_BLACK, ILI9341_COLOR_MAGENTA);
+	while(1);
 }
 
 int main(void) 		//主程式
@@ -293,10 +288,10 @@ int main(void) 		//主程式
 		    1024, NULL,
 		    tskIDLE_PRIORITY + 7, &watch_task_handle);
 
-	/* System error handler*/
-	xTaskCreate(error_handler_task,
-		    (signed portCHAR *) "Error handler",
-		    512, NULL,
+	/* Support LCD ili9341 */
+	xTaskCreate(lcd_task,
+		    (signed portCHAR *) "stm32f429's LCD handler",
+		    1024, NULL,
 		    tskIDLE_PRIORITY + 7, NULL);
 
 	vTaskSuspend(FlightControl_Handle);
