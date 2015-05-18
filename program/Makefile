@@ -69,7 +69,13 @@ SRC+=./lib/CMSIS/system_stm32f4xx.c \
         $(ST)/src/stm32f4xx_tim.c \
         $(ST)/src/stm32f4xx_spi.c \
         $(ST)/src/stm32f4xx_i2c.c \
-        $(ST)/src/stm32f4xx_sdio.c
+        $(ST)/src/stm32f4xx_sdio.c \
+        $(ST)/src/stm32f4xx_spi.c \
+        $(ST)/src/tm_stm32f4_spi.c\
+        $(ST)/src/tm_stm32f4_gpio.c\
+        $(ST)/src/tm_stm32f4_ili9341.c\
+        $(ST)/src/tm_stm32f4_fonts.c
+
 
 CFLAGS+=-I$(CONFIG)
 
