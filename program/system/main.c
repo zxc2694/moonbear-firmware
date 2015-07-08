@@ -199,7 +199,7 @@ int main(void)
 	xTaskCreate(shell_task,
 		    (signed portCHAR *) "Shell",
 		    2048, NULL,
-		    tskIDLE_PRIORITY + 5, NULL);
+		    tskIDLE_PRIORITY + 7, NULL);
 
 	xTaskCreate(flightControl_task,
 		    (signed portCHAR *) "Flight control",
