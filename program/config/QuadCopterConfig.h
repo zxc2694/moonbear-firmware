@@ -3,8 +3,9 @@
 
 /*Radio control*/
 #define USE_FUTABA_CONTROLLER		0
-#define USE_WFLY_CONTROLLER		1
+#define USE_WFLY_CONTROLLER		0
 #define USE_DEVO_v10_CONTROLLER 0
+#define USE_AT9 1
 /* Hardware environments */
 #define configRemoteControl				0       //if you no connect motor -> set 0. 
 #define configSD				0       //if you no connect SD card -> set 0.

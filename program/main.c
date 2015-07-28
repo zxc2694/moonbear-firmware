@@ -141,10 +141,10 @@ void flightControl_task()  		//飛行控制
 			//從感測器獲取訊號並經過濾波處理後計算出roll、pitch、yaw、throttle、safety訊號
 			
 			/* Motor Ctrl */
-			Final_M1 = Thr + Pitch - Roll + Yaw + adjustmentMotor1; //moonbear: - Yaw
-			Final_M2 = Thr + Pitch + Roll - Yaw + adjustmentMotor2; //moonbear: + Yaw
-			Final_M3 = Thr - Pitch + Roll + Yaw + adjustmentMotor3; //moonbear: - Yaw
-			Final_M4 = Thr - Pitch - Roll - Yaw + adjustmentMotor4; //moonbear: + Yaw
+			Final_M1 = Thr + Pitch - Roll - Yaw + adjustmentMotor1; //moonbear: - Yaw
+			Final_M2 = Thr + Pitch + Roll + Yaw + adjustmentMotor2; //moonbear: + Yaw
+			Final_M3 = Thr - Pitch + Roll - Yaw + adjustmentMotor3; //moonbear: - Yaw
+			Final_M4 = Thr - Pitch - Roll + Yaw + adjustmentMotor4; //moonbear: + Yaw
 			//將前述所得之roll、pitch、yaw、throttle、safety計算
 
 			system.variable[MOTOR1].value = Final_M1;
